@@ -1,6 +1,7 @@
 import 'package:cliqueledger/api_helpers/fetchTransactions.dart';
 import 'package:cliqueledger/models/cliqeue.dart';
 import 'package:cliqueledger/models/participants.dart';
+import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/themes/appBarTheme.dart';
 import 'package:cliqueledger/utility/routers_constant.dart';
@@ -8,17 +9,28 @@ import 'package:flutter/material.dart';
 import 'package:cliqueledger/models/transaction.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class Cliquepage extends StatefulWidget {
-
-  const Cliquepage({super.key});
+  final WebSocketChannel channel;
+  const Cliquepage({super.key,required this.channel});
 
   @override
-  State<Cliquepage> createState() => _CliquepageState();
+  State<Cliquepage> createState() => _CliquepageState(channel:channel);
 }
 
 class _CliquepageState extends State<Cliquepage> {
   final TransactionList transactionList = TransactionList();
+  Map<String,List<Transaction>> transacationMap = context.read<TransactionProvider>().transactionMap;
+  final WebSocketChannel channel;
+  _CliquepageState({required this.channel}){
+    channel.stream.listen((data){
+        Transaction t=data;
+        if(transacationMap.containsKey(t.cliqueId)){
+          context.read<TransactionProvider>().addSingleEntry(t.cliqueId, t);
+        }
+    });
+  }
   bool isLoading = true;
   @override
   void initState(){
@@ -26,15 +38,15 @@ class _CliquepageState extends State<Cliquepage> {
     fetchTransactions();
   }
  Future<void> fetchTransactions() async {
-    // final clique = context.read<CliqueProvider>().currentClique;
-    // if (clique != null) {
-    //   await transactionList.fetchData(clique.id); // Pass the cliqueId here
-    //   setState(() {
-    //     isLoading = false;
-    //   });
-    // } else {
-    //   // Handle the case where clique is null, if necessary
-    // }
+    final clique = context.read<CliqueProvider>().currentClique;
+    if (clique != null) {
+      await transactionList.fetchData(clique.id); // Pass the cliqueId here
+      setState(() {
+        isLoading = false;
+      });
+    } else {
+      // Handle the case where clique is null, if necessary
+    }
     await transactionList.fetchData("123");
     isLoading = false;
   }

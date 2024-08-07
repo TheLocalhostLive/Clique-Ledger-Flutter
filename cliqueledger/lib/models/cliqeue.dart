@@ -9,7 +9,7 @@ class Clique{
   final List<Member> admins;
   final List<Member> members;
   final bool isActive;
-  final Transaction latestTransaction;
+  Transaction? latestTransaction;
 
   Clique({
     required this.id,

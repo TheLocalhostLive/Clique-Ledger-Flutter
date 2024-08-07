@@ -26,7 +26,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CliqueProvider()),
-        ChangeNotifierProvider(create: (_)=>userProvider())
+        ChangeNotifierProvider(create: (_)=>UserProvider())
         // You can add other providers here as needed
       ],
       child: const MyApp(),

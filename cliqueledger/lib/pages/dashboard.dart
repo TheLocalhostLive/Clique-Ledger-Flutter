@@ -2,6 +2,8 @@ import 'package:cliqueledger/api_helpers/createCliquePost.dart';
 import 'package:cliqueledger/api_helpers/fetchCliqeue.dart';
 import 'package:cliqueledger/models/cliqeue.dart';
 import 'package:cliqueledger/models/cliquePostSchema.dart';
+import 'package:cliqueledger/models/transaction.dart';
+import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/themes/appBarTheme.dart';
 import 'package:cliqueledger/utility/routers_constant.dart';
@@ -9,8 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class Dashboard extends StatefulWidget {
+ 
+  
   const Dashboard({super.key});
 
   @override
@@ -18,11 +24,30 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  final WebSocketChannel channel = IOWebSocketChannel.connect('wss://echo.wesocket.org');
   final CreateCliquePost createCliquePost = CreateCliquePost();
+  late TransactionProvider transactionProvider;
+ 
+
   final CliqueList cliqueList = CliqueList();
+
+  _DashboardState(){
+    channel.stream.listen((data){
+        Transaction t=data;
+        if(transactionProvider.transactionMap.containsKey(t.cliqueId)){
+          transactionProvider.addSingleEntry(t.cliqueId,t);
+        }else{
+          if(cliqueList.activeCliqueList.containsKey(t.cliqueId)){
+              cliqueList.activeCliqueList[t.cliqueId]!.latestTransaction=t;
+              setState(() {});
+          }
+        }
+    });
+  }
   bool isCliquesLoading = true;
   @override
   void initState() {
+    transactionProvider = Provider.of<TransactionProvider>(context);
     super.initState();
     fetchCliques();
     //fetchFinishLedger();
@@ -130,7 +155,7 @@ class _DashboardState extends State<Dashboard> {
                       ? CliquePostSchema(name: cliqueName, members: membersList, isActive: isActive)
                       : CliquePostSchema(name: cliqueName, members: membersList, fund: amount, isActive: isActive);
                       createCliquePost.postData(cls);
-                      // Use the amount if withFunds is true
+                      
                       Navigator.of(context).pop();
                     }
                   },
@@ -213,13 +238,14 @@ class _DashboardState extends State<Dashboard> {
 }
 
 class LedgerTab extends StatelessWidget {
-  final List<Clique> cliqueList;
+  final Map<String,Clique> cliqueList;
   const LedgerTab({required this.cliqueList});
 
   @override
   Widget build(BuildContext context) {
+     CliqueProvider cliqueProvider = Provider.of<CliqueProvider>(context);
     return ListView(
-      children: cliqueList.map((clique) {
+      children: cliqueList.values.map((clique) {
         return Center(
           child: Container(
             //margin: const EdgeInsets.fromLTRB(5, 5, 5, 5),
@@ -232,8 +258,9 @@ class LedgerTab extends StatelessWidget {
               child: InkWell(
                   borderRadius: BorderRadius.circular(5),
                   onTap: (){
-                      context.read<CliqueProvider>().setClique(clique);
+                      cliqueProvider.setClique(clique);
                       context.go(RoutersConstants.CLIQUE_ROUTE);
+                      //
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -250,11 +277,11 @@ class LedgerTab extends StatelessWidget {
                                  ),
                               ),
                               Text(
-                                '${clique.latestTransaction.sender}-${clique.latestTransaction.spendAmount!=null ? clique.latestTransaction.sendAmount : clique.latestTransaction.sendAmount} \u{20B9}',
+                                '${clique.latestTransaction!.sender}-${clique.latestTransaction!.spendAmount!=null ? clique.latestTransaction!.sendAmount : clique.latestTransaction!.sendAmount} \u{20B9}',
                                  style: TextStyle(color: Colors.grey,fontSize: 12),
                               ),
                                Text(
-                                  '${clique.latestTransaction.date}',
+                                  '${clique.latestTransaction!.date}',
                                    style: TextStyle(color: Colors.grey,fontSize: 10),
                                )
                           ],

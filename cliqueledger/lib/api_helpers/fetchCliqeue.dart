@@ -7,8 +7,8 @@ import 'dart:convert';
 class CliqueList{
 
   List<Clique> cliqueList = [];
-  List<Clique> activeCliqueList=[];
-  List<Clique> finishedCliqueList=[];
+  Map<String,Clique> activeCliqueList={};
+  Map<String,Clique> finishedCliqueList={};
   Future<void> fetchData() async{
    final uriGet = Uri.parse('${BASE_URL}/cliques');
     try {
@@ -18,9 +18,9 @@ class CliqueList{
          cliqueList  = jsonList.map((jsonItem) => Clique .fromJson(jsonItem)).toList();
          for(Clique cl in cliqueList){
             if(cl.isActive){
-              activeCliqueList.add(cl);
+              activeCliqueList[cl.id]=cl;
             }else{
-              finishedCliqueList.add(cl);
+              finishedCliqueList[cl.id]=cl;
             }
          }
         print("Data fetched successfully: ${response.body}");

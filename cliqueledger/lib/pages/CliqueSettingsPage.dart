@@ -36,7 +36,7 @@ class _SettingsPageState extends State<SettingsPage> {
       TextEditingController(text: "Example Name");
   @override
   Widget build(BuildContext context) {
-    final clique = context.read<CliqueProvider>().currentClique;
+    //final clique = context.read<CliqueProvider>().currentClique;
     return Scaffold(
       appBar: GradientAppBar(title: "Clque Ledger"),
       body: SingleChildScrollView(
