@@ -1,6 +1,11 @@
 import 'package:cliqueledger/api_helpers/fetchTransactions.dart';
+import 'package:cliqueledger/api_helpers/transactionPost.dart';
+import 'package:cliqueledger/models/ParticipantsPost.dart';
+import 'package:cliqueledger/models/TransactionPostSchema.dart';
 import 'package:cliqueledger/models/cliqeue.dart';
+import 'package:cliqueledger/models/member.dart';
 import 'package:cliqueledger/models/participants.dart';
+import 'package:cliqueledger/pages/spendTransactionSliderPage.dart';
 import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/themes/appBarTheme.dart';
@@ -12,281 +17,233 @@ import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class Cliquepage extends StatefulWidget {
-  final WebSocketChannel channel;
-  const Cliquepage({super.key,required this.channel});
+  const Cliquepage({super.key});
 
   @override
-  State<Cliquepage> createState() => _CliquepageState(channel:channel);
+  State<Cliquepage> createState() => _CliquepageState();
 }
 
 class _CliquepageState extends State<Cliquepage> {
   final TransactionList transactionList = TransactionList();
-  Map<String,List<Transaction>> transacationMap = context.read<TransactionProvider>().transactionMap;
-  final WebSocketChannel channel;
-  _CliquepageState({required this.channel}){
-    channel.stream.listen((data){
-        Transaction t=data;
-        if(transacationMap.containsKey(t.cliqueId)){
-          context.read<TransactionProvider>().addSingleEntry(t.cliqueId, t);
-        }
-    });
-  }
+
   bool isLoading = true;
   @override
-  void initState(){
-    super.initState();
-    fetchTransactions();
-  }
- Future<void> fetchTransactions() async {
-    final clique = context.read<CliqueProvider>().currentClique;
-    if (clique != null) {
-      await transactionList.fetchData(clique.id); // Pass the cliqueId here
-      setState(() {
-        isLoading = false;
-      });
-    } else {
-      // Handle the case where clique is null, if necessary
-    }
-    await transactionList.fetchData("123");
-    isLoading = false;
-  }
-
-  void _createTransaction(BuildContext context) {
-     showDialog(
-  context: context,
-  builder: (BuildContext context) {
-    bool withFunds = false;
-    final TextEditingController amountController = TextEditingController();
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-    return StatefulBuilder(
-      builder: (BuildContext context, StateSetter setState) {
-        return AlertDialog(
-          title: const Text('Create Transaction'),
-          content: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextFormField(
-                  decoration: const InputDecoration(hintText: "Enter Clique Name"),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Clique Name cannot be empty";
-                    }
-                    return null;
-                  },
-                ),
-                Row(
-                  children: <Widget>[
-                    Checkbox(
-                      value: withFunds,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          withFunds = value ?? false;
-                        });
-                      },
-                    ),
-                    const Text("With funds"),
-                  ],
-                ),
-                if (withFunds)
-                  TextFormField(
-                    controller: amountController,
-                    decoration: const InputDecoration(hintText: "Enter Amount"),
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Amount cannot be empty";
-                      }
-                      return null;
-                    },
-                  ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Create'),
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  // Handle the create action
-                  String amount = amountController.text;
-                  // Use the amount if withFunds is true
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  },
-); 
-  }
-
   @override
-  Widget build(BuildContext context) {
-    
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar:  AppBar(
-          title: Text("Clique Ledger",style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold ),
-          ),
-          actions: <Widget>[
-            IconButton(
-              onPressed: ()=>{context.go(RoutersConstants.CLIQUE_SETTINGS_ROUTE)},
-              icon: Icon(Icons.settings,
-              color: Colors.white,),
-            )
-          ],
-          flexibleSpace: Container(
-          
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFF5588A3), // Note the use of 0xFF prefix for hex colors
-                Color(0xFF145374),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-      ),
-        body: Column(
-          children: [
-            TabBar(tabs: [
-              Tab(text: "Transaction"),
-              Tab(text: "Media"),
-              Tab(text: "Report"),
-            ]),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : transactionList.transactions.isEmpty
-                          ? const Center(child: Text("No Transaction to show"))
-                          : TransactionsTab(transactions: transactionList.transactions),
-                  Center(child: Text('Media')),
-                  Center(child: Text('Report')),
-                ],
-              ),
-            ),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => _createTransaction(context),
-          tooltip: 'Create Transaction',
-          backgroundColor: Color.fromARGB(255, 27, 62, 75),
-          child: const Icon(Icons.add,color: Color.fromARGB(255, 255, 255, 255),),
-        ),
-      ),
-    );
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final cliqueProvider = context.read<CliqueProvider>();
+      final transactionProvider = context.read<TransactionProvider>();
+      fetchTransactions(cliqueProvider, transactionProvider);
+    });
   }
-}
 
-class TransactionsTab extends StatelessWidget {
-  final List<Transaction> transactions;
-  
-  const TransactionsTab({required this.transactions});
+  Future<void> fetchTransactions(CliqueProvider cliqueProvider,
+      TransactionProvider transactionProvider) async {
+    if (cliqueProvider.currentClique != null) {
+      final cliqueId = cliqueProvider.currentClique!.id;
+      if (!transactionProvider.transactionMap.containsKey(cliqueId)) {
+        await transactionList.fetchData(cliqueId);
+        transactionProvider.addAllTransaction(
+            cliqueId, transactionList.transactions);
+        setState(() {
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
 
-void _checkTransaction(BuildContext context, Transaction t) {
+void _createTransaction(BuildContext context, CliqueProvider cliqueProvider,
+    TransactionProvider transactionProvider) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
+      // Define state variables
+      String transactionType = 'spend';
+      double amount = 0.0;
+      List<Map<String, String>> selectedMembers = [];
+      String? amountError;
+      String? transactionTypeError;
+      final List<Member> dummyMembers = [
+        Member(name: "John Doe", memberId: "M001", isAdmin: true),
+        Member(name: "Jane Smith", memberId: "M002", isAdmin: false),
+        Member(name: "Alice Johnson", memberId: "M003", isAdmin: false),
+        Member(name: "Bob Brown", memberId: "M004", isAdmin: true),
+        Member(name: "Charlie Davis", memberId: "M005", isAdmin: false),
+        Member(name: "Diana Evans", memberId: "M006", isAdmin: true),
+      ];
+
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
+          // Calculate available height by considering the keyboard height
+          double availableHeight = MediaQuery.of(context).size.height - MediaQuery.of(context).viewInsets.bottom - 100;
+
           return AlertDialog(
-            title: const Text(
-              'Transaction Details',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
+            title: Text('Create Transaction'),
             content: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  if (t.type == "send") ...[
-                    Text(
-                      '${t.sender.name} : \u{20B9}${t.sendAmount?.toStringAsFixed(2) ?? 'N/A'} paid to ${t.participants[0].name}',
-                      style: const TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ] else ...[
-                    Text(
-                      '${t.sender.name} Paid Total: \u{20B9}${t.spendAmount?.toStringAsFixed(2) ?? 'N/A'} To -',
-                      style: const TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    ...t.participants.map(
-                      (p) => Text(
-                        '${p.name} - \u{20B9}${p.partAmount}',
-                        style:  TextStyle(
-                          fontSize: 14.0,
-                          color: Colors.grey[700],
+              child: Container(
+                width: double.maxFinite,
+                constraints: BoxConstraints(maxHeight: availableHeight),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Amount Field
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Amount',
+                        border: OutlineInputBorder(),
+                        errorText: amountError,
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '₹', // Indian Rupee symbol
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              SizedBox(
+                                  width: 4), // Space between the symbol and the input
+                            ],
+                          ),
                         ),
                       ),
-                    ).toList(),
-                  ],
-                  SizedBox(height: 20),
-                  Text(
-                    'Description:',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {
+                        setState(() {
+                          try {
+                            amount = double.parse(value);
+                            amountError = null; // Clear error if valid
+                          } catch (e) {
+                            amountError = 'Invalid amount';
+                          }
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Amount is required';
+                        }
+                        try {
+                          double.parse(value);
+                          return null;
+                        } catch (e) {
+                          return 'Invalid amount';
+                        }
+                      },
                     ),
-                  ),
-                  Text(
-                    '${t.description}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[800],
+                    SizedBox(height: 16),
+                    // Transaction Type Dropdown
+                    DropdownButton<String>(
+                      value: transactionType,
+                      items: <String>['spend', 'send'].map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          transactionType = newValue!;
+                          transactionTypeError = null; // Clear error if valid
+                        });
+                      },
+                      isExpanded: true,
                     ),
-                  ),
-                  SizedBox(height: 30),
-                  ElevatedButton(
-                    onPressed: () => {},
-                    child: const Text(
-                      "Verify",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                    if (transactionTypeError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          transactionTypeError!,
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    SizedBox(height: 16),
+                    // Members Checkboxes
+                    Expanded(
+                      child: ListView(
+                        children: dummyMembers.map((member) {
+                          return CheckboxListTile(
+                            title: Text(member.name),
+                            value: selectedMembers.any((element) => element['memberId'] == member.memberId),
+                            onChanged: (bool? checked) {
+                              setState(() {
+                                if (checked == true) {
+                                  selectedMembers.add({
+                                    'memberId': member.memberId,
+                                    'name': member.name,
+                                  });
+                                } else {
+                                  selectedMembers.removeWhere((element) => element['memberId'] == member.memberId);
+                                }
+                              });
+                            },
+                          );
+                        }).toList(),
                       ),
                     ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00334E),
-                      minimumSize: Size(double.infinity, 36), // Full-width button
-                      padding: const EdgeInsets.symmetric(vertical: 12), // Add vertical padding
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Close',style: TextStyle(color: Color.fromARGB(255, 1, 47, 63)),),
+            actions: [
+              ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  // Validation
+                  bool isValid = true;
+
+                  if (amount <= 0) {
+                    setState(() {
+                      amountError = 'Amount cannot be empty or zero';
+                    });
+                    isValid = false;
+                  }
+                  if (transactionType.isEmpty) {
+                    setState(() {
+                      transactionTypeError = 'Please select a transaction type';
+                    });
+                    isValid = false;
+                  }
+
+                  if (transactionType == "send" && selectedMembers.length > 1) {
+                    setState(() {
+                      transactionTypeError = 'When Send is Selected only one Member can be chosen';
+                    });
+                    isValid = false;
+                  }
+
+                  if (isValid) {
+                    if (transactionType == "send") {
+                      String sender = "s001";
+                      String type = transactionType;
+                      List<Participantspost> participants = [
+                        Participantspost(
+                            id: selectedMembers[0]['memberId']!, amount: amount)
+                      ];
+                      TransactionPostschema tSchema =
+                          new TransactionPostschema(
+                              type: type,
+                              sender: sender,
+                              participants: participants,
+                              amount: amount);
+                      TransactionPost.PostData(tSchema);
+                    } else {
+                      print("Here");
+                      context.go(
+                            RoutersConstants.SPEND_TRANSACTION_SLIDER_PAGE,
+                            extra: {
+                              'selectedMembers': selectedMembers,
+                              'amount': amount,
+                            },
+                          );
+                    }
+                    Navigator.of(context).pop();
+                  }
                 },
+                child: Text('Create Transaction'),
               ),
             ],
           );
@@ -295,6 +252,204 @@ void _checkTransaction(BuildContext context, Transaction t) {
     },
   );
 }
+
+
+ 
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer2<CliqueProvider, TransactionProvider>(
+      builder: (context, cliqueProvider, transactionProvider, child) {
+        return DefaultTabController(
+          length: 3,
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(
+                "Clique Ledger",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              actions: <Widget>[
+                IconButton(
+                  onPressed: () {
+                    // Your navigation logic here
+                  },
+                  icon: const Icon(
+                    Icons.settings,
+                    color: Colors.white,
+                  ),
+                )
+              ],
+              flexibleSpace: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(
+                          0xFF5588A3), // Note the use of 0xFF prefix for hex colors
+                      Color(0xFF145374),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+              ),
+            ),
+            body: Column(
+              children: [
+                const TabBar(tabs: [
+                  Tab(text: "Transaction"),
+                  Tab(text: "Media"),
+                  Tab(text: "Report"),
+                ]),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : transactionProvider
+                                      .transactionMap[
+                                          cliqueProvider.currentClique!.id]
+                                      ?.isEmpty ??
+                                  true
+                              ? const Center(
+                                  child: Text("No Transaction to show"))
+                              : TransactionsTab(
+                                  transactions:
+                                      transactionProvider.transactionMap[
+                                          cliqueProvider.currentClique!.id]!,
+                                ),
+                      const Center(child: Text('Media')),
+                      const Center(child: Text('Report')),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () => _createTransaction(
+                  context, cliqueProvider, transactionProvider),
+              tooltip: 'Create Transaction',
+              backgroundColor: const Color.fromARGB(255, 27, 62, 75),
+              child: const Icon(
+                Icons.add,
+                color: Color.fromARGB(255, 255, 255, 255),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class TransactionsTab extends StatelessWidget {
+  final List<Transaction> transactions;
+
+  const TransactionsTab({required this.transactions});
+
+  void _checkTransaction(BuildContext context, Transaction t) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text(
+                'Transaction Details',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    if (t.type == "send") ...[
+                      Text(
+                        '${t.sender.name} : \u{20B9}${t.sendAmount?.toStringAsFixed(2) ?? 'N/A'} paid to ${t.participants[0].name}',
+                        style: const TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ] else ...[
+                      Text(
+                        '${t.sender.name} Paid Total: \u{20B9}${t.spendAmount?.toStringAsFixed(2) ?? 'N/A'} To -',
+                        style: const TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      ...t.participants
+                          .map(
+                            (p) => Text(
+                              '${p.name} - \u{20B9}${p.partAmount}',
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ],
+                    SizedBox(height: 20),
+                    Text(
+                      'Description:',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      '${t.description}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    SizedBox(height: 30),
+                    ElevatedButton(
+                      onPressed: () => {},
+                      child: const Text(
+                        "Verify",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00334E),
+                        minimumSize:
+                            Size(double.infinity, 36), // Full-width button
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12), // Add vertical padding
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text(
+                    'Close',
+                    style: TextStyle(color: Color.fromARGB(255, 1, 47, 63)),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -332,7 +487,7 @@ void _checkTransaction(BuildContext context, Transaction t) {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${tx.sender} - \u{20B9}${tx.spendAmount != null ? tx.spendAmount!.toStringAsFixed(2):tx.sendAmount!.toStringAsFixed(2)}',
+                        '${tx.sender} - \u{20B9}${tx.spendAmount != null ? tx.spendAmount!.toStringAsFixed(2) : tx.sendAmount!.toStringAsFixed(2)}',
                         style: TextStyle(fontSize: 16.0),
                       ),
                       const SizedBox(height: 4.0),

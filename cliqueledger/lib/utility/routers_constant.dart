@@ -6,4 +6,5 @@ class RoutersConstants {
   static const String CLIQUE_ROUTE = '/clique';
   static const String CLIQUE_SETTINGS_ROUTE = '/clique/settings';
   static const String ADD_MEMBER_ROUTE = '/cliqeu/settings/add-member';
+  static const String SPEND_TRANSACTION_SLIDER_PAGE = '/spendTransactionSliderPage';
 }

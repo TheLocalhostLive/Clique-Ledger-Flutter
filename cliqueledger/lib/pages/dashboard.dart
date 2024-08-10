@@ -15,8 +15,6 @@ import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class Dashboard extends StatefulWidget {
- 
-  
   const Dashboard({super.key});
 
   @override
@@ -24,42 +22,45 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  final WebSocketChannel channel = IOWebSocketChannel.connect('wss://echo.wesocket.org');
+  //final WebSocketChannel channel = IOWebSocketChannel.connect('wss://echo.wesocket.org');
   final CreateCliquePost createCliquePost = CreateCliquePost();
   late TransactionProvider transactionProvider;
- 
 
   final CliqueList cliqueList = CliqueList();
 
-  _DashboardState(){
-    channel.stream.listen((data){
-        Transaction t=data;
-        if(transactionProvider.transactionMap.containsKey(t.cliqueId)){
-          transactionProvider.addSingleEntry(t.cliqueId,t);
-        }else{
-          if(cliqueList.activeCliqueList.containsKey(t.cliqueId)){
-              cliqueList.activeCliqueList[t.cliqueId]!.latestTransaction=t;
-              setState(() {});
-          }
-        }
-    });
-  }
+  // _DashboardState(){
+  //   channel.stream.listen((data){
+  //       Transaction t=data;
+  //       if(transactionProvider.transactionMap.containsKey(t.cliqueId)){
+  //         transactionProvider.addSingleEntry(t.cliqueId,t);
+  //       }else{
+  //         if(cliqueList.activeCliqueList.containsKey(t.cliqueId)){
+  //             cliqueList.activeCliqueList[t.cliqueId]!.latestTransaction=t;
+  //             setState(() {});
+  //         }
+  //       }
+  //   });
+  // }
   bool isCliquesLoading = true;
   @override
-  void initState() {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Initialize transactionProvider here
     transactionProvider = Provider.of<TransactionProvider>(context);
+  }
+
+  @override
+  void initState() {
     super.initState();
     fetchCliques();
-    //fetchFinishLedger();
   }
+
   Future<void> fetchCliques() async {
     await cliqueList.fetchData();
     setState(() {
       isCliquesLoading = false;
     });
   }
-
-
 
   void _createClique(BuildContext context) {
     // Navigate to create page or show a dialog
@@ -70,7 +71,8 @@ class _DashboardState extends State<Dashboard> {
       builder: (BuildContext context) {
         bool withFunds = false;
         final TextEditingController amountController = TextEditingController();
-        final TextEditingController cliqueNameController = TextEditingController();
+        final TextEditingController cliqueNameController =
+            TextEditingController();
         final TextEditingController MembersController = TextEditingController();
         final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -85,9 +87,9 @@ class _DashboardState extends State<Dashboard> {
                   children: <Widget>[
                     TextFormField(
                       controller: cliqueNameController,
-                      decoration:
-                          const InputDecoration(
-                            hintText: "Enter Clique Name",),
+                      decoration: const InputDecoration(
+                        hintText: "Enter Clique Name",
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Clique Name cannot be empty";
@@ -95,16 +97,16 @@ class _DashboardState extends State<Dashboard> {
                         return null;
                       },
                     ),
-                    TextFormField(
-                      controller: MembersController,
-                      decoration:  const InputDecoration(hintText: "eg: john,bob12,alice03"),
-                      validator: (value){
-                        if(value == null || value.isEmpty){
-                          return "This field cannot be empty";
-                        }
-                        return null;
-                      },
-                    ),
+                    // TextFormField(
+                    //   controller: MembersController,
+                    //   decoration:  const InputDecoration(hintText: "eg: john,bob12,alice03"),
+                    //   validator: (value){
+                    //     if(value == null || value.isEmpty){
+                    //       return "This field cannot be empty";
+                    //     }
+                    //     return null;
+                    //   },
+                    // ),
                     Row(
                       children: <Widget>[
                         Checkbox(
@@ -143,19 +145,19 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 TextButton(
                   child: const Text('Create'),
-                  onPressed: () {
+                  onPressed: () async {
                     if (formKey.currentState!.validate()) {
                       // Handle the create action
                       String amount = amountController.text;
                       String cliqueName = cliqueNameController.text;
-                      String members = MembersController.text;
+                      // String members = MembersController.text;
                       bool isActive = true;
-                      List<String> membersList = members.split(',');
+                      //List<String> membersList = members.split(',');
                       CliquePostSchema cls = amount.isEmpty
-                      ? CliquePostSchema(name: cliqueName, members: membersList, isActive: isActive)
-                      : CliquePostSchema(name: cliqueName, members: membersList, fund: amount, isActive: isActive);
-                      createCliquePost.postData(cls);
-                      
+                          ? CliquePostSchema(name: cliqueName, fund: "0")
+                          : CliquePostSchema(name: cliqueName, fund: amount);
+                      await createCliquePost.postData(cls);
+
                       Navigator.of(context).pop();
                     }
                   },
@@ -173,39 +175,48 @@ class _DashboardState extends State<Dashboard> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar:  AppBar(
-        actions: <Widget>[
-          IconButton(
-            onPressed: () async{
-              await Authservice.instance.logout();
-            },
-             icon: Icon(IconData(0xe3b3,fontFamily: 'MaterialIcons')),
-             color: Colors.white,
-          )
-        ],
-        title: Text("Clique Ledger",style: const TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.bold ),),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFF5588A3), // Note the use of 0xFF prefix for hex colors
-              Color(0xFF145374),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+        appBar: AppBar(
+          actions: <Widget>[
+            IconButton(
+              onPressed: () async {
+                await Authservice.instance.logout();
+              },
+              icon: Icon(IconData(0xe3b3, fontFamily: 'MaterialIcons')),
+              color: Colors.white,
+            )
+          ],
+          title: Text(
+            "Clique Ledger",
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
           ),
-          
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(
+                      0xFF5588A3), // Note the use of 0xFF prefix for hex colors
+                  Color(0xFF145374),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
           ),
-        
         ),
-      ),
         body: Column(
           children: [
-            const TabBar(tabs:[
-              Tab(child:Text("Active Ledger",style:TextStyle(color: Color.fromARGB(255, 14, 97, 130)),),),
-              Tab(child: Text("Finished Ledger",style:TextStyle(color: Color.fromARGB(255, 14, 97, 130))),)
+            const TabBar(tabs: [
+              Tab(
+                child: Text(
+                  "Active Ledger",
+                  style: TextStyle(color: Color.fromARGB(255, 14, 97, 130)),
+                ),
+              ),
+              Tab(
+                child: Text("Finished Ledger",
+                    style: TextStyle(color: Color.fromARGB(255, 14, 97, 130))),
+              )
             ]),
             Expanded(
               child: TabBarView(
@@ -219,8 +230,11 @@ class _DashboardState extends State<Dashboard> {
                               child: Text("No Ledgers to show"),
                             )
                           : LedgerTab(cliqueList: cliqueList.activeCliqueList),
-                            cliqueList.finishedCliqueList.isEmpty ? const Center(child: Text("No Ledgers to Show"),):
-                            LedgerTab(cliqueList: cliqueList.finishedCliqueList)
+                  cliqueList.finishedCliqueList.isEmpty
+                      ? const Center(
+                          child: Text("No Ledgers to Show"),
+                        )
+                      : LedgerTab(cliqueList: cliqueList.finishedCliqueList)
                 ],
               ),
             ),
@@ -230,22 +244,27 @@ class _DashboardState extends State<Dashboard> {
           onPressed: () => _createClique(context),
           tooltip: 'Create Clique',
           child: const Icon(Icons.add),
-          backgroundColor:Color.fromARGB(255, 165, 229, 244),
+          backgroundColor: Color.fromARGB(255, 165, 229, 244),
         ),
       ),
     );
   }
 }
 
-class LedgerTab extends StatelessWidget {
-  final Map<String,Clique> cliqueList;
+class LedgerTab extends StatefulWidget {
+  final Map<String, Clique> cliqueList;
   const LedgerTab({required this.cliqueList});
 
   @override
+  State<LedgerTab> createState() => _LedgerTabState();
+}
+
+class _LedgerTabState extends State<LedgerTab> {
+  @override
   Widget build(BuildContext context) {
-     CliqueProvider cliqueProvider = Provider.of<CliqueProvider>(context);
+    CliqueProvider cliqueProvider = Provider.of<CliqueProvider>(context);
     return ListView(
-      children: cliqueList.values.map((clique) {
+      children: widget.cliqueList.values.map((clique) {
         return Center(
           child: Container(
             //margin: const EdgeInsets.fromLTRB(5, 5, 5, 5),
@@ -257,10 +276,19 @@ class LedgerTab extends StatelessWidget {
                   borderRadius: BorderRadius.circular(5)),
               child: InkWell(
                   borderRadius: BorderRadius.circular(5),
-                  onTap: (){
-                      cliqueProvider.setClique(clique);
-                      context.go(RoutersConstants.CLIQUE_ROUTE);
-                      //
+                  onTap: () {
+                    cliqueProvider.setClique(clique);
+                    context.go(RoutersConstants.CLIQUE_ROUTE);
+                    setState(() {
+                      widget.cliqueList[cliqueProvider.currentClique!.id] =
+                          widget.cliqueList[cliqueProvider.currentClique!.id]!
+                              .copyWith(
+                        latestTransaction:
+                            cliqueProvider.currentClique!.latestTransaction,
+                      );
+                    });
+
+                    //
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -271,19 +299,26 @@ class LedgerTab extends StatelessWidget {
                       child: Container(
                         child: Column(
                           children: [
-                              Text('${clique.name}',
-                                  style: TextStyle(
-                                   fontSize: 22.0,
-                                 ),
+                            Text(
+                              '${clique.name}',
+                              style: TextStyle(
+                                fontSize: 22.0,
                               ),
-                              Text(
-                                '${clique.latestTransaction!.sender}-${clique.latestTransaction!.spendAmount!=null ? clique.latestTransaction!.sendAmount : clique.latestTransaction!.sendAmount} \u{20B9}',
-                                 style: TextStyle(color: Colors.grey,fontSize: 12),
-                              ),
-                               Text(
-                                  '${clique.latestTransaction!.date}',
-                                   style: TextStyle(color: Colors.grey,fontSize: 10),
-                               )
+                            ),
+                            Text(
+                              clique.latestTransaction != null
+                                  ? '${clique.latestTransaction!.sender}-${clique.latestTransaction!.spendAmount != null ? clique.latestTransaction!.spendAmount : clique.latestTransaction!.sendAmount} \u{20B9}'
+                                  : 'No transactions yet',
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                            Text(
+                              clique.latestTransaction != null
+                                  ? '${clique.latestTransaction!.date}'
+                                  : 'No transactions yet',
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 10),
+                            )
                           ],
                         ),
                       ),

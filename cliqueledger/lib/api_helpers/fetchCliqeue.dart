@@ -15,7 +15,9 @@ class CliqueList{
       final response = await http.get(uriGet);
       if (response.statusCode == 200) {
          final List<dynamic> jsonList = json.decode(response.body);
+         print(jsonList.length);
          cliqueList  = jsonList.map((jsonItem) => Clique .fromJson(jsonItem)).toList();
+         
          for(Clique cl in cliqueList){
             if(cl.isActive){
               activeCliqueList[cl.id]=cl;

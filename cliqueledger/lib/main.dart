@@ -2,6 +2,7 @@ import 'package:cliqueledger/pages/addMember.dart';
 import 'package:cliqueledger/pages/cliquePage.dart';
 import 'package:cliqueledger/pages/dashboard.dart';
 import 'package:cliqueledger/pages/CliqueSettingsPage.dart';
+import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/providers/userProvider.dart';
 import 'package:cliqueledger/service/authservice.dart';
@@ -26,7 +27,8 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CliqueProvider()),
-        ChangeNotifierProvider(create: (_)=>UserProvider())
+        ChangeNotifierProvider(create: (_)=>UserProvider()),
+         ChangeNotifierProvider(create: (_) => TransactionProvider()),
         // You can add other providers here as needed
       ],
       child: const MyApp(),
@@ -43,6 +45,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
        routerConfig: Routers.routers(true),
     );
+    // return MaterialApp(
+    //   home: Cliquepage() ,
+    // );
    
   }
 }
