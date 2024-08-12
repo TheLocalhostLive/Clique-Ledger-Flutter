@@ -2,6 +2,7 @@ import 'package:cliqueledger/pages/addMember.dart';
 import 'package:cliqueledger/pages/cliquePage.dart';
 import 'package:cliqueledger/pages/dashboard.dart';
 import 'package:cliqueledger/pages/CliqueSettingsPage.dart';
+import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/providers/userProvider.dart';
@@ -29,6 +30,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => CliqueProvider()),
         ChangeNotifierProvider(create: (_)=>UserProvider()),
          ChangeNotifierProvider(create: (_) => TransactionProvider()),
+         ChangeNotifierProvider(create: (_) => CliqueListProvider()),
         // You can add other providers here as needed
       ],
       child: const MyApp(),

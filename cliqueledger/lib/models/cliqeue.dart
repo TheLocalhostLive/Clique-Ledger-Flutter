@@ -8,7 +8,7 @@ class Clique {
   final List<Member> members;
   final bool isActive;
   Transaction? latestTransaction;
-  final double fund; 
+  final num fund; 
   final bool isFund;
 
   Clique({
@@ -29,7 +29,7 @@ class Clique {
     List<Member>? members,
     bool? isActive,
     Transaction? latestTransaction,
-    double? fund,
+    int? fund,
     bool? isFund,
   }) {
     return Clique(
@@ -60,11 +60,10 @@ class Clique {
       latestTransaction: json['latestTransaction'] != null
           ? Transaction.fromJson(json['latestTransaction'] as Map<String, dynamic>)
           : null, // Handle nullable Transaction
-      fund: json['fund'] as double? ?? 0.0, // Default to 0.0 if null
+      fund: json['fund'] ?? 0, // Default to 0.0 if null
       isFund: json['isFund'] as bool? ?? false, // Default to false if null
-    );
-  }
-
+    );    
+  }         
   Map<String, dynamic> toJson() => {
         'clique_id': id,
         'clique_name': name,
@@ -75,4 +74,5 @@ class Clique {
         'fund': fund,
         'isFund': isFund,
       };
+            
 }

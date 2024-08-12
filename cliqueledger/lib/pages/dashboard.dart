@@ -3,6 +3,7 @@ import 'package:cliqueledger/api_helpers/fetchCliqeue.dart';
 import 'package:cliqueledger/models/cliqeue.dart';
 import 'package:cliqueledger/models/cliquePostSchema.dart';
 import 'package:cliqueledger/models/transaction.dart';
+import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/themes/appBarTheme.dart';
@@ -25,6 +26,7 @@ class _DashboardState extends State<Dashboard> {
   //final WebSocketChannel channel = IOWebSocketChannel.connect('wss://echo.wesocket.org');
   final CreateCliquePost createCliquePost = CreateCliquePost();
   late TransactionProvider transactionProvider;
+  late CliqueListProvider cliqueListProvider;
 
   final CliqueList cliqueList = CliqueList();
 
@@ -47,16 +49,19 @@ class _DashboardState extends State<Dashboard> {
     super.didChangeDependencies();
     // Initialize transactionProvider here
     transactionProvider = Provider.of<TransactionProvider>(context);
+    cliqueListProvider = Provider.of<CliqueListProvider>(context);
   }
 
   @override
   void initState() {
     super.initState();
-    fetchCliques();
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchCliques();
+    });
   }
 
   Future<void> fetchCliques() async {
-    await cliqueList.fetchData();
+  await cliqueList.fetchData(cliqueListProvider);
     setState(() {
       isCliquesLoading = false;
     });
@@ -97,16 +102,6 @@ class _DashboardState extends State<Dashboard> {
                         return null;
                       },
                     ),
-                    // TextFormField(
-                    //   controller: MembersController,
-                    //   decoration:  const InputDecoration(hintText: "eg: john,bob12,alice03"),
-                    //   validator: (value){
-                    //     if(value == null || value.isEmpty){
-                    //       return "This field cannot be empty";
-                    //     }
-                    //     return null;
-                    //   },
-                    // ),
                     Row(
                       children: <Widget>[
                         Checkbox(
@@ -156,8 +151,7 @@ class _DashboardState extends State<Dashboard> {
                       CliquePostSchema cls = amount.isEmpty
                           ? CliquePostSchema(name: cliqueName, fund: "0")
                           : CliquePostSchema(name: cliqueName, fund: amount);
-                      await createCliquePost.postData(cls);
-
+                      await createCliquePost.postData(cls,cliqueListProvider);
                       Navigator.of(context).pop();
                     }
                   },
@@ -225,16 +219,16 @@ class _DashboardState extends State<Dashboard> {
                       ? const Center(
                           child: CircularProgressIndicator(),
                         )
-                      : cliqueList.activeCliqueList.isEmpty
+                      : cliqueListProvider.activeCliqueList.isEmpty
                           ? const Center(
                               child: Text("No Ledgers to show"),
                             )
-                          : LedgerTab(cliqueList: cliqueList.activeCliqueList),
-                  cliqueList.finishedCliqueList.isEmpty
+                          : LedgerTab(cliqueList: cliqueListProvider.activeCliqueList),
+                        cliqueListProvider.finishedCliqueList.isEmpty
                       ? const Center(
                           child: Text("No Ledgers to Show"),
                         )
-                      : LedgerTab(cliqueList: cliqueList.finishedCliqueList)
+                      : LedgerTab(cliqueList: cliqueListProvider.finishedCliqueList)
                 ],
               ),
             ),
@@ -262,7 +256,7 @@ class LedgerTab extends StatefulWidget {
 class _LedgerTabState extends State<LedgerTab> {
   @override
   Widget build(BuildContext context) {
-    CliqueProvider cliqueProvider = Provider.of<CliqueProvider>(context);
+     CliqueProvider cliqueProvider = Provider.of<CliqueProvider>(context);
     return ListView(
       children: widget.cliqueList.values.map((clique) {
         return Center(
@@ -315,7 +309,7 @@ class _LedgerTabState extends State<LedgerTab> {
                             Text(
                               clique.latestTransaction != null
                                   ? '${clique.latestTransaction!.date}'
-                                  : 'No transactions yet',
+                                  : '',
                               style:
                                   TextStyle(color: Colors.grey, fontSize: 10),
                             )
