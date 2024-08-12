@@ -1,12 +1,29 @@
-class CliquePostSchema{
+class CliquePostSchema {
   final String name;
-  final List<String> members;
   final String? fund;
-  final bool? isActive;
+
+
   CliquePostSchema({
     required this.name,
-    required this.members,
     this.fund,
-    required this.isActive
+    
   });
+
+  // Convert a CliquePostSchema instance to a map (JSON)
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'funds': fund,
+      
+    };
+  }
+
+  // Create a CliquePostSchema instance from a map (JSON)
+  factory CliquePostSchema.fromJson(Map<String, dynamic> json) {
+    return CliquePostSchema(
+      name: json['name'] as String,
+      fund: json['fund'] as String?,
+     
+    );
+  }
 }

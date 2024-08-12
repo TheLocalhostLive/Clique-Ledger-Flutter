@@ -6,8 +6,8 @@ class CliqueProvider with ChangeNotifier {
 
   Clique? get currentClique => _currentClique;
 
-  void setClique(Clique ledger) {
-    _currentClique = ledger;
+  void setClique(Clique clique) {
+    _currentClique = clique;
     notifyListeners();
   }
 }

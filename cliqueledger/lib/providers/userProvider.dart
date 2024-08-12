@@ -1,7 +1,7 @@
 import 'package:cliqueledger/models/user.dart';
 import 'package:flutter/material.dart';
 
-class userProvider with ChangeNotifier {
+class UserProvider with ChangeNotifier {
   User ? _currentUser;
   User ? get  currentUser => _currentUser;
 

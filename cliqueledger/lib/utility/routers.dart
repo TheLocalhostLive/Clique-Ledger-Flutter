@@ -5,6 +5,7 @@ import 'package:cliqueledger/pages/dashboard.dart';
 import 'package:cliqueledger/pages/cliquePage.dart';
 import 'package:cliqueledger/pages/login.dart';
 import 'package:cliqueledger/pages/signup.dart';
+import 'package:cliqueledger/pages/spendTransactionSliderPage.dart';
 import 'package:cliqueledger/pages/welcome_page.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:cliqueledger/utility/routers_constant.dart';
@@ -61,6 +62,19 @@ class Routers {
           path: RoutersConstants.ADD_MEMBER_ROUTE,
           name: 'AddMember',
           builder: (context,state)=> AddMember()
+        ),
+        GoRoute(
+          path: RoutersConstants.SPEND_TRANSACTION_SLIDER_PAGE,
+          name: 'SliderPage', builder: (context, state) {
+          final Map<String, dynamic> extra = state.extra as Map<String, dynamic>;
+          final List<Map<String, String>> selectedMembers = extra['selectedMembers'];
+          final double amount = extra['amount'];
+
+            return SpendTransactionSliderPage(
+              selectedMembers: selectedMembers,
+              amount: amount,
+            );
+          }        
         ),
         
       ],
