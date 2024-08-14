@@ -268,7 +268,7 @@ class _CliquepageState extends State<Cliquepage> {
                         print('amount: $amount');
                         await TransactionPost.postData(tSchema,transactionProvider);
                       } else {
-                        context.go(
+                        context.push(
                           RoutersConstants.SPEND_TRANSACTION_SLIDER_PAGE,
                           extra: {
                             'selectedMembers': selectedMembers,

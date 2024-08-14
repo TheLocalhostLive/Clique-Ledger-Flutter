@@ -47,7 +47,7 @@ class _SignupState extends State<Signup> {
                 // Check if login/signup was successful
                 if (Authservice.instance.loginInfo.isLoggedIn) {
                   // Navigate to the dashboard
-                  context.go('/dashboard');
+                  context.push('/dashboard');
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Login successful')),
                   );
