@@ -14,6 +14,7 @@ class CliqueList {
 
   Future<void> fetchData(CliqueListProvider cliqueListProvider) async {
     String? accessToken = Authservice.instance.accessToken;
+    print('Access Token : $accessToken');
     
     final uriGet = Uri.parse('${BASE_URL}/cliques');
     try {
@@ -27,7 +28,7 @@ class CliqueList {
         cliqueListProvider.setCliqueList(cliqueList);
       } else {
         // Handle error response
-        print("Error fetching data: ${response.statusCode}");
+        print("Error while fetching data: ${response.statusCode}");
       }
     } catch (e) {
       // Handle exceptions

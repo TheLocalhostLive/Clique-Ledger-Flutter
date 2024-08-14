@@ -25,9 +25,9 @@ class Cliquepage extends StatefulWidget {
 
 class _CliquepageState extends State<Cliquepage> {
   final TransactionList transactionList = TransactionList();
-
+  late TransactionProvider transactionProvider;
+  late CliqueProvider cliqueProvider;
   bool isLoading = true;
-  @override
   @override
   void initState() {
     super.initState();
@@ -57,204 +57,238 @@ class _CliquepageState extends State<Cliquepage> {
     }
   }
 
-void _createTransaction(BuildContext context, CliqueProvider cliqueProvider,
-    TransactionProvider transactionProvider) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      // Define state variables
-      String transactionType = 'spend';
-      double amount = 0.0;
-      List<Map<String, String>> selectedMembers = [];
-      String? amountError;
-      String? transactionTypeError;
-      final List<Member> dummyMembers = [
-        Member(name: "John Doe", memberId: "M001", isAdmin: true),
-        Member(name: "Jane Smith", memberId: "M002", isAdmin: false),
-        Member(name: "Alice Johnson", memberId: "M003", isAdmin: false),
-        Member(name: "Bob Brown", memberId: "M004", isAdmin: true),
-        Member(name: "Charlie Davis", memberId: "M005", isAdmin: false),
-        Member(name: "Diana Evans", memberId: "M006", isAdmin: true),
-      ];
+  void _createTransaction(BuildContext context, CliqueProvider cliqueProvider,
+      TransactionProvider transactionProvider) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // Define state variables
+        String transactionType = 'spend';
+        num amount = 0.0;
+        List<Map<String, String>> selectedMembers = [];
+        String? amountError;
+        String? transactionTypeError;
+        String description="Description is not Present";
+        String? descriptionError;
+        
 
-      return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          // Calculate available height by considering the keyboard height
-          double availableHeight = MediaQuery.of(context).size.height - MediaQuery.of(context).viewInsets.bottom - 100;
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            // Calculate available height by considering the keyboard height
+            double availableHeight = MediaQuery.of(context).size.height -
+                MediaQuery.of(context).viewInsets.bottom -
+                100;
 
-          return AlertDialog(
-            title: Text('Create Transaction'),
-            content: SingleChildScrollView(
-              child: Container(
-                width: double.maxFinite,
-                constraints: BoxConstraints(maxHeight: availableHeight),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Amount Field
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Amount',
-                        border: OutlineInputBorder(),
-                        errorText: amountError,
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '₹', // Indian Rupee symbol
-                                style: TextStyle(fontSize: 18),
-                              ),
-                              SizedBox(
-                                  width: 4), // Space between the symbol and the input
-                            ],
+            return AlertDialog(
+              title: Text('Create Transaction'),
+              content: SingleChildScrollView(
+                child: Container(
+                  width: double.maxFinite,
+                  constraints: BoxConstraints(maxHeight: availableHeight),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Amount Field
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Amount',
+                          border: OutlineInputBorder(),
+                          errorText: amountError,
+                          prefixIcon: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '₹', // Indian Rupee symbol
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                SizedBox(
+                                    width:
+                                        4), // Space between the symbol and the input
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        setState(() {
-                          try {
-                            amount = double.parse(value);
-                            amountError = null; // Clear error if valid
-                          } catch (e) {
-                            amountError = 'Invalid amount';
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          setState(() {
+                            try {
+                              amount = num.parse(value);
+                              amountError = null; // Clear error if valid
+                            } catch (e) {
+                              amountError = 'Invalid amount';
+                            }
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Amount is required';
                           }
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Amount is required';
-                        }
-                        try {
-                          double.parse(value);
-                          return null;
-                        } catch (e) {
-                          return 'Invalid amount';
-                        }
-                      },
-                    ),
-                    SizedBox(height: 16),
-                    // Transaction Type Dropdown
-                    DropdownButton<String>(
-                      value: transactionType,
-                      items: <String>['spend', 'send'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          transactionType = newValue!;
-                          transactionTypeError = null; // Clear error if valid
-                        });
-                      },
-                      isExpanded: true,
-                    ),
-                    if (transactionTypeError != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          transactionTypeError!,
-                          style: TextStyle(color: Colors.red),
-                        ),
+                          try {
+                            double.parse(value);
+                            return null;
+                          } catch (e) {
+                            return 'Invalid amount';
+                          }
+                        },
                       ),
-                    SizedBox(height: 16),
-                    // Members Checkboxes
-                    Expanded(
-                      child: ListView(
-                        children: dummyMembers.map((member) {
-                          return CheckboxListTile(
-                            title: Text(member.name),
-                            value: selectedMembers.any((element) => element['memberId'] == member.memberId),
-                            onChanged: (bool? checked) {
-                              setState(() {
-                                if (checked == true) {
-                                  selectedMembers.add({
-                                    'memberId': member.memberId,
-                                    'name': member.name,
-                                  });
-                                } else {
-                                  selectedMembers.removeWhere((element) => element['memberId'] == member.memberId);
-                                }
-                              });
-                            },
+                      SizedBox(height: 16),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Description',
+                          border: OutlineInputBorder(),
+                          errorText: descriptionError,
+                          prefixIcon: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              '₹', // Indian Rupee symbol
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                        ),
+                        keyboardType: TextInputType.text,
+                        onChanged: (value) {
+                          setState(() {
+                            description = value;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Description is required';
+                          }
+                          return null; // No error if the value is valid
+                        },
+                      ),
+
+                      // Transaction Type Dropdown
+                      DropdownButton<String>(
+                        value: transactionType,
+                        items: <String>['send', 'spend'].map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
                           );
                         }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            transactionType = newValue!;
+                            transactionTypeError = null; // Clear error if valid
+                          });
+                        },
+                        isExpanded: true,
                       ),
-                    ),
-                  ],
+                      if (transactionTypeError != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            transactionTypeError!,
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      SizedBox(height: 16),
+                      // Members Checkboxes
+                      Expanded(
+                        child: ListView(
+                          children: cliqueProvider.currentClique!.members.map((member) {
+                            return CheckboxListTile(
+                              title: Text(member.name),
+                              value: selectedMembers.any((element) =>
+                                  element['memberId'] == member.memberId),
+                              onChanged: (bool? checked) {
+                                setState(() {
+                                  if (checked == true) {
+                                    selectedMembers.add({
+                                      'memberId': member.memberId,
+                                      'name': member.name,
+                                    });
+                                  } else {
+                                    selectedMembers.removeWhere((element) =>
+                                        element['memberId'] == member.memberId);
+                                  }
+                                });
+                              },
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  // Validation
-                  bool isValid = true;
+              actions: [
+                ElevatedButton(
+                  onPressed: () async {
+                    // Validation
+                    bool isValid = true;
 
-                  if (amount <= 0) {
-                    setState(() {
-                      amountError = 'Amount cannot be empty or zero';
-                    });
-                    isValid = false;
-                  }
-                  if (transactionType.isEmpty) {
-                    setState(() {
-                      transactionTypeError = 'Please select a transaction type';
-                    });
-                    isValid = false;
-                  }
-
-                  if (transactionType == "send" && selectedMembers.length > 1) {
-                    setState(() {
-                      transactionTypeError = 'When Send is Selected only one Member can be chosen';
-                    });
-                    isValid = false;
-                  }
-
-                  if (isValid) {
-                    if (transactionType == "send") {
-                      String sender = "s001";
-                      String type = transactionType;
-                      List<Participantspost> participants = [
-                        Participantspost(
-                            id: selectedMembers[0]['memberId']!, amount: amount)
-                      ];
-                      TransactionPostschema tSchema =
-                          new TransactionPostschema(
-                              type: type,
-                              sender: sender,
-                              participants: participants,
-                              amount: amount);
-                      TransactionPost.PostData(tSchema);
-                    } else {
-                      print("Here");
-                      context.go(
-                            RoutersConstants.SPEND_TRANSACTION_SLIDER_PAGE,
-                            extra: {
-                              'selectedMembers': selectedMembers,
-                              'amount': amount,
-                            },
-                          );
+                    if (amount <= 0) {
+                      setState(() {
+                        amountError = 'Amount cannot be empty or zero';
+                      });
+                      isValid = false;
                     }
-                    Navigator.of(context).pop();
-                  }
-                },
-                child: Text('Create Transaction'),
-              ),
-            ],
-          );
-        },
-      );
-    },
-  );
-}
+                    if (transactionType.isEmpty) {
+                      setState(() {
+                        transactionTypeError =
+                            'Please select a transaction type';
+                      });
+                      isValid = false;
+                    }
 
+                    if (transactionType == "send" &&
+                        selectedMembers.length > 1) {
+                      setState(() {
+                        transactionTypeError =
+                            'When Send is Selected only one Member can be chosen';
+                      });
+                      isValid = false;
+                    }
 
- 
+                    if (isValid) {
+                      if (transactionType == "send") {
+                        String type = transactionType;
+                        List<Participantspost> participants = [
+                          Participantspost(
+                              id: selectedMembers[0]['memberId']!,
+                              amount: amount)
+                        ];
+                        String cliqueId = cliqueProvider.currentClique!.id;
+                        TransactionPostschema tSchema =
+                             TransactionPostschema(
+                                cliqueId: cliqueId,
+                                type: type,
+                                participants: participants,
+                                amount: amount,
+                                description: description);
+                        print('description : $description');
+                        print('cliqueId : $cliqueId');
+                        print('amount: $amount');
+                        await TransactionPost.postData(tSchema,transactionProvider);
+                      } else {
+                        context.go(
+                          RoutersConstants.SPEND_TRANSACTION_SLIDER_PAGE,
+                          extra: {
+                            'selectedMembers': selectedMembers,
+                            'amount': amount,
+                            'description':description
+                          },
+                        );
+                      }
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: Text('Create Transaction'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -370,7 +404,7 @@ class TransactionsTab extends StatelessWidget {
                   children: <Widget>[
                     if (t.type == "send") ...[
                       Text(
-                        '${t.sender.name} : \u{20B9}${t.sendAmount?.toStringAsFixed(2) ?? 'N/A'} paid to ${t.participants[0].name}',
+                        '${t.sender.name} : \u{20B9}${t.amount.toStringAsFixed(2) ?? 'N/A'} paid to ${t.participants[0].name}',
                         style: const TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w500,
@@ -378,7 +412,7 @@ class TransactionsTab extends StatelessWidget {
                       ),
                     ] else ...[
                       Text(
-                        '${t.sender.name} Paid Total: \u{20B9}${t.spendAmount?.toStringAsFixed(2) ?? 'N/A'} To -',
+                        '${t.sender.name} Paid Total: \u{20B9}${t.amount?.toStringAsFixed(2) ?? 'N/A'} To -',
                         style: const TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w500,
@@ -487,7 +521,7 @@ class TransactionsTab extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${tx.sender} - \u{20B9}${tx.spendAmount != null ? tx.spendAmount!.toStringAsFixed(2) : tx.sendAmount!.toStringAsFixed(2)}',
+                        '${tx.sender} - \u{20B9}${tx.amount != null ? tx.amount!.toStringAsFixed(2) : tx.amount!.toStringAsFixed(2)}',
                         style: TextStyle(fontSize: 16.0),
                       ),
                       const SizedBox(height: 4.0),

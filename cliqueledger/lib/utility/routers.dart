@@ -68,11 +68,13 @@ class Routers {
           name: 'SliderPage', builder: (context, state) {
           final Map<String, dynamic> extra = state.extra as Map<String, dynamic>;
           final List<Map<String, String>> selectedMembers = extra['selectedMembers'];
-          final double amount = extra['amount'];
+          final num amount = extra['amount'];
+          final String description = extra['description'];
 
             return SpendTransactionSliderPage(
               selectedMembers: selectedMembers,
               amount: amount,
+              description: description,
             );
           }        
         ),

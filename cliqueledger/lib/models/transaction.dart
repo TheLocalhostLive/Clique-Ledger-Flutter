@@ -10,16 +10,16 @@ class Transaction {
   final String cliqueId;
   @JsonKey(name: "transaction_type")
   final String type;
-  @JsonKey(name:"sender_id")
+  @JsonKey(name: "sender_id")
   final Member sender;
   final List<Participant> participants;
-  @JsonKey(name: "spend_amount")
-  final double? spendAmount ;
-  @JsonKey(name: "send_amount")
-  final double? sendAmount;
-  @JsonKey(name:" done_at")
+  @JsonKey(name: "amount")
+  final num amount;
+  @JsonKey(name: "done_at")
   final DateTime date;
   final String description;
+  @JsonKey(name: "is_verified")
+  final String isVerified;
 
   Transaction({
     required this.id,
@@ -27,27 +27,42 @@ class Transaction {
     required this.type,
     required this.sender,
     required this.participants,
-    
-    this.spendAmount,
-    this.sendAmount,
+    required this.amount,
     required this.date,
     required this.description,
+    required this.isVerified,
   });
 
-   factory Transaction.fromJson(Map<String, dynamic> json) {
-    return Transaction(
-      id: json['transaction_id'] as String,
-      cliqueId: json['clique_id'] as String,
-      type: json['transaction_type'] as String,
-      sender: Member.fromJson(json['sender_id']),
-      participants: (json['participants'] as List)
-          .map((e) => Participant.fromJson(e))
-          .toList(),
-      spendAmount: (json['spend_amount'] as num?)?.toDouble(),
-      sendAmount: (json['send_amount'] as num?)?.toDouble(),
-      date: DateTime.parse(json['done_at'] as String),
-      description: json['description'] as String,
-    );
+  factory Transaction.fromJson(Map<String, dynamic> json) {
+    try {
+      // Print each field to debug
+      print("Parsing transaction_id: ${json['transaction_id']}");
+      print("Parsing clique_id: ${json['clique_id']}");
+      print("Parsing transaction_type: ${json['transaction_type']}");
+      print("Parsing sender: ${json['sender']}");
+      print("Parsing participants: ${json['participants']}");
+      print("Parsing amount: ${json['amount']}");
+      print("Parsing done_at: ${json['done_at']}");
+      print("Parsing description: ${json['description']}");
+      print("Parsing is_verified: ${json['is_verified']}");
+
+      return Transaction(
+        id: json['transaction_id'] as String,
+        cliqueId: json['clique_id'] as String,
+        type: json['transaction_type'] as String? ?? 'unknown',
+        sender: Member.fromJson(json['sender']),
+        participants: (json['participants'] as List)
+            .map((e) => Participant.fromJson(e))
+            .toList(),
+        amount: json['amount'] as num? ?? 0,
+        date: DateTime.parse(json['done_at'] as String),
+        description: json['description'] as String? ?? '',
+        isVerified: json['is_verified'] as String? ?? 'not_verified',
+      );
+    } catch (e) {
+      print("Error parsing Transaction object: $e");
+      rethrow;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -57,13 +72,10 @@ class Transaction {
       'transaction_type': type,
       'sender_id': sender.toJson(),
       'participants': participants.map((e) => e.toJson()).toList(),
-      'spend_amount': spendAmount,
-      'send_amount': sendAmount,
+      'amount': amount,
       'done_at': date.toIso8601String(),
       'description': description,
+      'is_verified': isVerified,
     };
   }
-  
 }
-
-
