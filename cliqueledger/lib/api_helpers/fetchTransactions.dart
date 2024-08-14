@@ -19,14 +19,17 @@ class TransactionList {
  String? accessToken = Authservice.instance.accessToken;
 
   Future<void> fetchData(String cliqueId) async {
+    print('Fetch Data - Clique ID - $cliqueId');
     final queryParams = {"cliqueId": cliqueId};
-    final uriGet = Uri.parse('http://13.234.48.56:3000/api/v1/transactions').replace(queryParameters: queryParams);
+    final uriGet = Uri.parse('$BASE_URL/transactions').replace(queryParameters: queryParams);
             
     try {
-      final response = await http.get(uriGet,headers:{
-            'Authorization' : 'Bearer $accessToken'
-      });
+      final response = await http.get(uriGet,headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        });
       if (response.statusCode == 200) {
+        print('Response Body : ${response.body}');
         final List<dynamic> jsonList = json.decode(response.body);
         transactions = jsonList.map((jsonItem) => Transaction.fromJson(jsonItem)).toList();
         print("Data fetched successfully: ${response.body}");

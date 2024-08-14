@@ -22,6 +22,7 @@ class CliqueList {
         'Authorization' : 'Bearer $accessToken'
         });
       if (response.statusCode == 200) {
+        print('Response Body : ${response.body}');
         final List<dynamic> jsonList = json.decode(response.body);
         cliqueList = jsonList.map((jsonItem) => Clique.fromJson(jsonItem)).toList();
         print("Data fetched successfully: ${cliqueList.length} items");

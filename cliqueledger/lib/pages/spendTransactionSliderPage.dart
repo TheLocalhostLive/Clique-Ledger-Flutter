@@ -129,8 +129,9 @@ class _SpendTransactionSliderPageState extends State<SpendTransactionSliderPage>
                        amount: widget.amount,
                        description: widget.description);
                   await TransactionPost.postData(tSchema,transactionProvider);
-                  context.go(RoutersConstants.CLIQUE_ROUTE);
-                 };
+                  // ignore: use_build_context_synchronously
+                  context.pop();
+                 }
                 
 
 

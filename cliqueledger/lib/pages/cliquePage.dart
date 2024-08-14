@@ -43,6 +43,7 @@ class _CliquepageState extends State<Cliquepage> {
     if (cliqueProvider.currentClique != null) {
       final cliqueId = cliqueProvider.currentClique!.id;
       if (!transactionProvider.transactionMap.containsKey(cliqueId)) {
+        print('Clique Id : $cliqueId');
         await transactionList.fetchData(cliqueId);
         transactionProvider.addAllTransaction(
             cliqueId, transactionList.transactions);

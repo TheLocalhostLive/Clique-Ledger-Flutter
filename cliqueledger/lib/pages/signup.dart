@@ -43,6 +43,7 @@ class _SignupState extends State<Signup> {
               onPressed: () async {
                 // Attempt to login/signup
                 await Authservice.instance.login();
+                if (!mounted) return;
                 
                 // Check if login/signup was successful
                 if (Authservice.instance.loginInfo.isLoggedIn) {
