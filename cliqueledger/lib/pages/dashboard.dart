@@ -272,7 +272,7 @@ class _LedgerTabState extends State<LedgerTab> {
                   borderRadius: BorderRadius.circular(5),
                   onTap: () {
                     cliqueProvider.setClique(clique);
-                    context.go(RoutersConstants.CLIQUE_ROUTE);
+                    context.push(RoutersConstants.CLIQUE_ROUTE);
                     setState(() {
                       widget.cliqueList[cliqueProvider.currentClique!.id] =
                           widget.cliqueList[cliqueProvider.currentClique!.id]!
