@@ -1,6 +1,6 @@
 class Participantspost {
   String id;
-  double amount;
+  num amount;
 
   Participantspost({
     required this.id,

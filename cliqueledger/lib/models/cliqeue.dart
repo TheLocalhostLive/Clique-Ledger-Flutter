@@ -45,17 +45,20 @@ class Clique {
   }
 
   factory Clique.fromJson(Map<String, dynamic> json) {
+    List<Member> parseMembers(dynamic membersJson) {
+      if (membersJson is List) {
+        return membersJson.map((item) => Member.fromJson(item as Map<String, dynamic>)).toList();
+      } else if (membersJson is Map) {
+        return [Member.fromJson(membersJson as Map<String, dynamic>)];
+      }
+      return [];
+    }
+
     return Clique(
       id: json['clique_id'] as String? ?? '', // Default to empty string if null
       name: json['clique_name'] as String? ?? '', // Default to empty string if null
-      admins: (json['admins'] as List<dynamic>?)
-              ?.map((item) => Member.fromJson(item as Map<String, dynamic>))
-              .toList() ??
-          [], // Default to empty list if null
-      members: (json['members'] as List<dynamic>?)
-              ?.map((item) => Member.fromJson(item as Map<String, dynamic>))
-              .toList() ??
-          [], // Default to empty list if null
+      admins: parseMembers(json['admins']),
+      members: parseMembers(json['members']),
       isActive: json['isActive'] as bool? ?? false, // Default to false if null
       latestTransaction: json['latestTransaction'] != null
           ? Transaction.fromJson(json['latestTransaction'] as Map<String, dynamic>)
@@ -74,5 +77,4 @@ class Clique {
         'fund': fund,
         'isFund': isFund,
       };
-            
 }

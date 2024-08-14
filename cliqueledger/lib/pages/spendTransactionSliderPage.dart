@@ -1,13 +1,24 @@
+import 'package:cliqueledger/api_helpers/transactionPost.dart';
+import 'package:cliqueledger/models/ParticipantsPost.dart';
+import 'package:cliqueledger/models/TransactionPostSchema.dart';
+import 'package:cliqueledger/models/participants.dart';
+import 'package:cliqueledger/providers/TransactionProvider.dart';
+import 'package:cliqueledger/providers/cliqueProvider.dart';
+import 'package:cliqueledger/utility/routers_constant.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class SpendTransactionSliderPage extends StatefulWidget {
   final List<Map<String, String>> selectedMembers;
-  final double amount;
+  final num amount;
+  final String description;
 
   const SpendTransactionSliderPage({
     Key? key,
     required this.selectedMembers,
     required this.amount,
+    required this.description
   }) : super(key: key);
 
   @override
@@ -29,7 +40,10 @@ class _SpendTransactionSliderPageState extends State<SpendTransactionSliderPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final cliqueProvider = context.read<CliqueProvider>();
+    return Consumer<TransactionProvider>(
+      builder:(context,transactionProvider,child){
+        return Scaffold(
       appBar: AppBar(
         title: Text('Allocate Spend Amount'),
       ),
@@ -54,7 +68,7 @@ class _SpendTransactionSliderPageState extends State<SpendTransactionSliderPage>
                         Slider(
                           value: memberAllocations[memberId]!,
                           min: 0,
-                          max: widget.amount,
+                          max: widget.amount.toDouble(),
                           divisions: 1000,
                           label: memberAllocations[memberId]!.toStringAsFixed(2),
                           onChanged: (value) {
@@ -92,15 +106,43 @@ class _SpendTransactionSliderPageState extends State<SpendTransactionSliderPage>
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                // Handle the submission of allocated amounts
-                print(memberAllocations);
+              onPressed: () async{
+                double totalAmount = memberAllocations.values.reduce((a, b) => a + b);
+                
+                if (totalAmount > widget.amount) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Total amount is exceeding the spend amount"),
+                    ),
+                  );
+                }else{
+                  List<Participantspost> participants=[];
+                  memberAllocations.forEach((k,v){
+                      Participantspost participant = Participantspost(id: k, amount: v);
+                      participants.add(participant);
+                  });
+                  TransactionPostschema tSchema = TransactionPostschema(
+                    cliqueId: cliqueProvider.currentClique!.id,
+                     type: "spend",
+                      
+                      participants: participants,
+                       amount: widget.amount,
+                       description: widget.description);
+                  await TransactionPost.postData(tSchema,transactionProvider);
+                  context.go(RoutersConstants.CLIQUE_ROUTE);
+                 };
+                
+
+
               },
               child: Text('Submit Allocations'),
             ),
           ],
         ),
       ),
+    );
+    }
+      
     );
   }
 }
