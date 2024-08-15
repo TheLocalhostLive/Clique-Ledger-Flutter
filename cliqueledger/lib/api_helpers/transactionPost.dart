@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'package:cliqueledger/api_helpers/fetchCliqeue.dart';
 import 'package:cliqueledger/models/transaction.dart';
+import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/TransactionProvider.dart';
+import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:http/http.dart' as http;
 import 'package:cliqueledger/models/TransactionPostSchema.dart';
@@ -10,7 +13,7 @@ class TransactionPost {
   static final uriPost = Uri.parse('${BASE_URL}/transactions');
   static String? accessToken = Authservice.instance.accessToken;
   static Future<void> postData(TransactionPostschema object,
-      TransactionProvider transactionProvider) async {
+      TransactionProvider transactionProvider , CliqueProvider cliqueProvider , CliqueListProvider cliqueListProvider) async {
     print("In Transaction Post");
     var _payload = json.encode(object.toJson());
     try {
@@ -32,6 +35,8 @@ class TransactionPost {
         try {
           Transaction ts = Transaction.fromJson(responseBody);
           transactionProvider.addSingleEntry(ts.cliqueId, ts);
+          cliqueProvider.chaneLatestTransaction(ts);
+          cliqueListProvider.activeCliqueList[cliqueProvider.currentClique!.id]!.latestTransaction = ts;
         } catch (e) {
           print("Error parsing Transaction object: $e");
         }

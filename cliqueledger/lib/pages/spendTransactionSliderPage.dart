@@ -2,6 +2,7 @@ import 'package:cliqueledger/api_helpers/transactionPost.dart';
 import 'package:cliqueledger/models/ParticipantsPost.dart';
 import 'package:cliqueledger/models/TransactionPostSchema.dart';
 import 'package:cliqueledger/models/participants.dart';
+import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/utility/routers_constant.dart';
@@ -40,9 +41,9 @@ class _SpendTransactionSliderPageState extends State<SpendTransactionSliderPage>
 
   @override
   Widget build(BuildContext context) {
-    final cliqueProvider = context.read<CliqueProvider>();
-    return Consumer<TransactionProvider>(
-      builder:(context,transactionProvider,child){
+    
+    return Consumer3<TransactionProvider,CliqueProvider,CliqueListProvider>(
+      builder:(context,transactionProvider,cliqueProvider,CliqueListProvider,child){
         return Scaffold(
       appBar: AppBar(
         title: Text('Allocate Spend Amount'),
@@ -128,7 +129,7 @@ class _SpendTransactionSliderPageState extends State<SpendTransactionSliderPage>
                       participants: participants,
                        amount: widget.amount,
                        description: widget.description);
-                  await TransactionPost.postData(tSchema,transactionProvider);
+                  await TransactionPost.postData(tSchema,transactionProvider,cliqueProvider,CliqueListProvider);
                   // ignore: use_build_context_synchronously
                   context.pop();
                  }

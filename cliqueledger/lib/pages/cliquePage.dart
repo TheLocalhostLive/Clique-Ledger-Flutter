@@ -6,6 +6,7 @@ import 'package:cliqueledger/models/cliqeue.dart';
 import 'package:cliqueledger/models/member.dart';
 import 'package:cliqueledger/models/participants.dart';
 import 'package:cliqueledger/pages/spendTransactionSliderPage.dart';
+import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/themes/appBarTheme.dart';
@@ -59,7 +60,7 @@ class _CliquepageState extends State<Cliquepage> {
   }
 
   void _createTransaction(BuildContext context, CliqueProvider cliqueProvider,
-      TransactionProvider transactionProvider) {
+      TransactionProvider transactionProvider,CliqueListProvider cliqueListProvider) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -267,7 +268,7 @@ class _CliquepageState extends State<Cliquepage> {
                         print('description : $description');
                         print('cliqueId : $cliqueId');
                         print('amount: $amount');
-                        await TransactionPost.postData(tSchema,transactionProvider);
+                        await TransactionPost.postData(tSchema,transactionProvider,cliqueProvider,cliqueListProvider);
                       } else {
                         context.push(
                           RoutersConstants.SPEND_TRANSACTION_SLIDER_PAGE,
@@ -293,8 +294,8 @@ class _CliquepageState extends State<Cliquepage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<CliqueProvider, TransactionProvider>(
-      builder: (context, cliqueProvider, transactionProvider, child) {
+    return Consumer3<CliqueListProvider,CliqueProvider, TransactionProvider>(
+      builder: (context, cliqueListProvider ,cliqueProvider, transactionProvider, child) {
         return DefaultTabController(
           length: 3,
           child: Scaffold(
@@ -309,7 +310,7 @@ class _CliquepageState extends State<Cliquepage> {
               actions: <Widget>[
                 IconButton(
                   onPressed: () {
-                    // Your navigation logic here
+                    context.push(RoutersConstants.CLIQUE_SETTINGS_ROUTE);
                   },
                   icon: const Icon(
                     Icons.settings,
@@ -364,7 +365,7 @@ class _CliquepageState extends State<Cliquepage> {
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: () => _createTransaction(
-                  context, cliqueProvider, transactionProvider),
+                  context, cliqueProvider, transactionProvider,cliqueListProvider),
               tooltip: 'Create Transaction',
               backgroundColor: const Color.fromARGB(255, 27, 62, 75),
               child: const Icon(
@@ -522,7 +523,7 @@ class TransactionsTab extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${tx.sender} - \u{20B9}${tx.amount != null ? tx.amount!.toStringAsFixed(2) : tx.amount!.toStringAsFixed(2)}',
+                        '${tx.sender.name} - \u{20B9}${tx.amount != null ? tx.amount!.toStringAsFixed(2) : tx.amount!.toStringAsFixed(2)}',
                         style: TextStyle(fontSize: 16.0),
                       ),
                       const SizedBox(height: 4.0),

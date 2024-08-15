@@ -138,7 +138,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed:(){context.go(RoutersConstants.ADD_MEMBER_ROUTE);},
+                      onPressed:(){context.push(RoutersConstants.ADD_MEMBER_ROUTE);},
                       child: Text("Add")
                     )
                   ],
