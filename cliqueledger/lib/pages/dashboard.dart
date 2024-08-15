@@ -301,7 +301,7 @@ class _LedgerTabState extends State<LedgerTab> {
                             ),
                             Text(
                               clique.latestTransaction != null
-                                  ? '${clique.latestTransaction!.sender}-${clique.latestTransaction!.amount!= null ? clique.latestTransaction!.amount : clique.latestTransaction!.amount} \u{20B9}'
+                                  ? '${clique.latestTransaction!.sender.name}-${clique.latestTransaction!.amount!= null ? clique.latestTransaction!.amount : clique.latestTransaction!.amount} \u{20B9}'
                                   : 'No transactions yet',
                               style:
                                   TextStyle(color: Colors.grey, fontSize: 12),
