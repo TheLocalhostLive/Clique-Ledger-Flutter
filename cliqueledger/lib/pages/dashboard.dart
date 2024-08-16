@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cliqueledger/api_helpers/createCliquePost.dart';
 import 'package:cliqueledger/api_helpers/fetchCliqeue.dart';
 import 'package:cliqueledger/models/cliqeue.dart';
@@ -6,6 +8,7 @@ import 'package:cliqueledger/models/transaction.dart';
 import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
+import 'package:cliqueledger/service/socket_service.dart';
 import 'package:cliqueledger/themes/appBarTheme.dart';
 import 'package:cliqueledger/utility/routers_constant.dart';
 import 'package:flutter/material.dart';
@@ -23,26 +26,14 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  //final WebSocketChannel channel = IOWebSocketChannel.connect('wss://echo.wesocket.org');
+
   final CreateCliquePost createCliquePost = CreateCliquePost();
   late TransactionProvider transactionProvider;
   late CliqueListProvider cliqueListProvider;
 
   final CliqueList cliqueList = CliqueList();
 
-  // _DashboardState(){
-  //   channel.stream.listen((data){
-  //       Transaction t=data;
-  //       if(transactionProvider.transactionMap.containsKey(t.cliqueId)){
-  //         transactionProvider.addSingleEntry(t.cliqueId,t);
-  //       }else{
-  //         if(cliqueList.activeCliqueList.containsKey(t.cliqueId)){
-  //             cliqueList.activeCliqueList[t.cliqueId]!.latestTransaction=t;
-  //             setState(() {});
-  //         }
-  //       }
-  //   });
-  // }
+
   bool isCliquesLoading = true;
   @override
   void didChangeDependencies() {
@@ -50,13 +41,26 @@ class _DashboardState extends State<Dashboard> {
     // Initialize transactionProvider here
     transactionProvider = Provider.of<TransactionProvider>(context);
     cliqueListProvider = Provider.of<CliqueListProvider>(context);
+    
+  }
+
+  void _initSocket() {
+    
+    SocketService.instance.connectAndListen();
+    SocketService.transactionProvider = transactionProvider;
+    SocketService.cliquesProvider = cliqueListProvider;
+    List<String> rooms = cliqueListProvider.activeCliqueList.keys.toList();
+
+    SocketService.instance.joinRooms(rooms);
+    SocketService.instance.setupListeners();
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchCliques();
+     WidgetsBinding.instance.addPostFrameCallback((_)async {
+      await fetchCliques();
+      _initSocket();
     });
   }
 
