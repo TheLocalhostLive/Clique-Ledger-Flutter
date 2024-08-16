@@ -59,8 +59,11 @@ class _CliquepageState extends State<Cliquepage> {
     }
   }
 
-  void _createTransaction(BuildContext context, CliqueProvider cliqueProvider,
-      TransactionProvider transactionProvider,CliqueListProvider cliqueListProvider) {
+  void _createTransaction(
+      BuildContext context,
+      CliqueProvider cliqueProvider,
+      TransactionProvider transactionProvider,
+      CliqueListProvider cliqueListProvider) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -70,9 +73,8 @@ class _CliquepageState extends State<Cliquepage> {
         List<Map<String, String>> selectedMembers = [];
         String? amountError;
         String? transactionTypeError;
-        String description="Description is not Present";
+        String description = "Description is not Present";
         String? descriptionError;
-        
 
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
@@ -194,7 +196,8 @@ class _CliquepageState extends State<Cliquepage> {
                       // Members Checkboxes
                       Expanded(
                         child: ListView(
-                          children: cliqueProvider.currentClique!.members.map((member) {
+                          children: cliqueProvider.currentClique!.members
+                              .map((member) {
                             return CheckboxListTile(
                               title: Text(member.name),
                               value: selectedMembers.any((element) =>
@@ -258,24 +261,27 @@ class _CliquepageState extends State<Cliquepage> {
                               amount: amount)
                         ];
                         String cliqueId = cliqueProvider.currentClique!.id;
-                        TransactionPostschema tSchema =
-                             TransactionPostschema(
-                                cliqueId: cliqueId,
-                                type: type,
-                                participants: participants,
-                                amount: amount,
-                                description: description);
+                        TransactionPostschema tSchema = TransactionPostschema(
+                            cliqueId: cliqueId,
+                            type: type,
+                            participants: participants,
+                            amount: amount,
+                            description: description);
                         print('description : $description');
                         print('cliqueId : $cliqueId');
                         print('amount: $amount');
-                        await TransactionPost.postData(tSchema,transactionProvider,cliqueProvider,cliqueListProvider);
+                        await TransactionPost.postData(
+                            tSchema,
+                            transactionProvider,
+                            cliqueProvider,
+                            cliqueListProvider);
                       } else {
                         context.push(
                           RoutersConstants.SPEND_TRANSACTION_SLIDER_PAGE,
                           extra: {
                             'selectedMembers': selectedMembers,
                             'amount': amount,
-                            'description':description
+                            'description': description
                           },
                         );
                       }
@@ -294,8 +300,9 @@ class _CliquepageState extends State<Cliquepage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer3<CliqueListProvider,CliqueProvider, TransactionProvider>(
-      builder: (context, cliqueListProvider ,cliqueProvider, transactionProvider, child) {
+    return Consumer3<CliqueListProvider, CliqueProvider, TransactionProvider>(
+      builder: (context, cliqueListProvider, cliqueProvider,
+          transactionProvider, child) {
         return DefaultTabController(
           length: 3,
           child: Scaffold(
@@ -323,8 +330,8 @@ class _CliquepageState extends State<Cliquepage> {
                   gradient: LinearGradient(
                     colors: [
                       Color(
-                          0xFF5588A3), // Note the use of 0xFF prefix for hex colors
-                      Color(0xFF145374),
+                          0xFF10439F), // Note the use of 0xFF prefix for hex colors
+                      Color(0xFF874CCC),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -364,8 +371,8 @@ class _CliquepageState extends State<Cliquepage> {
               ],
             ),
             floatingActionButton: FloatingActionButton(
-              onPressed: () => _createTransaction(
-                  context, cliqueProvider, transactionProvider,cliqueListProvider),
+              onPressed: () => _createTransaction(context, cliqueProvider,
+                  transactionProvider, cliqueListProvider),
               tooltip: 'Create Transaction',
               backgroundColor: const Color.fromARGB(255, 27, 62, 75),
               child: const Icon(

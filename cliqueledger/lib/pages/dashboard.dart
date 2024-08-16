@@ -55,13 +55,13 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-     WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchCliques();
     });
   }
 
   Future<void> fetchCliques() async {
-  await cliqueList.fetchData(cliqueListProvider);
+    await cliqueList.fetchData(cliqueListProvider);
     setState(() {
       isCliquesLoading = false;
     });
@@ -151,7 +151,7 @@ class _DashboardState extends State<Dashboard> {
                       CliquePostSchema cls = amount.isEmpty
                           ? CliquePostSchema(name: cliqueName, fund: "0")
                           : CliquePostSchema(name: cliqueName, fund: amount);
-                      await createCliquePost.postData(cls,cliqueListProvider);
+                      await createCliquePost.postData(cls, cliqueListProvider);
                       Navigator.of(context).pop();
                     }
                   },
@@ -169,6 +169,7 @@ class _DashboardState extends State<Dashboard> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           actions: <Widget>[
             IconButton(
@@ -189,8 +190,8 @@ class _DashboardState extends State<Dashboard> {
               gradient: LinearGradient(
                 colors: [
                   Color(
-                      0xFF5588A3), // Note the use of 0xFF prefix for hex colors
-                  Color(0xFF145374),
+                      0xFF10439F), // Note the use of 0xFF prefix for hex colors
+                  Color(0xFF874CCC),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -223,12 +224,14 @@ class _DashboardState extends State<Dashboard> {
                           ? const Center(
                               child: Text("No Ledgers to show"),
                             )
-                          : LedgerTab(cliqueList: cliqueListProvider.activeCliqueList),
-                        cliqueListProvider.finishedCliqueList.isEmpty
+                          : LedgerTab(
+                              cliqueList: cliqueListProvider.activeCliqueList),
+                  cliqueListProvider.finishedCliqueList.isEmpty
                       ? const Center(
                           child: Text("No Ledgers to Show"),
                         )
-                      : LedgerTab(cliqueList: cliqueListProvider.finishedCliqueList)
+                      : LedgerTab(
+                          cliqueList: cliqueListProvider.finishedCliqueList)
                 ],
               ),
             ),
@@ -256,14 +259,13 @@ class LedgerTab extends StatefulWidget {
 class _LedgerTabState extends State<LedgerTab> {
   @override
   Widget build(BuildContext context) {
-     CliqueProvider cliqueProvider = Provider.of<CliqueProvider>(context);
+    CliqueProvider cliqueProvider = Provider.of<CliqueProvider>(context);
     return ListView(
       children: widget.cliqueList.values.map((clique) {
         return Center(
           child: Container(
-            //margin: const EdgeInsets.fromLTRB(5, 5, 5, 5),
             width: MediaQuery.of(context).size.width * 0.95,
-            height: 90,
+            height: 100,
             child: Card(
               elevation: 10.0,
               shape: RoundedRectangleBorder(
@@ -281,40 +283,69 @@ class _LedgerTabState extends State<LedgerTab> {
                             cliqueProvider.currentClique!.latestTransaction,
                       );
                     });
-
-                    //
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 213, 225, 236),
-                        borderRadius: BorderRadius.circular(5)),
+                      gradient: LinearGradient(
+                        colors: [
+                          Color.fromARGB(255, 143, 177, 240),
+                          Color.fromARGB(255, 222, 155, 228)
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(15, 5, 5, 5),
-                      child: Container(
-                        child: Column(
-                          children: [
-                            Text(
-                              '${clique.name}',
-                              style: TextStyle(
-                                fontSize: 22.0,
+                      child: Row(
+                        children: [
+                          Container(
+                            height: 50,
+                            width: 50,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(60),
+                              child: Image.asset(
+                                "assets/images/groupSelfie.png",
+                                fit: BoxFit.cover,
                               ),
                             ),
-                            Text(
-                              clique.latestTransaction != null
-                                  ? '${clique.latestTransaction!.sender.name}-${clique.latestTransaction!.amount!= null ? clique.latestTransaction!.amount : clique.latestTransaction!.amount} \u{20B9}'
-                                  : 'No transactions yet',
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
+                          const SizedBox(width: 10), // Space between photo and text
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  clique.name,
+                                  style: TextStyle(
+                                    fontSize: 26.0,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w200,
+                                  ),
+                                ),
+                                Text(
+                                  clique.latestTransaction != null
+                                      ? '${clique.latestTransaction!.sender.name}-${clique.latestTransaction!.amount != null ? clique.latestTransaction!.amount : clique.latestTransaction!.amount} \u{20B9}'
+                                      : 'No transactions yet',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 54, 24, 56),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w100,
+                                  ),
+                                ),
+                                Text(
+                                  clique.latestTransaction != null
+                                      ? '${clique.latestTransaction!.date}'
+                                      : '',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 51, 22, 54),
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              clique.latestTransaction != null
-                                  ? '${clique.latestTransaction!.date}'
-                                  : '',
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 10),
-                            )
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   )),

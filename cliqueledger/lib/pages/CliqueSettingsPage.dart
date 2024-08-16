@@ -1,12 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cliqueledger/api_helpers/fetchMemeber.dart';
 import 'package:cliqueledger/models/member.dart';
+import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/providers/userProvider.dart';
 import 'package:cliqueledger/themes/appBarTheme.dart';
 import 'package:cliqueledger/utility/routers_constant.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -16,153 +17,169 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final List<Member> memberList = [
-    //  Member(name: "Ant"),
-    //   Member(name: "Seo Ri"),
-    //   Member(name: "Ko Mun Young"),
-    //   Member(name: "Seo Yeo Ji"),
-    //   Member(name: "Tian Tian"),
-    //   Member(name: "Tian Tian"),
-    //   Member(name: "Tian Tian"),
-    //   Member(name: "Tian Tian"),
-    //   Member(name: "Tian Tian"),
-    //   Member(name: "Tian Tian"),
-    //   Member(name: "Tian Tian"),
-    //   Member(name: "Tian Tian"),
-    //   Member(name: "Tian Tian"),
-    ];
+  final List<Member> memberList = [];
   bool isEditing = false;
-  TextEditingController _nameController =
-      TextEditingController(text: "Example Name");
+
   @override
   Widget build(BuildContext context) {
-    //final clique = context.read<CliqueProvider>().currentClique;
-    return Scaffold(
-      appBar: GradientAppBar(title: "Clque Ledger"),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(5),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 40,
-              ),
-              Center(
-                child: Container(
-                  height:
-                      120, // Slightly larger than the image to accommodate the border
-                  width: 120,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Color(0xFF145374), width: 2.0),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        75), // Half of the image height/width
-                    child: Image.asset(
-                      "assets/images/defaultCliqueLogo.png",
-                      height: 100,
-                      width: 100,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Consumer2<CliqueListProvider, CliqueProvider>(
+      builder: (context, cliqueListProvider, cliqueProvider, child) {
+        TextEditingController _nameController =
+            TextEditingController(text: cliqueProvider.currentClique!.name);
+
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: GradientAppBar(title: "Clique Ledger"),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(20, 5, 0, 5),
+                  SizedBox(height: 40),
+                  Center(
                     child: Container(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      padding:
-                          EdgeInsets.all(8.0), // Padding inside the nameplate
+                      height: 120,
+                      width: 120,
                       decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(10.0), // Rounded corners
-                        border: Border.all(
-                            color: Color(0xFF145374),
-                            width: 1.0), // Border color and width
-                        color:
-                            Colors.white, // Background color of the nameplate
+                        shape: BoxShape.circle,
+                        border:
+                            Border.all(color: Color(0xFF10439F), width: 3.0),
                       ),
-                      child: isEditing
-                          ? TextField(
-                              controller: _nameController,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                              ),
-                            )
-                          : Text(
-                                _nameController.text, // Replace with your dynamic name
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF145374), // Text color
-                              ),
-                            ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            60), // Half of the container's size
+                        child: Image.asset(
+                          "assets/images/defaultCliqueLogo.png",
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Color(0xFF145374)),
-                    onPressed: () {
-                      setState(() {
-                        isEditing = true;
-                      });
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(
+                                color: Color(0xFF10439F), width: 1.5),
+                            color: Colors.white,
+                          ),
+                          child: isEditing
+                              ? TextField(
+                                  controller: _nameController,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
+                                  style: TextStyle(fontSize: 20.0),
+                                )
+                              : Text(
+                                  _nameController.text,
+                                  style: TextStyle(
+                                    fontSize: 22.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF10439F),
+                                  ),
+                                ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.edit, color: Color(0xFF10439F)),
+                        onPressed: () {
+                          setState(() {
+                            isEditing = true;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  if (isEditing)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              isEditing = false;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF145374),
+                          ),
+                          child: Text(
+                            "Save",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Text(
+                        "Participants",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF10439F),
+                        ),
+                      ),
+                      const Spacer(),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.push(RoutersConstants.ADD_MEMBER_ROUTE);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF10439F),
+                        ),
+                        child: Text(
+                          "Add Member",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: cliqueProvider.currentClique!.members.length,
+                    itemBuilder: (context, index) {
+                      final member =
+                          cliqueProvider.currentClique!.members[index];
+                      return Card(
+                        color: Color(0xFFE8E8E8),
+                        margin: EdgeInsets.symmetric(vertical: 8.0),
+                        child: ListTile(
+                          title: Text(
+                            member.name,
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              color: Color.fromARGB(255, 20, 36, 116),
+                            ),
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete,
+                                color: const Color.fromARGB(255, 146, 12, 2)),
+                            onPressed: () {
+                              // Implement delete functionality
+                            },
+                          ),
+                        ),
+                      );
                     },
                   ),
                 ],
               ),
-              isEditing ?
-              ElevatedButton(
-                onPressed: (){
-                  setState(() {
-                        isEditing = false;
-                      });
-                },
-                child: Text("Save")
-              ) :
-              SizedBox(height: 1,),
-              SizedBox(height: 10,),
-              Padding(
-                padding: EdgeInsets.fromLTRB(20, 5, 10, 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Participants",
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed:(){context.push(RoutersConstants.ADD_MEMBER_ROUTE);},
-                      child: Text("Add")
-                    )
-                  ],
-                ),  
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: memberList.length,
-                itemBuilder: (context, index) {
-                  final member = memberList[index];
-                  return ListTile(
-                    title: Text("null"),
-                    trailing: ElevatedButton(
-                      onPressed: () {},
-                      child: Icon(Icons.delete),
-                    ),
-                  );
-                },
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
