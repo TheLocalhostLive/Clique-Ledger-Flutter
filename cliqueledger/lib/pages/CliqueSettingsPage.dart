@@ -148,10 +148,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: cliqueProvider.currentClique!.members.length,
+                    itemCount: cliqueListProvider.activeCliqueList[cliqueProvider.currentClique!.id]!.members.length,
                     itemBuilder: (context, index) {
                       final member =
-                          cliqueProvider.currentClique!.members[index];
+                          cliqueListProvider.activeCliqueList[cliqueProvider.currentClique!.id]!.members[index];
                       return Card(
                         color: Color(0xFFE8E8E8),
                         margin: EdgeInsets.symmetric(vertical: 8.0),

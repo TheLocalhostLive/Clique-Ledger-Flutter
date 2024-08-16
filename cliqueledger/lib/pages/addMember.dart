@@ -40,10 +40,8 @@ class _AddMemberState extends State<AddMember> {
     });
   }
 
-  void _addMember() {
-    for (String userId in selectedUsers) {
-      print("Selected User ID: $userId");
-    }
+  Future<void> _addMember(CliqueListProvider cl , CliqueProvider c) async{
+    await MemberApi.addUserPost(selectedUsers, cl, c);
   }
 
   @override
@@ -91,7 +89,7 @@ class _AddMemberState extends State<AddMember> {
                     ),
                     const Spacer(),
                     ElevatedButton(
-                      onPressed: _addMember,
+                      onPressed: () => _addMember(cliqueListProvider,cliqueProvider),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF874CCC),
                         padding: const EdgeInsets.symmetric(horizontal: 20),
