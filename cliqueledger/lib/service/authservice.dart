@@ -84,7 +84,7 @@ class Authservice {
       scopes: ['openid', 'profile', 'email', 'offline_access', "api"],
       promptValues: ["login"],
       additionalParameters: {
-        'audience': "https://dev-1yffugckd6d5gydc.us.auth0.com/api/v2/"
+        'audience': AUTH0_AUDIENCE
       },
     );
 
