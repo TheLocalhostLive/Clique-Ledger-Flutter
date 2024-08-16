@@ -13,6 +13,7 @@ Auth0User _$Auth0UserFromJson(Map<String, dynamic> json) => Auth0User(
       picture: json['picture'] as String,
       updatedAt: json['updated_at'] as String,
       email: json['email'] as String,
+      cliqueLedgerAppUid: json['clique_ledger_app_uid'] as String,
       emailVerified: json['email_verified'] as bool,
     );
 
@@ -24,4 +25,5 @@ Map<String, dynamic> _$Auth0UserToJson(Auth0User instance) => <String, dynamic>{
       'updated_at': instance.updatedAt,
       'email_verified': instance.emailVerified,
       'email': instance.email,
+      'clique_ledger_app_uid': instance.cliqueLedgerAppUid,
     };

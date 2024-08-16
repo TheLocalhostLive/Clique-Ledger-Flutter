@@ -10,6 +10,7 @@ class Auth0User {
       required this.picture,
       required this.updatedAt,
       required this.email,
+      required this.cliqueLedgerAppUid,
       required this.emailVerified});
 
   String get id => sub;
@@ -26,6 +27,9 @@ class Auth0User {
 
   final String email;
 
+  @JsonKey(name: 'clique_ledger_app_uid')
+  final String cliqueLedgerAppUid;
+
   factory Auth0User.fromJson(Map<String, dynamic> json) =>
       _$Auth0UserFromJson(json);
 
@@ -41,6 +45,7 @@ class Auth0User {
       'updatedAt': updatedAt,
       'emailVerified': emailVerified,
       'email': email,
+      'cliqueLedgerAppUid': cliqueLedgerAppUid
     }.toString();
   }
 }
