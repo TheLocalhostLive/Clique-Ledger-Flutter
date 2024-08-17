@@ -25,14 +25,14 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
-
+class _DashboardState extends State<Dashboard>
+    with SingleTickerProviderStateMixin {
   final CreateCliquePost createCliquePost = CreateCliquePost();
   late TransactionProvider transactionProvider;
   late CliqueListProvider cliqueListProvider;
+  late TabController _tabController;
 
   final CliqueList cliqueList = CliqueList();
-
 
   bool isCliquesLoading = true;
   @override
@@ -41,11 +41,9 @@ class _DashboardState extends State<Dashboard> {
     // Initialize transactionProvider here
     transactionProvider = Provider.of<TransactionProvider>(context);
     cliqueListProvider = Provider.of<CliqueListProvider>(context);
-    
   }
 
   void _initSocket() {
-    
     SocketService.instance.connectAndListen();
     SocketService.transactionProvider = transactionProvider;
     SocketService.cliquesProvider = cliqueListProvider;
@@ -58,7 +56,11 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-     WidgetsBinding.instance.addPostFrameCallback((_)async {
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      setState(() {});
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       await fetchCliques();
       _initSocket();
     });
@@ -205,7 +207,7 @@ class _DashboardState extends State<Dashboard> {
         ),
         body: Column(
           children: [
-            const TabBar(tabs: [
+            TabBar(controller: _tabController, tabs: [
               Tab(
                 child: Text(
                   "Active Ledger",
@@ -219,6 +221,7 @@ class _DashboardState extends State<Dashboard> {
             ]),
             Expanded(
               child: TabBarView(
+                controller: _tabController,
                 children: [
                   isCliquesLoading
                       ? const Center(
@@ -241,11 +244,21 @@ class _DashboardState extends State<Dashboard> {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => _createClique(context),
-          tooltip: 'Create Clique',
-          child: const Icon(Icons.add),
-          backgroundColor: Color.fromARGB(255, 165, 229, 244),
+        floatingActionButton: IndexedStack(
+          index: _tabController.index,
+          children: [
+            FloatingActionButton(
+              onPressed: () => _createClique(context),
+              tooltip: 'Create Clique',
+              child: const Icon(Icons.add,
+              color: Colors.white
+              ),
+              backgroundColor: Color(0xFF10439F),
+            ),
+            Text(
+              ""
+            )
+          ],
         ),
       ),
     );
@@ -313,7 +326,8 @@ class _LedgerTabState extends State<LedgerTab> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 10), // Space between photo and text
+                          const SizedBox(
+                              width: 10), // Space between photo and text
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

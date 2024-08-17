@@ -24,14 +24,20 @@ class Cliquepage extends StatefulWidget {
   State<Cliquepage> createState() => _CliquepageState();
 }
 
-class _CliquepageState extends State<Cliquepage> {
+class _CliquepageState extends State<Cliquepage>
+    with SingleTickerProviderStateMixin {
   final TransactionList transactionList = TransactionList();
   late TransactionProvider transactionProvider;
   late CliqueProvider cliqueProvider;
+  late TabController _tabController;
   bool isLoading = true;
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      setState(() {});
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cliqueProvider = context.read<CliqueProvider>();
       final transactionProvider = context.read<TransactionProvider>();
@@ -341,13 +347,14 @@ class _CliquepageState extends State<Cliquepage> {
             ),
             body: Column(
               children: [
-                const TabBar(tabs: [
+                TabBar(controller: _tabController, tabs: [
                   Tab(text: "Transaction"),
                   Tab(text: "Media"),
                   Tab(text: "Report"),
                 ]),
                 Expanded(
                   child: TabBarView(
+                    controller: _tabController,
                     children: [
                       isLoading
                           ? const Center(child: CircularProgressIndicator())
@@ -370,15 +377,46 @@ class _CliquepageState extends State<Cliquepage> {
                 ),
               ],
             ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () => _createTransaction(context, cliqueProvider,
-                  transactionProvider, cliqueListProvider),
-              tooltip: 'Create Transaction',
-              backgroundColor: const Color.fromARGB(255, 27, 62, 75),
-              child: const Icon(
-                Icons.add,
-                color: Color.fromARGB(255, 255, 255, 255),
-              ),
+            floatingActionButton: IndexedStack(
+              index: _tabController.index,
+              children: [
+                FloatingActionButton(
+                  onPressed: () => _createTransaction(
+                    context,
+                    cliqueProvider,
+                    transactionProvider,
+                    cliqueListProvider,
+                  ),
+                  tooltip: 'Create Transaction',
+                  backgroundColor: const Color(0xFF10439F),
+                  child: const Icon(
+                    Icons.add,
+                    color: Color.fromARGB(255, 255, 255, 255),
+                  ),
+                ),
+                 FloatingActionButton(
+                      onPressed: () {
+                        // Handle action for the "Media" tab
+                      },
+                      tooltip: 'Add Media',
+                      backgroundColor: const Color(0xFF10439F),
+                      child: const Icon(
+                        Icons.photo,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                      ),
+                    ),
+                FloatingActionButton(
+                          onPressed: () {
+                            // Handle action for the "Report" tab
+                          },
+                          tooltip: 'Generate Report',
+                          backgroundColor: const Color(0xFF10439F),
+                          child: const Icon(
+                            Icons.report,
+                            color: Color.fromARGB(255, 255, 255, 255),
+                          ),
+                        ),
+              ],
             ),
           ),
         );
