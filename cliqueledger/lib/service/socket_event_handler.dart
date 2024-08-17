@@ -8,7 +8,7 @@ class SocketEventHandler {
   static void handleCreateTranscation(dynamic data, TransactionProvider? transactionProvider) {
     final Transaction newTransaction = Transaction.fromJson(data);
     
-    if(Authservice.instance.profile!.cliqueLedgerAppUid == newTransaction.sender.userId) {
+    if(Authservice.instance.profile!.cliqueLedgerAppUid != newTransaction.sender.userId) {
       transactionProvider!.addSingleEntry(newTransaction.cliqueId, newTransaction);
     }
     
