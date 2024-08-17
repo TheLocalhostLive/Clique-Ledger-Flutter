@@ -63,6 +63,13 @@ class Authservice {
       accessToken = result!.accessToken!;
       idToken = parseIdToken(result.idToken!);
       profile = await getUserDetails(accessToken!);
+
+      if (profile != null) {
+        print("profile Info");
+        print(profile!.toJson());
+      } else
+        print("Profile is null");
+
       if (result.refreshToken != null) {
         await secureStorage.write(
           key: REFRESH_TOKEN_KEY,
@@ -125,12 +132,18 @@ class Authservice {
     return Auth0IdToken.fromJson(json);
   }
 
-  getUserDetails(String accessToken) async {
+  Future<Auth0User?> getUserDetails(String accessToken) async {
     final url = Uri.https(AUTH0_DOMAIN, "/userinfo");
     final response = await http.get(url, headers: {
-      'Authorization' : 'Bearer $accessToken'
+      'Authorization': 'Bearer $accessToken',
     });
 
-    print('User details ${response.body}');
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
+      return Auth0User.fromJson(jsonResponse);
+    } else {
+      print('Failed to load user details: ${response.statusCode}');
+      return null;
+    }
   }
 }
