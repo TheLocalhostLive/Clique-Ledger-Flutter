@@ -4,7 +4,6 @@ import 'package:cliqueledger/models/cliquePostSchema.dart';
 import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:cliqueledger/utility/constant.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class CreateCliquePost {
