@@ -2,9 +2,11 @@ import 'package:cliqueledger/pages/addMember.dart';
 import 'package:cliqueledger/pages/cliquePage.dart';
 import 'package:cliqueledger/pages/dashboard.dart';
 import 'package:cliqueledger/pages/CliqueSettingsPage.dart';
+import 'package:cliqueledger/pages/repor.page.dart';
 import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
+import 'package:cliqueledger/providers/reportsProvider.dart';
 import 'package:cliqueledger/providers/userProvider.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:cliqueledger/utility/routers.dart';
@@ -31,6 +33,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_)=>UserProvider()),
          ChangeNotifierProvider(create: (_) => TransactionProvider()),
          ChangeNotifierProvider(create: (_) => CliqueListProvider()),
+         ChangeNotifierProvider(create: (_) => ReportsProvider()),
         // You can add other providers here as needed
       ],
       child: const MyApp(),
@@ -48,7 +51,7 @@ class MyApp extends StatelessWidget {
        routerConfig: Routers.routers(true),
     );
     // return MaterialApp(
-    //   home: Cliquepage() ,
+    //   home: ReportListPage(),
     // );
    
   }

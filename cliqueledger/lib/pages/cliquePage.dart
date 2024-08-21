@@ -1,14 +1,19 @@
+import 'package:cliqueledger/api_helpers/MemberApi.dart';
 import 'package:cliqueledger/api_helpers/fetchTransactions.dart';
+import 'package:cliqueledger/api_helpers/reportApi.dart';
 import 'package:cliqueledger/api_helpers/transactionPost.dart';
 import 'package:cliqueledger/models/ParticipantsPost.dart';
 import 'package:cliqueledger/models/TransactionPostSchema.dart';
 import 'package:cliqueledger/models/cliqeue.dart';
+import 'package:cliqueledger/models/abstructReport.dart';
+import 'package:cliqueledger/models/detailsReport.dart';
 import 'package:cliqueledger/models/member.dart';
 import 'package:cliqueledger/models/participants.dart';
 import 'package:cliqueledger/pages/spendTransactionSliderPage.dart';
 import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
+import 'package:cliqueledger/providers/reportsProvider.dart';
 import 'package:cliqueledger/themes/appBarTheme.dart';
 import 'package:cliqueledger/utility/routers_constant.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +32,12 @@ class Cliquepage extends StatefulWidget {
 class _CliquepageState extends State<Cliquepage>
     with SingleTickerProviderStateMixin {
   final TransactionList transactionList = TransactionList();
+  final ReportApi reportApi = ReportApi();
+
   late TransactionProvider transactionProvider;
   late CliqueProvider cliqueProvider;
   late TabController _tabController;
+  bool isGenerateButtonClicked = false;
   bool isLoading = true;
   @override
   void initState() {
@@ -62,6 +70,22 @@ class _CliquepageState extends State<Cliquepage>
           isLoading = false;
         });
       }
+    }
+  }
+
+  Future<void> getAbstructReport(String cliqueId,ReportsProvider reportsProvider ,BuildContext context) async {
+    setState(() {
+      isLoading = true; // Show loading while fetching
+    });
+    try {
+      await reportApi.getOverAllReport(
+          cliqueId, reportsProvider,context);
+    } catch (e) {
+      print("Error fetching abstract report: $e");
+    } finally {
+      setState(() {
+        isLoading = false; // Hide loading after fetching
+      });
     }
   }
 
@@ -306,6 +330,7 @@ class _CliquepageState extends State<Cliquepage>
 
   @override
   Widget build(BuildContext context) {
+    ReportsProvider reportsProvider = Provider.of<ReportsProvider>(context);
     return Consumer3<CliqueListProvider, CliqueProvider, TransactionProvider>(
       builder: (context, cliqueListProvider, cliqueProvider,
           transactionProvider, child) {
@@ -371,7 +396,11 @@ class _CliquepageState extends State<Cliquepage>
                                           cliqueProvider.currentClique!.id]!,
                                 ),
                       const Center(child: Text('Media')),
-                      const Center(child: Text('Report')),
+                      !isGenerateButtonClicked || !reportsProvider.reportList.containsKey(cliqueProvider.currentClique!.id) ? 
+                      const Center(child: Text('Report is Empty')):
+                      ReportTab(cliqueProvider: cliqueProvider,reportsProvider:reportsProvider)
+                      ,
+
                     ],
                   ),
                 ),
@@ -381,6 +410,7 @@ class _CliquepageState extends State<Cliquepage>
               index: _tabController.index,
               children: [
                 FloatingActionButton(
+                  heroTag: 'btn1',
                   onPressed: () => _createTransaction(
                     context,
                     cliqueProvider,
@@ -394,28 +424,34 @@ class _CliquepageState extends State<Cliquepage>
                     color: Color.fromARGB(255, 255, 255, 255),
                   ),
                 ),
-                 FloatingActionButton(
-                      onPressed: () {
-                        // Handle action for the "Media" tab
-                      },
-                      tooltip: 'Add Media',
-                      backgroundColor: const Color(0xFF10439F),
-                      child: const Icon(
-                        Icons.photo,
-                        color: Color.fromARGB(255, 255, 255, 255),
-                      ),
-                    ),
                 FloatingActionButton(
-                          onPressed: () {
-                            // Handle action for the "Report" tab
-                          },
-                          tooltip: 'Generate Report',
-                          backgroundColor: const Color(0xFF10439F),
-                          child: const Icon(
-                            Icons.report,
-                            color: Color.fromARGB(255, 255, 255, 255),
-                          ),
-                        ),
+                  heroTag: 'btn2',
+                  onPressed: () {
+                    // Handle action for the "Media" tab
+                  },
+                  tooltip: 'Add Media',
+                  backgroundColor: const Color(0xFF10439F),
+                  child: const Icon(
+                    Icons.photo,
+                    color: Color.fromARGB(255, 255, 255, 255),
+                  ),
+                ),
+                FloatingActionButton(
+                  heroTag: 'btn3',
+                  onPressed: () async {
+                    print('clicked');
+                    await getAbstructReport(cliqueProvider.currentClique!.id,reportsProvider,context);
+                    setState(() {
+                      isGenerateButtonClicked = true;
+                    });
+                  },
+                  tooltip: 'Generate Report',
+                  backgroundColor: const Color(0xFF10439F),
+                  child: const Icon(
+                    Icons.report,
+                    color: Colors.white,
+                  ),
+                ),
               ],
             ),
           ),
@@ -589,6 +625,107 @@ class TransactionsTab extends StatelessWidget {
           ),
         );
       }).toList(),
+    );
+  }
+}
+
+class ReportTab extends StatefulWidget {
+  final CliqueProvider cliqueProvider;
+  ReportsProvider reportsProvider;
+  ReportTab({
+    Key? key,
+    required this.cliqueProvider,
+    required this.reportsProvider
+  }) : super(key: key);
+
+  @override
+  State<ReportTab> createState() =>
+      _ReportTabState(cliqueProvider: cliqueProvider,reportsProvider:reportsProvider);
+}
+
+class _ReportTabState extends State<ReportTab> {
+  final CliqueProvider cliqueProvider;
+  ReportsProvider reportsProvider;
+  final ReportApi reportApi = ReportApi();
+  bool isLoading = false; // Loading state for the overall report
+
+  _ReportTabState({
+    required this.cliqueProvider,
+    required this.reportsProvider,
+  });
+
+  Future<void> getDetailsReport(String cliqueId , String memberId , ReportsProvider reportsProvider) async{
+      await reportApi.getDetailsReport(cliqueId,memberId,reportsProvider);
+  }
+
+  
+
+  
+  @override
+  Widget build(BuildContext context) {
+    
+
+    return Scaffold(
+      body : ListView.builder(
+                  itemCount: reportsProvider
+                      .reportList[cliqueProvider.currentClique!.id]!.length,
+                  itemBuilder: (context, index) {
+                    AbstructReport report = reportsProvider
+                        .reportList[cliqueProvider.currentClique!.id]![index];
+                    Color tileColor = report.isDue
+                        ? const Color(0xFFF27BBD)
+                        : const Color.fromARGB(255, 76, 204, 161);
+
+                    return Column(
+                      children: [
+                        ExpansionTile(
+                          backgroundColor: tileColor,
+                          title: Row(
+                            children: [
+                              Container(
+                                width: 80,
+                                child: Text(report.userName),
+                              ),
+                              const SizedBox(width: 80),
+                              Container(
+                                width: 50,
+                                child: Text(
+                                  report.isDue ? "Due" : "Extra",
+                                  style: TextStyle(
+                                      color: report.isDue
+                                          ? const Color(0xFFF27BBD)
+                                          : const Color.fromARGB(
+                                              255, 76, 204, 161)),
+                                ),
+                              ),
+                              const SizedBox(width: 50),
+                              Text('${report.amount}'),
+                            ],
+                          ),
+                          onExpansionChanged: (bool expanded) async {
+                            if (expanded) {
+                              await getDetailsReport(
+                                  cliqueProvider.currentClique!.id,
+                                  report.memberId,
+                                  reportsProvider);
+                            }
+                          },
+                          children: report.detailsReport?.map((details) {
+                                return ListTile(
+                                  title: Text(details.transactionId),
+                                  subtitle: Text(
+                                      '${details.date} - ${details.description}'),
+                                  trailing: Text(
+                                    'Sent: ${details.sendAmount}, Received: ${details.receiveAmount}',
+                                  ),
+                                );
+                              }).toList() ??
+                              [],
+                        ),
+                      ],
+                    );
+                  },
+                )
     );
   }
 }
