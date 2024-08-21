@@ -1,6 +1,6 @@
 class DetailsReport{
   final String transactionId;
-  final String date;
+  final DateTime date;
   final String description;
   final num? sendAmount;
   final num? receiveAmount;
@@ -17,7 +17,7 @@ class DetailsReport{
     return DetailsReport
     (
       transactionId: json['transaction_id'],
-      date: json['date'],
+      date: DateTime.parse(json['date'] as String),
       description: json['description'],
       sendAmount: json['send_amount'],
       receiveAmount: json['receive_amount']

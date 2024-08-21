@@ -19,6 +19,7 @@ import 'package:cliqueledger/utility/routers_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:cliqueledger/models/transaction.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -609,8 +610,8 @@ class TransactionsTab extends StatelessWidget {
                       ),
                       const SizedBox(height: 4.0),
                       Text(
-                        'Date: ${tx.date.toLocal()}',
-                        style: TextStyle(color: Colors.grey),
+                        'Date: ${DateFormat('yyyy-MM-dd HH:mm').format(tx.date.toLocal())}',
+                        style: TextStyle(color: const Color.fromARGB(255, 32, 30, 30)),
                       ),
                       const SizedBox(height: 4.0),
                       Text(
@@ -704,6 +705,7 @@ class _ReportTabState extends State<ReportTab> {
                           ),
                           onExpansionChanged: (bool expanded) async {
                             if (expanded) {
+                              report.detailsReport??
                               await getDetailsReport(
                                   cliqueProvider.currentClique!.id,
                                   report.memberId,
@@ -714,9 +716,9 @@ class _ReportTabState extends State<ReportTab> {
                                 return ListTile(
                                   title: Text(details.transactionId),
                                   subtitle: Text(
-                                      '${details.date} - ${details.description}'),
+                                      '${DateFormat('yyyy-MM-dd HH:mm').format(details.date.toLocal())} - ${details.description}'),
                                   trailing: Text(
-                                    'Sent: ${details.sendAmount}, Received: ${details.receiveAmount}',
+                                    'Sent: ${details.sendAmount ?? 0}, Received: ${details.receiveAmount ?? 0}',
                                   ),
                                 );
                               }).toList() ??
