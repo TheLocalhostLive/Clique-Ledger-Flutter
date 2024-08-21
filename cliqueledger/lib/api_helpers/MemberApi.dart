@@ -4,6 +4,7 @@ import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:cliqueledger/utility/constant.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cliqueledger/models/user.dart';
 class MemberApi{
@@ -64,5 +65,36 @@ class MemberApi{
   }catch(e){
     print('Exception Occured : $e');
   }
+  }
+  static Future<void> removeMember(String cliqueId , String memberId , CliqueListProvider cliquelistProvider , BuildContext context) async{
+    final uriDelete = Uri.parse('${BASE_URL}/cliques/${cliqueId}/members');
+    List<String> deleteUser = [];
+    deleteUser.add(memberId);
+    final jsonBody = json.encode(deleteUser);
+    try {
+      final response = await http.delete(uriDelete ,headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+      },
+          body: jsonBody
+      );
+      if(response.statusCode==204){
+        print(response.statusCode);
+          print('response body : ${response.body}');
+          cliquelistProvider.deleteMember(cliqueId, memberId);
+          print("Member Deleted Successfully");
+           ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Removed Succussfully')),
+                    );
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to Remove the member')),
+                    );
+      }
+
+      }
+    catch (e) {
+      print('Exception Occured :$e');
+    }
   }
 }

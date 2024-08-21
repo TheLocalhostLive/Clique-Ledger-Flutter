@@ -129,6 +129,7 @@ class _CliquepageState extends State<Cliquepage>
                         cursorColor: Color.fromARGB(255, 114, 4, 32),
                           
                         decoration: InputDecoration(
+                          floatingLabelStyle: TextStyle(color: Color(0xFFE4003A)),
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(color:  Color.fromARGB(255, 114, 4, 32),)
                           ),
@@ -185,6 +186,7 @@ class _CliquepageState extends State<Cliquepage>
                         
                         cursorColor: Color.fromARGB(255, 114, 4, 32),
                         decoration: InputDecoration(
+                          floatingLabelStyle: TextStyle(color: Color(0xFFE4003A)),
                         enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(color:  Color.fromARGB(255, 114, 4, 32),)
                           ),
