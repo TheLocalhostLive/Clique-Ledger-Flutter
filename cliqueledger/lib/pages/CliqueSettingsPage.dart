@@ -1,3 +1,4 @@
+import 'package:cliqueledger/api_helpers/MemberApi.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -166,8 +167,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           trailing: IconButton(
                             icon: Icon(Icons.delete,
                                 color: const Color.fromARGB(255, 146, 12, 2)),
-                            onPressed: () {
-                              // Implement delete functionality
+                            onPressed: () async{
+                              await MemberApi.removeMember(cliqueProvider.currentClique!.id, member.memberId, cliqueListProvider, context);
                             },
                           ),
                         ),
