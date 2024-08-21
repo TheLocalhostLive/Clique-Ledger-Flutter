@@ -74,13 +74,13 @@ class _CliquepageState extends State<Cliquepage>
     }
   }
 
-  Future<void> getAbstructReport(String cliqueId,ReportsProvider reportsProvider ,BuildContext context) async {
+  Future<void> getAbstructReport(String cliqueId,
+      ReportsProvider reportsProvider, BuildContext context) async {
     setState(() {
       isLoading = true; // Show loading while fetching
     });
     try {
-      await reportApi.getOverAllReport(
-          cliqueId, reportsProvider,context);
+      await reportApi.getOverAllReport(cliqueId, reportsProvider, context);
     } catch (e) {
       print("Error fetching abstract report: $e");
     } finally {
@@ -115,7 +115,8 @@ class _CliquepageState extends State<Cliquepage>
                 100;
 
             return AlertDialog(
-              title: Text('Create Transaction'),
+              backgroundColor: Colors.white,
+              title: Text('Create Transaction',style: TextStyle(fontWeight: FontWeight.w200),),
               content: SingleChildScrollView(
                 child: Container(
                   width: double.maxFinite,
@@ -125,9 +126,19 @@ class _CliquepageState extends State<Cliquepage>
                     children: [
                       // Amount Field
                       TextFormField(
+                        cursorColor: Color.fromARGB(255, 114, 4, 32),
+                          
                         decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color:  Color.fromARGB(255, 114, 4, 32),)
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color:  Color.fromARGB(255, 114, 4, 32),)
+                          ),
                           labelText: 'Amount',
-                          border: OutlineInputBorder(),
+                          border: OutlineInputBorder(
+                            
+                          ),
                           errorText: amountError,
                           prefixIcon: Padding(
                             padding:
@@ -171,9 +182,19 @@ class _CliquepageState extends State<Cliquepage>
                       ),
                       SizedBox(height: 16),
                       TextFormField(
+                        
+                        cursorColor: Color.fromARGB(255, 114, 4, 32),
                         decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color:  Color.fromARGB(255, 114, 4, 32),)
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color:  Color.fromARGB(255, 114, 4, 32),)
+                          ),
                           labelText: 'Description',
-                          border: OutlineInputBorder(),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFE4003A))
+                          ),
                           errorText: descriptionError,
                           prefixIcon: Padding(
                             padding:
@@ -230,6 +251,7 @@ class _CliquepageState extends State<Cliquepage>
                           children: cliqueProvider.currentClique!.members
                               .map((member) {
                             return CheckboxListTile(
+                              activeColor: Color(0xFFE4003A),
                               title: Text(member.name),
                               value: selectedMembers.any((element) =>
                                   element['memberId'] == member.memberId),
@@ -319,7 +341,10 @@ class _CliquepageState extends State<Cliquepage>
                       Navigator.of(context).pop();
                     }
                   },
-                  child: Text('Create Transaction'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:  Color(0xFFFFB200),
+                  ),
+                  child: Text('Create Transaction',style: TextStyle(color: Colors.white),),
                 ),
               ],
             );
@@ -338,6 +363,7 @@ class _CliquepageState extends State<Cliquepage>
         return DefaultTabController(
           length: 3,
           child: Scaffold(
+            backgroundColor: Colors.white,
             appBar: AppBar(
               title: Text(
                 "Clique Ledger",
@@ -359,11 +385,12 @@ class _CliquepageState extends State<Cliquepage>
               ],
               flexibleSpace: Container(
                 decoration: const BoxDecoration(
+                  //color: Color(0xFF800000),
                   gradient: LinearGradient(
                     colors: [
-                      Color(
-                          0xFF10439F), // Note the use of 0xFF prefix for hex colors
-                      Color(0xFF874CCC),
+                      Color.fromARGB(255, 128, 6,
+                          37), // Note the use of 0xFF prefix for hex colors
+                      Color(0xFFEB5B00),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -373,10 +400,12 @@ class _CliquepageState extends State<Cliquepage>
             ),
             body: Column(
               children: [
-                TabBar(controller: _tabController, tabs: [
-                  Tab(text: "Transaction"),
-                  Tab(text: "Media"),
-                  Tab(text: "Report"),
+                TabBar(
+                   indicatorColor: const Color(0xFFFFB200),
+                  controller: _tabController, tabs: [
+                  Tab(child: Text("Transaction",style: TextStyle(color: Color.fromARGB(255, 102, 2, 27))),),
+                  Tab(child: Text("Media",style: TextStyle(color: Color.fromARGB(255, 102, 2, 27))),),
+                  Tab(child: Text("Report",style: TextStyle(color: Color.fromARGB(255, 102, 2, 27))),),
                 ]),
                 Expanded(
                   child: TabBarView(
@@ -397,11 +426,13 @@ class _CliquepageState extends State<Cliquepage>
                                           cliqueProvider.currentClique!.id]!,
                                 ),
                       const Center(child: Text('Media')),
-                      !isGenerateButtonClicked || !reportsProvider.reportList.containsKey(cliqueProvider.currentClique!.id) ? 
-                      const Center(child: Text('Report is Empty')):
-                      ReportTab(cliqueProvider: cliqueProvider,reportsProvider:reportsProvider)
-                      ,
-
+                      !isGenerateButtonClicked ||
+                              !reportsProvider.reportList
+                                  .containsKey(cliqueProvider.currentClique!.id)
+                          ? const Center(child: Text('Report is Empty'))
+                          : ReportTab(
+                              cliqueProvider: cliqueProvider,
+                              reportsProvider: reportsProvider),
                     ],
                   ),
                 ),
@@ -419,7 +450,7 @@ class _CliquepageState extends State<Cliquepage>
                     cliqueListProvider,
                   ),
                   tooltip: 'Create Transaction',
-                  backgroundColor: const Color(0xFF10439F),
+                  backgroundColor: const Color(0xFFFFB200),
                   child: const Icon(
                     Icons.add,
                     color: Color.fromARGB(255, 255, 255, 255),
@@ -431,7 +462,7 @@ class _CliquepageState extends State<Cliquepage>
                     // Handle action for the "Media" tab
                   },
                   tooltip: 'Add Media',
-                  backgroundColor: const Color(0xFF10439F),
+                  backgroundColor: const Color(0xFFFFB200),
                   child: const Icon(
                     Icons.photo,
                     color: Color.fromARGB(255, 255, 255, 255),
@@ -441,13 +472,14 @@ class _CliquepageState extends State<Cliquepage>
                   heroTag: 'btn3',
                   onPressed: () async {
                     print('clicked');
-                    await getAbstructReport(cliqueProvider.currentClique!.id,reportsProvider,context);
+                    await getAbstructReport(cliqueProvider.currentClique!.id,
+                        reportsProvider, context);
                     setState(() {
                       isGenerateButtonClicked = true;
                     });
                   },
                   tooltip: 'Generate Report',
-                  backgroundColor: const Color(0xFF10439F),
+                  backgroundColor: const Color(0xFFFFB200),
                   child: const Icon(
                     Icons.report,
                     color: Colors.white,
@@ -487,6 +519,8 @@ class TransactionsTab extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     if (t.type == "send") ...[
+                      Text("Send Transaction",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w200,fontSize: 16),),
+                      const SizedBox(height: 20,),
                       Text(
                         '${t.sender.name} : \u{20B9}${t.amount.toStringAsFixed(2) ?? 'N/A'} paid to ${t.participants[0].name}',
                         style: const TextStyle(
@@ -495,6 +529,8 @@ class TransactionsTab extends StatelessWidget {
                         ),
                       ),
                     ] else ...[
+                      Text("Spend Transaction",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w200,fontSize: 16),),
+                      const SizedBox(height: 20,),
                       Text(
                         '${t.sender.name} Paid Total: \u{20B9}${t.amount?.toStringAsFixed(2) ?? 'N/A'} To -',
                         style: const TextStyle(
@@ -541,7 +577,7 @@ class TransactionsTab extends StatelessWidget {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF00334E),
+                        backgroundColor: const Color.fromARGB(255, 150, 4, 41),
                         minimumSize:
                             Size(double.infinity, 36), // Full-width button
                         padding: const EdgeInsets.symmetric(
@@ -555,7 +591,7 @@ class TransactionsTab extends StatelessWidget {
                 TextButton(
                   child: const Text(
                     'Close',
-                    style: TextStyle(color: Color.fromARGB(255, 1, 47, 63)),
+                    style: TextStyle(color:Color.fromARGB(255, 150, 4, 41)),
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -590,13 +626,14 @@ class TransactionsTab extends StatelessWidget {
                 onTap: () => _checkTransaction(context, tx),
                 child: Container(
                   decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color.fromARGB(255, 235, 165,
-                              43), // Note the use of 0xFF prefix for hex colors
-                          Color.fromARGB(255, 241, 205, 58),
-                        ],
-                      ),
+                    color: Color.fromARGB(255, 254, 246, 235),
+                      // gradient: const LinearGradient(
+                      //   colors: [
+                      //     Colors.redAccent,
+                      //         // Note the use of 0xFF prefix for hex colors
+                      //     Colors.yellowAccent,
+                      //   ],
+                      // ),
                       borderRadius: BorderRadius.circular(20)),
 
                   padding: const EdgeInsets.all(
@@ -611,7 +648,8 @@ class TransactionsTab extends StatelessWidget {
                       const SizedBox(height: 4.0),
                       Text(
                         'Date: ${DateFormat('yyyy-MM-dd HH:mm').format(tx.date.toLocal())}',
-                        style: TextStyle(color: const Color.fromARGB(255, 32, 30, 30)),
+                        style: TextStyle(
+                            color: const Color.fromARGB(255, 32, 30, 30)),
                       ),
                       const SizedBox(height: 4.0),
                       Text(
@@ -633,15 +671,13 @@ class TransactionsTab extends StatelessWidget {
 class ReportTab extends StatefulWidget {
   final CliqueProvider cliqueProvider;
   ReportsProvider reportsProvider;
-  ReportTab({
-    Key? key,
-    required this.cliqueProvider,
-    required this.reportsProvider
-  }) : super(key: key);
+  ReportTab(
+      {Key? key, required this.cliqueProvider, required this.reportsProvider})
+      : super(key: key);
 
   @override
-  State<ReportTab> createState() =>
-      _ReportTabState(cliqueProvider: cliqueProvider,reportsProvider:reportsProvider);
+  State<ReportTab> createState() => _ReportTabState(
+      cliqueProvider: cliqueProvider, reportsProvider: reportsProvider);
 }
 
 class _ReportTabState extends State<ReportTab> {
@@ -655,79 +691,74 @@ class _ReportTabState extends State<ReportTab> {
     required this.reportsProvider,
   });
 
-  Future<void> getDetailsReport(String cliqueId , String memberId , ReportsProvider reportsProvider) async{
-      await reportApi.getDetailsReport(cliqueId,memberId,reportsProvider);
+  Future<void> getDetailsReport(
+      String cliqueId, String memberId, ReportsProvider reportsProvider) async {
+    await reportApi.getDetailsReport(cliqueId, memberId, reportsProvider);
   }
 
-  
-
-  
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
-      body : ListView.builder(
-                  itemCount: reportsProvider
-                      .reportList[cliqueProvider.currentClique!.id]!.length,
-                  itemBuilder: (context, index) {
-                    AbstructReport report = reportsProvider
-                        .reportList[cliqueProvider.currentClique!.id]![index];
-                    Color tileColor = report.isDue
-                        ? const Color(0xFFF27BBD)
-                        : const Color.fromARGB(255, 76, 204, 161);
+      backgroundColor: Colors.white,
+        body: ListView.builder(
+      itemCount:
+          reportsProvider.reportList[cliqueProvider.currentClique!.id]!.length,
+      itemBuilder: (context, index) {
+        AbstructReport report = reportsProvider
+            .reportList[cliqueProvider.currentClique!.id]![index];
+        Color tileColor = report.isDue
+            ? const Color.fromARGB(255, 172, 72, 10)
+            : const Color.fromARGB(255, 20, 135, 97);
 
-                    return Column(
-                      children: [
-                        ExpansionTile(
-                          backgroundColor: tileColor,
-                          title: Row(
-                            children: [
-                              Container(
-                                width: 80,
-                                child: Text(report.userName),
-                              ),
-                              const SizedBox(width: 80),
-                              Container(
-                                width: 50,
-                                child: Text(
-                                  report.isDue ? "Due" : "Extra",
-                                  style: TextStyle(
-                                      color: report.isDue
-                                          ? const Color(0xFFF27BBD)
-                                          : const Color.fromARGB(
-                                              255, 76, 204, 161)),
-                                ),
-                              ),
-                              const SizedBox(width: 50),
-                              Text('${report.amount}'),
-                            ],
-                          ),
-                          onExpansionChanged: (bool expanded) async {
-                            if (expanded) {
-                              report.detailsReport??
-                              await getDetailsReport(
-                                  cliqueProvider.currentClique!.id,
-                                  report.memberId,
-                                  reportsProvider);
-                            }
-                          },
-                          children: report.detailsReport?.map((details) {
-                                return ListTile(
-                                  title: Text(details.transactionId),
-                                  subtitle: Text(
-                                      '${DateFormat('yyyy-MM-dd HH:mm').format(details.date.toLocal())} - ${details.description}'),
-                                  trailing: Text(
-                                    'Sent: ${details.sendAmount ?? 0}, Received: ${details.receiveAmount ?? 0}',
-                                  ),
-                                );
-                              }).toList() ??
-                              [],
-                        ),
-                      ],
+        return Column(
+          children: [
+            ExpansionTile(
+              backgroundColor: tileColor,
+              title: Row(
+                children: [
+                  Container(
+                    width: 80,
+                    child: Text(report.userName),
+                  ),
+                  const SizedBox(width: 80),
+                  Container(
+                    width: 50,
+                    child: Text(
+                      report.isDue ? "Due" : "Extra",
+                      style: TextStyle(
+                          color: report.isDue
+                              ? const Color.fromARGB(255, 199, 27, 47)
+                              : const Color.fromARGB(255, 35, 141, 105),
+                              fontWeight: FontWeight.bold
+                            ),
+                    ),
+                  ),
+                  const SizedBox(width: 50),
+                  Text('${report.amount}'),
+                ],
+              ),
+              onExpansionChanged: (bool expanded) async {
+                if (expanded) {
+                  report.detailsReport ??
+                      await getDetailsReport(cliqueProvider.currentClique!.id,
+                          report.memberId, reportsProvider);
+                }
+              },
+              children: report.detailsReport?.map((details) {
+                    return ListTile(
+                      title: Text(details.transactionId),
+                      subtitle: Text(
+                          '${DateFormat('yyyy-MM-dd HH:mm').format(details.date.toLocal())} - ${details.description}'),
+                      trailing: Text(
+                        'Sent: ${details.sendAmount ?? 0}, Received: ${details.receiveAmount ?? 0}',
+                      ),
                     );
-                  },
-                )
-    );
+                  }).toList() ??
+                  [],
+            ),
+          ],
+        );
+      },
+    ));
   }
 }

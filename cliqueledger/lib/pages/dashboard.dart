@@ -98,9 +98,18 @@ class _DashboardState extends State<Dashboard>
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     TextFormField(
+                      cursorColor: Color.fromARGB(255, 114, 4, 32),
                       controller: cliqueNameController,
                       decoration: const InputDecoration(
                         hintText: "Enter Clique Name",
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color.fromARGB(255, 114, 4, 32),
+                        )),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                          color: Color.fromARGB(255, 114, 4, 32),
+                        )),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -113,6 +122,7 @@ class _DashboardState extends State<Dashboard>
                       children: <Widget>[
                         Checkbox(
                           value: withFunds,
+                          activeColor: Color(0xFFE4003A),
                           onChanged: (bool? value) {
                             setState(() {
                               withFunds = value ?? false;
@@ -124,9 +134,19 @@ class _DashboardState extends State<Dashboard>
                     ),
                     if (withFunds)
                       TextFormField(
+                        cursorColor: Color.fromARGB(255, 114, 4, 32),
                         controller: amountController,
-                        decoration:
-                            const InputDecoration(hintText: "Enter Amount"),
+                        decoration: const InputDecoration(
+                          hintText: "Enter Amount",
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Color.fromARGB(255, 114, 4, 32),
+                          )),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Color.fromARGB(255, 114, 4, 32),
+                          )),
+                        ),
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -140,13 +160,13 @@ class _DashboardState extends State<Dashboard>
               ),
               actions: <Widget>[
                 TextButton(
-                  child: const Text('Cancel'),
+                  child: const Text('Cancel',style: TextStyle(color: Color.fromARGB(255, 161, 2, 41),),),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
                 TextButton(
-                  child: const Text('Create'),
+                  child: const Text('Create',style: TextStyle(color: Color(0xFFFFB200) ),),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
                       // Handle the create action
@@ -194,11 +214,12 @@ class _DashboardState extends State<Dashboard>
           ),
           flexibleSpace: Container(
             decoration: const BoxDecoration(
+              //color: Color(0xFF536493)
               gradient: LinearGradient(
                 colors: [
-                  Color(
-                      0xFF10439F), // Note the use of 0xFF prefix for hex colors
-                  Color(0xFF874CCC),
+                  Color.fromARGB(255, 128, 6,
+                      37), // Note the use of 0xFF prefix for hex colors
+                  Color(0xFFEB5B00),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -208,18 +229,22 @@ class _DashboardState extends State<Dashboard>
         ),
         body: Column(
           children: [
-            TabBar(controller: _tabController, tabs: [
-              Tab(
-                child: Text(
-                  "Active Ledger",
-                  style: TextStyle(color: Color.fromARGB(255, 14, 97, 130)),
-                ),
-              ),
-              Tab(
-                child: Text("Finished Ledger",
-                    style: TextStyle(color: Color.fromARGB(255, 14, 97, 130))),
-              )
-            ]),
+            TabBar(
+                indicatorColor: const Color(0xFFFFB200),
+                controller: _tabController,
+                tabs: [
+                  Tab(
+                    child: Text(
+                      "Active Ledger",
+                      style: TextStyle(color: Color.fromARGB(255, 102, 2, 27)),
+                    ),
+                  ),
+                  Tab(
+                    child: Text("Finished Ledger",
+                        style:
+                            TextStyle(color: Color.fromARGB(255, 102, 2, 27))),
+                  )
+                ]),
             Expanded(
               child: TabBarView(
                 controller: _tabController,
@@ -251,14 +276,10 @@ class _DashboardState extends State<Dashboard>
             FloatingActionButton(
               onPressed: () => _createClique(context),
               tooltip: 'Create Clique',
-              child: const Icon(Icons.add,
-              color: Colors.white
-              ),
-              backgroundColor: Color(0xFF10439F),
+              child: const Icon(Icons.add, color: Colors.white),
+              backgroundColor: Color(0xFFFFB200),
             ),
-            Text(
-              ""
-            )
+            Text("")
           ],
         ),
       ),
@@ -304,12 +325,13 @@ class _LedgerTabState extends State<LedgerTab> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color.fromARGB(255, 143, 177, 240),
-                          Color.fromARGB(255, 222, 155, 228)
-                        ],
-                      ),
+                      // gradient: LinearGradient(
+                      //   colors: [
+                      //     Color.fromARGB(255, 143, 177, 240),
+                      //     Color.fromARGB(255, 222, 155, 228)
+                      //   ],
+                      // ),
+                      color: Color.fromARGB(255, 254, 246, 235),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Padding(
