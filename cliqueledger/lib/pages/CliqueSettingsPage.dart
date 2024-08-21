@@ -44,13 +44,13 @@ class _SettingsPageState extends State<SettingsPage> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border:
-                            Border.all(color: Color(0xFF10439F), width: 3.0),
+                            Border.all(color:Colors.white,width: 3.0),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(
                             60), // Half of the container's size
                         child: Image.asset(
-                          "assets/images/defaultCliqueLogo.png",
+                          "assets/images/cliqueDefault.png",
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -66,7 +66,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(
-                                color: Color(0xFF10439F), width: 1.5),
+                                color: Colors.black, width: 1.5),
                             color: Colors.white,
                           ),
                           child: isEditing
@@ -82,13 +82,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                   style: TextStyle(
                                     fontSize: 22.0,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF10439F),
+                                    color: Colors.black,
                                   ),
                                 ),
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.edit, color: Color(0xFF10439F)),
+                        icon: Icon(Icons.edit, color: Color(0xFFFFB200)),
                         onPressed: () {
                           setState(() {
                             isEditing = true;
@@ -109,7 +109,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             });
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF145374),
+                            backgroundColor: Color(0xFFFFB200),
                           ),
                           child: Text(
                             "Save",
@@ -126,7 +126,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF10439F),
+                          color: Colors.black,
                         ),
                       ),
                       const Spacer(),
@@ -135,7 +135,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           context.push(RoutersConstants.ADD_MEMBER_ROUTE);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF10439F),
+                          backgroundColor: Color(0xFFFFB200),
                         ),
                         child: Text(
                           "Add Member",
@@ -153,14 +153,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       final member =
                           cliqueListProvider.activeCliqueList[cliqueProvider.currentClique!.id]!.members[index];
                       return Card(
-                        color: Color(0xFFE8E8E8),
+                        color: Color.fromARGB(255, 254, 246, 235),
                         margin: EdgeInsets.symmetric(vertical: 8.0),
                         child: ListTile(
                           title: Text(
                             member.name,
                             style: TextStyle(
                               fontSize: 18.0,
-                              color: Color.fromARGB(255, 20, 36, 116),
+                              color: Colors.black,
                             ),
                           ),
                           trailing: IconButton(

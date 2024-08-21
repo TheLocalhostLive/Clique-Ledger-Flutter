@@ -85,7 +85,7 @@ class _AddMemberState extends State<AddMember> {
                     ElevatedButton(
                       onPressed: () => _searchMember(_searchController.text),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF874CCC),
+                        backgroundColor: Color(0xFFFFB200),
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                       ),
 
@@ -99,7 +99,7 @@ class _AddMemberState extends State<AddMember> {
                       },
                       
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF874CCC),
+                        backgroundColor: Color(0xFFFFB200),
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                       ),
                       child: const Text("Add Member",style: TextStyle(color: Color(0xFFE8E8E8)),),
@@ -117,7 +117,7 @@ class _AddMemberState extends State<AddMember> {
                         final user = users[index];
                         return CheckboxListTile(
                           title: Text(user.name),
-                          activeColor: Color(0xFFF27BBD),
+                          activeColor: Color(0xFFE4003A),
                           value: selectedUsers.contains(user.id),
                           onChanged: (bool? checked) {
                             setState(() {
