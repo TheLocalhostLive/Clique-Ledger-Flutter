@@ -14,6 +14,7 @@ import 'package:cliqueledger/utility/routers_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -353,7 +354,7 @@ class _LedgerTabState extends State<LedgerTab> {
                                 ),
                                 Text(
                                   clique.latestTransaction != null
-                                      ? '${clique.latestTransaction!.date}'
+                                      ? '${DateFormat('yyyy-MM-dd HH:mm').format(clique.latestTransaction!.date.toLocal())}'
                                       : '',
                                   style: TextStyle(
                                     color: Color.fromARGB(255, 51, 22, 54),
