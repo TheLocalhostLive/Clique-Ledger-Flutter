@@ -1,9 +1,12 @@
 import 'package:cliqueledger/api_helpers/MemberApi.dart';
+import 'package:cliqueledger/models/member.dart';
 import 'package:cliqueledger/models/user.dart';
 import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/themes/appBarTheme.dart';
+import 'package:cliqueledger/utility/routers.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class AddMember extends StatefulWidget {
@@ -42,6 +45,7 @@ class _AddMemberState extends State<AddMember> {
 
   Future<void> _addMember(CliqueListProvider cl , CliqueProvider c) async{
     await MemberApi.addUserPost(selectedUsers, cl, c);
+    
   }
 
   @override
@@ -89,7 +93,11 @@ class _AddMemberState extends State<AddMember> {
                     ),
                     const Spacer(),
                     ElevatedButton(
-                      onPressed: () => _addMember(cliqueListProvider,cliqueProvider),
+                      onPressed: ()async{
+                          await _addMember(cliqueListProvider,cliqueProvider);
+                          context.pop();
+                      },
+                      
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF874CCC),
                         padding: const EdgeInsets.symmetric(horizontal: 20),
