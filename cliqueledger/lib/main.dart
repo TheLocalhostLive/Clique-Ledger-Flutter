@@ -7,6 +7,7 @@ import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/providers/reportsProvider.dart';
+import 'package:cliqueledger/providers/clique_media_provider.dart';
 import 'package:cliqueledger/providers/userProvider.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:cliqueledger/utility/routers.dart';
@@ -34,6 +35,7 @@ Future<void> main() async {
          ChangeNotifierProvider(create: (_) => TransactionProvider()),
          ChangeNotifierProvider(create: (_) => CliqueListProvider()),
          ChangeNotifierProvider(create: (_) => ReportsProvider()),
+         ChangeNotifierProvider(create: (_) => CliqueMediaProvider()),
         // You can add other providers here as needed
       ],
       child: const MyApp(),
