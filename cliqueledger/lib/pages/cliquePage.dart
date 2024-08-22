@@ -1,4 +1,7 @@
 import 'package:cliqueledger/api_helpers/MemberApi.dart';
+import 'dart:io';
+
+import 'package:cliqueledger/api_helpers/clique_media.dart';
 import 'package:cliqueledger/api_helpers/fetchTransactions.dart';
 import 'package:cliqueledger/api_helpers/reportApi.dart';
 import 'package:cliqueledger/api_helpers/transactionPost.dart';
@@ -14,12 +17,16 @@ import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/providers/reportsProvider.dart';
+import 'package:cliqueledger/providers/clique_media_provider.dart';
 import 'package:cliqueledger/themes/appBarTheme.dart';
 import 'package:cliqueledger/utility/routers_constant.dart';
+import 'package:cliqueledger/widgets/media_tab.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:cliqueledger/models/transaction.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -39,6 +46,9 @@ class _CliquepageState extends State<Cliquepage>
   late CliqueProvider cliqueProvider;
   late TabController _tabController;
   bool isGenerateButtonClicked = false;
+  
+  PickImage pickImage = PickImage();
+
   bool isLoading = true;
   @override
   void initState() {
@@ -50,7 +60,11 @@ class _CliquepageState extends State<Cliquepage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cliqueProvider = context.read<CliqueProvider>();
       final transactionProvider = context.read<TransactionProvider>();
+      final cliqueMediaProvider = context.read<CliqueMediaProvider>();
       fetchTransactions(cliqueProvider, transactionProvider);
+      if(cliqueProvider.currentClique != null) {
+        CliqueMedia.getMedia(cliqueMediaProvider, cliqueProvider.currentClique!.id);
+      }
     });
   }
 
@@ -359,6 +373,7 @@ class _CliquepageState extends State<Cliquepage>
   @override
   Widget build(BuildContext context) {
     ReportsProvider reportsProvider = Provider.of<ReportsProvider>(context);
+    CliqueMediaProvider cliqueMediaProvider = Provider.of<CliqueMediaProvider>(context);
     return Consumer3<CliqueListProvider, CliqueProvider, TransactionProvider>(
       builder: (context, cliqueListProvider, cliqueProvider,
           transactionProvider, child) {
@@ -427,7 +442,7 @@ class _CliquepageState extends State<Cliquepage>
                                       transactionProvider.transactionMap[
                                           cliqueProvider.currentClique!.id]!,
                                 ),
-                      const Center(child: Text('Media')),
+                      CliqueMediaTab(cliqueMediaProvider: cliqueMediaProvider),
                       !isGenerateButtonClicked ||
                               !reportsProvider.reportList
                                   .containsKey(cliqueProvider.currentClique!.id)
@@ -435,6 +450,7 @@ class _CliquepageState extends State<Cliquepage>
                           : ReportTab(
                               cliqueProvider: cliqueProvider,
                               reportsProvider: reportsProvider),
+
                     ],
                   ),
                 ),
@@ -461,8 +477,9 @@ class _CliquepageState extends State<Cliquepage>
                 FloatingActionButton(
                   heroTag: 'btn2',
                   onPressed: () {
-                    // Handle action for the "Media" tab
-                  },
+                      // Handle action for the "Media" tab
+                      pickImage.showImagePickerOption(context);
+                    },
                   tooltip: 'Add Media',
                   backgroundColor: const Color(0xFFFFB200),
                   child: const Icon(
