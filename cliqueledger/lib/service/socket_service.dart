@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cliqueledger/models/transaction.dart';
 import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/TransactionProvider.dart';
+import 'package:cliqueledger/service/authservice.dart';
 import 'package:cliqueledger/service/socket_event_handler.dart';
 import 'package:cliqueledger/utility/constant.dart';
 import 'package:flutter/material.dart';
@@ -35,11 +36,11 @@ class SocketService {
   factory SocketService() {
     return instance;
   }
-
+  String? token = Authservice.instance.accessToken;
   void connectAndListen() {
     if (socket != null) return;
     debugPrint("Connection to socket...");
-    socket ??= IO.io('http://$HOST/',
+    socket ??= IO.io('http://$HOST/?token=$token',
         IO.OptionBuilder().setTransports(['websocket']).build());
 
     socket!.onConnect((data) => {print("Connected to socket")});
