@@ -9,11 +9,13 @@ class Member{
 
   @JsonKey(name: "user_id")
   final String userId;
+  final String email;
 
   Member({
     required this.name,
     required this.memberId,
-    required this.userId
+    required this.userId,
+    required this.email
   });
  
   
@@ -22,14 +24,16 @@ class Member{
     return Member(
       name: json["member_name"],
       memberId: json["member_id"],
-      userId: json['user_id']
+      userId: json['user_id'],
+      email: json['email']
       );
   }
   Map<String,dynamic> toJson(){
     return {
       'member_name':name,
       'member_id':memberId,
-      'user_id': userId
+      'user_id': userId,
+      'email': email
     };
 
   }
