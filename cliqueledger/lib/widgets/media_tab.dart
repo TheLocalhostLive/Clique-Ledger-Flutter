@@ -24,7 +24,9 @@ class _CliqueMediaTab extends State<CliqueMediaTab> {
   _CliqueMediaTab({required this.cliqueMediaProvider});
   @override
   Widget build(BuildContext context) {
-    if (context.watch<CliqueMediaProvider>().cliqueMediaMap.isEmpty) {
+    String currentCliqueId = context.read<CliqueProvider>().currentClique!.id;
+    Map<String, List<CliqueMediaResponse>>? cliqueMediaMap = context.watch<CliqueMediaProvider>().cliqueMediaMap;
+    if (cliqueMediaMap[currentCliqueId] == null || cliqueMediaMap[currentCliqueId]!.isEmpty) {
       return const Scaffold(
           body: Center(
         child: (Text("No media yet")),
@@ -57,15 +59,14 @@ class _CliqueMediaTab extends State<CliqueMediaTab> {
 class MediaCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List<CliqueMediaResponse> medias = context
-        .watch<CliqueMediaProvider>()
-        .cliqueMediaMap
-        .values
-        .expand((list) => list)
-        .toList();
+    String currentCliqueId = context.read<CliqueProvider>().currentClique!.id;
+
+    List<CliqueMediaResponse>? medias = context
+        .read<CliqueMediaProvider>()
+        .cliqueMediaMap[currentCliqueId];   
 
     return ListView.builder(
-      itemCount: medias.length,
+      itemCount: medias!.length,
       itemBuilder: (context, index) {
         return MediaCard(media: medias[index]);
       },
