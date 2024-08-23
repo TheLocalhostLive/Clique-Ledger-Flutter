@@ -22,6 +22,7 @@ class SocketService {
     "transaction-rejected": SocketEventHandler.handleRejectTransaction,
     "added-to-clique": SocketEventHandler.handleAddToClique,
     "removed-from-clique": SocketEventHandler.handleRemoveFromClique,
+    "media-created": SocketEventHandler.handleMediaCreated
   };
 
   SocketService._internal();
