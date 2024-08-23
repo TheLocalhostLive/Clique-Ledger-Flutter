@@ -44,8 +44,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       width: 120,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border:
-                            Border.all(color:Colors.white,width: 3.0),
+                        border: Border.all(color: Colors.white, width: 3.0),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(
@@ -66,8 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           padding: EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(
-                                color: Colors.black, width: 1.5),
+                            border: Border.all(color: Colors.black, width: 1.5),
                             color: Colors.white,
                           ),
                           child: isEditing
@@ -149,26 +147,48 @@ class _SettingsPageState extends State<SettingsPage> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: cliqueListProvider.activeCliqueList[cliqueProvider.currentClique!.id]!.members.length,
+                    itemCount: cliqueListProvider
+                        .activeCliqueList[cliqueProvider.currentClique!.id]!
+                        .members
+                        .length,
                     itemBuilder: (context, index) {
-                      final member =
-                          cliqueListProvider.activeCliqueList[cliqueProvider.currentClique!.id]!.members[index];
+                      final member = cliqueListProvider
+                          .activeCliqueList[cliqueProvider.currentClique!.id]!
+                          .members[index];
                       return Card(
                         color: Color.fromARGB(255, 254, 246, 235),
                         margin: EdgeInsets.symmetric(vertical: 8.0),
                         child: ListTile(
-                          title: Text(
-                            member.name,
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              color: Colors.black,
-                            ),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                member.name,
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Text(
+                                member.email,
+                                style: TextStyle(
+                                  fontSize:
+                                      14.0, // Smaller font size for the email
+                                  color: Colors.grey[600], // Grey-ish color
+                                ),
+                              ),
+                            ],
                           ),
                           trailing: IconButton(
                             icon: Icon(Icons.delete,
                                 color: const Color.fromARGB(255, 146, 12, 2)),
-                            onPressed: () async{
-                              await MemberApi.removeMember(cliqueProvider.currentClique!.id, member.memberId, cliqueListProvider, context);
+                            onPressed: () async {
+                              await MemberApi.removeMember(
+                                cliqueProvider.currentClique!.id,
+                                member.memberId,
+                                cliqueListProvider,
+                                context,
+                              );
                             },
                           ),
                         ),
