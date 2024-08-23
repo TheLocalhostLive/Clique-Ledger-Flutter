@@ -14,7 +14,7 @@ class CliqueMedia {
 
   static Future<CliqueMediaResponse?> uploadFile(File file, String cliqueId) async {
     String? accessToken = Authservice.instance.accessToken; 
-    final uri = Uri.http('192.168.0.103:3000', 'api/v1/cliques/$cliqueId/media');
+    final uri = Uri.parse('$BASE_URL/cliques/$cliqueId/media');
     final request = http.MultipartRequest('POST', uri);
     request.headers['Authorization'] = 'Bearer $accessToken';
 

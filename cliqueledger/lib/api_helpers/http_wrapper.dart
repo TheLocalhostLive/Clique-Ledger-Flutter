@@ -32,7 +32,8 @@ class HTTPWrapper {
   Map<String, String> _headers = {};
 
   void _prepareRequest() {
-    _url = Uri.http('192.168.0.103:3000', 'api/v1/$endpoint');
+    _url = Uri.parse('$BASE_URL/$endpoint');
+    
     _headers = {'Content-Type': 'application/json'};
     if (accessToken != null) {
       _headers.addEntries({'Authorization': 'Bearer $accessToken'}.entries);
