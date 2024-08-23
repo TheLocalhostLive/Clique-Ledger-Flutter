@@ -4,6 +4,7 @@ import 'package:cliqueledger/models/transaction.dart';
 import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/service/socket_event_handler.dart';
+import 'package:cliqueledger/utility/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -37,7 +38,7 @@ class SocketService {
   void connectAndListen() {
     if (socket != null) return;
     debugPrint("Connection to socket...");
-    socket ??= IO.io('http://13.234.48.56:3000/',
+    socket ??= IO.io('http://$HOST/',
         IO.OptionBuilder().setTransports(['websocket']).build());
 
     socket!.onConnect((data) => {print("Connected to socket")});
