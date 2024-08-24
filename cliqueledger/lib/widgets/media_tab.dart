@@ -82,14 +82,32 @@ class MediaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Column(
-        children: <Widget>[
-          Image.network(media.fileUrl),
-        ],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+        side: BorderSide(color: Colors.grey, width: 1.0),
+      ),
+      elevation: 5,
+      shadowColor: Colors.black54,
+      child: Container(
+        height: 200.0, // Fixed height
+        width: 150.0,  // Fixed width
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15.0),
+          child: Image.network(
+            media.fileUrl,
+            fit: BoxFit.cover, // Ensures the image fits the content
+            width: double.infinity,
+            height: double.infinity,
+          ),
+        ),
       ),
     );
   }
 }
+
 
 class PickImage {
   void showPopup(BuildContext context) {
