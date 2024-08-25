@@ -1,4 +1,5 @@
 import 'package:cliqueledger/models/cliqeue.dart';
+import 'package:cliqueledger/models/member.dart';
 import 'package:cliqueledger/models/transaction.dart';
 import 'package:flutter/material.dart';
 
@@ -13,5 +14,12 @@ class CliqueProvider with ChangeNotifier {
   }
   void chaneLatestTransaction(Transaction t){
     _currentClique!.latestTransaction = t;
+  }
+}
+  Member getMemberById(String id) {
+    Member member =
+        currentClique!.members.firstWhere((member) => member.memberId == id);
+
+    return member;
   }
 }
