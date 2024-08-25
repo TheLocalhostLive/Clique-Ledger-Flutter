@@ -67,7 +67,7 @@ class MemberApi{
   }
   }
   static Future<void> removeMember(String cliqueId , String memberId , CliqueListProvider cliquelistProvider , BuildContext context) async{
-    final uriDelete = Uri.parse('${BASE_URL}/cliques/${cliqueId}/members');
+    final uriDelete = Uri.parse('${BASE_URL}/cliques/${cliqueId}/members/');
     List<String> deleteUser = [];
     deleteUser.add(memberId);
     final jsonBody = json.encode(deleteUser);
@@ -87,6 +87,7 @@ class MemberApi{
                       SnackBar(content: Text('Removed Succussfully')),
                     );
       }else{
+        print(response.statusCode);
         ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Failed to Remove the member')),
                     );
