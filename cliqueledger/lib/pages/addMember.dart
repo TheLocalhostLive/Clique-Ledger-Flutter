@@ -25,6 +25,7 @@ class _AddMemberState extends State<AddMember> {
   Future<void> _searchMember(String email) async {
     setState(() {
       isLoading = true;
+      users.clear(); // Clear previous search results
     });
 
     User? user = await MemberApi.searchUser(email);
@@ -43,9 +44,12 @@ class _AddMemberState extends State<AddMember> {
     });
   }
 
-  Future<void> _addMember(CliqueListProvider cl , CliqueProvider c) async{
+  Future<void> _addMember(CliqueListProvider cl, CliqueProvider c) async {
     await MemberApi.addUserPost(selectedUsers, cl, c);
-    
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Member added successfully")),
+    );
   }
 
   @override
@@ -67,7 +71,6 @@ class _AddMemberState extends State<AddMember> {
                 const SizedBox(height: 16),
                 TextField(
                   controller: _searchController,
-                  
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Color.fromARGB(255, 220, 220, 220),
@@ -88,22 +91,25 @@ class _AddMemberState extends State<AddMember> {
                         backgroundColor: Color(0xFFFFB200),
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                       ),
-
-                      child: const Text("Search",style: TextStyle(color: Color(0xFFE8E8E8)),),
+                      child: const Text(
+                        "Search",
+                        style: TextStyle(color: Color(0xFFE8E8E8)),
+                      ),
                     ),
                     const Spacer(),
-                    ElevatedButton(
-                      onPressed: ()async{
-                          await _addMember(cliqueListProvider,cliqueProvider);
+                    if (users.isNotEmpty) // Only show if users are found
+                      ElevatedButton(
+                        onPressed: () async {
+                          await _addMember(cliqueListProvider, cliqueProvider);
                           context.pop();
-                      },
-                      
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFFB200),
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFFFB200),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                        ),
+                        child: const Text("Add Member",
+                            style: TextStyle(color: Color(0xFFE8E8E8))),
                       ),
-                      child: const Text("Add Member",style: TextStyle(color: Color(0xFFE8E8E8)),),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
