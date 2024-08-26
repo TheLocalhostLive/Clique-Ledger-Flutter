@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cliqueledger/themes/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:cliqueledger/api_helpers/cliqueDelete.dart';
 import 'package:cliqueledger/api_helpers/createCliquePost.dart';
 import 'package:cliqueledger/api_helpers/fetchCliqeue.dart';
 import 'package:cliqueledger/models/cliqeue.dart';
@@ -343,17 +344,46 @@ class _DashboardState extends State<Dashboard>
 
 class LedgerTab extends StatefulWidget {
   final Map<String, Clique> cliqueList;
+
   const LedgerTab({required this.cliqueList});
+  
 
   @override
   State<LedgerTab> createState() => _LedgerTabState();
 }
 
 class _LedgerTabState extends State<LedgerTab> {
+  Future<void> _showDeleteConfirmationDialog(Clique clique , CliqueListProvider cliqueListProvider) async {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Delete Clique'),
+        content: const Text('Are you sure you want to delete this Clique?'),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Cancel',style: TextStyle(color: Color.fromARGB(255, 161, 2, 41),),),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: const Text('Delete',style: TextStyle(color: Color(0xFFFFB200) ),),
+            onPressed: ()  async{
+              await CliqueDelete.deleteClique(clique,cliqueListProvider,context);
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
   @override
   Widget build(BuildContext context) {
     CliqueProvider cliqueProvider = Provider.of<CliqueProvider>(context);
     var theme = Theme.of(context);
+    CliqueListProvider cliqueListProvider=context.read<CliqueListProvider>();
     return ListView(
       children: widget.cliqueList.values.map((clique) {
         return Center(
@@ -367,6 +397,9 @@ class _LedgerTabState extends State<LedgerTab> {
                   shadowColor: Color.fromARGB(255, 158, 158, 158),
               child: InkWell(
                   borderRadius: BorderRadius.circular(5),
+                  onLongPress: () async {
+                    await _showDeleteConfirmationDialog(clique,cliqueListProvider);
+                  },
                   onTap: () {
                     cliqueProvider.setClique(clique);
                     context.push(RoutersConstants.CLIQUE_ROUTE);
