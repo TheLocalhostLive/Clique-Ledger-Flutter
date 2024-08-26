@@ -705,11 +705,12 @@ class TransactionsTab extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.fromLTRB(60, 10, 5, 10),
             width: MediaQuery.of(context).size.width * 0.7,
-            height: 100,
+            height: 140, // Increased height to accommodate spacing
             child: Card(
               elevation: 10.0,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.circular(20),
+              ),
               child: InkWell(
                 borderRadius: BorderRadius.circular(20.0),
                 focusColor: theme.colorScheme.secondary,
@@ -719,23 +720,63 @@ class TransactionsTab extends StatelessWidget {
                     color: theme.colorScheme.primary,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  padding: const EdgeInsets.all(10.0),
+                  child: Stack(
                     children: [
-                      Text(
-                        '${tx.sender.name} - \u{20B9}${tx.amount != null ? tx.amount!.toStringAsFixed(2) : tx.amount!.toStringAsFixed(2)}',
-                        style: theme.textTheme.bodyLarge,
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        child: Text(
+                          tx.sender.name,
+                          style: const TextStyle(
+                            fontSize: 13.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 4.0),
-                      Text(
-                        'Date: ${DateFormat('yyyy-MM-dd HH:mm').format(tx.date.toLocal())}',
-                        style: theme.textTheme.bodyMedium,
+                      Positioned(
+                        top: 30,
+                        left: 0,
+                        child: Text(
+                          '\u{20B9}${tx.amount != null ? tx.amount!.toStringAsFixed(2) : tx.amount!.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            fontSize: 24.0, // Larger font for the amount
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 4.0),
-                      Text(
-                        tx.description,
-                        style: theme.textTheme.bodySmall,
+                      Positioned(
+                        top: 65,
+                        left: 0,
+                        right: 0, // Ensure description takes full width
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              tx.description,
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14.0,
+                                overflow: TextOverflow.ellipsis
+                              ),
+                            ),
+                            const SizedBox(
+                                height:
+                                    10.0), // Space between description and date
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: Text(
+                                'Date: ${DateFormat('yyyy-MM-dd HH:mm').format(tx.date.toLocal())}',
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12.0,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
