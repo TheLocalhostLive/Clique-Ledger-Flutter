@@ -124,16 +124,21 @@ class _CliquepageState extends State<Cliquepage>
 
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
+            final theme = Theme.of(context); // Get current theme
+
             // Calculate available height by considering the keyboard height
             double availableHeight = MediaQuery.of(context).size.height -
                 MediaQuery.of(context).viewInsets.bottom -
                 100;
 
             return AlertDialog(
-              backgroundColor: Colors.white,
+              backgroundColor: theme.colorScheme.surface,
               title: Text(
                 'Create Transaction',
-                style: TextStyle(fontWeight: FontWeight.w200),
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  color: theme.textTheme.titleSmall?.color,
+                ),
               ),
               content: SingleChildScrollView(
                 child: Container(
@@ -144,18 +149,20 @@ class _CliquepageState extends State<Cliquepage>
                     children: [
                       // Amount Field
                       TextFormField(
-                        cursorColor: Color.fromARGB(255, 114, 4, 32),
+                        cursorColor: theme.colorScheme.tertiary,
                         decoration: InputDecoration(
                           floatingLabelStyle:
-                              TextStyle(color: Color(0xFFE4003A)),
+                              TextStyle(color: theme.colorScheme.tertiary),
                           enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Color.fromARGB(255, 114, 4, 32),
-                          )),
+                            borderSide: BorderSide(
+                              color: theme.colorScheme.secondary,
+                            ),
+                          ),
                           focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Color.fromARGB(255, 114, 4, 32),
-                          )),
+                            borderSide: BorderSide(
+                              color: theme.colorScheme.tertiary,
+                            ),
+                          ),
                           labelText: 'Amount',
                           border: OutlineInputBorder(),
                           errorText: amountError,
@@ -167,7 +174,9 @@ class _CliquepageState extends State<Cliquepage>
                               children: [
                                 Text(
                                   '₹', // Indian Rupee symbol
-                                  style: TextStyle(fontSize: 18),
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: theme.textTheme.bodySmall?.color),
                                 ),
                                 SizedBox(
                                     width:
@@ -201,28 +210,33 @@ class _CliquepageState extends State<Cliquepage>
                       ),
                       SizedBox(height: 16),
                       TextFormField(
-                        cursorColor: Color.fromARGB(255, 114, 4, 32),
+                        cursorColor: theme.colorScheme.tertiary,
                         decoration: InputDecoration(
                           floatingLabelStyle:
-                              TextStyle(color: Color(0xFFE4003A)),
+                              TextStyle(color: theme.colorScheme.tertiary),
                           enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Color.fromARGB(255, 114, 4, 32),
-                          )),
+                            borderSide: BorderSide(
+                              color: theme.colorScheme.secondary,
+                            ),
+                          ),
                           focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Color.fromARGB(255, 114, 4, 32),
-                          )),
+                            borderSide: BorderSide(
+                              color: theme.colorScheme.tertiary,
+                            ),
+                          ),
                           labelText: 'Description',
                           border: OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xFFE4003A))),
+                              borderSide: BorderSide(
+                                  color: theme.colorScheme.tertiary)),
                           errorText: descriptionError,
                           prefixIcon: Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Text(
-                              '₹', // Indian Rupee symbol
-                              style: TextStyle(fontSize: 18),
+                              '>',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: theme.textTheme.bodySmall?.color),
                             ),
                           ),
                         ),
@@ -246,7 +260,9 @@ class _CliquepageState extends State<Cliquepage>
                         items: <String>['send', 'spend'].map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value),
+                            child: Text(value,
+                                style: TextStyle(
+                                    color: theme.textTheme.bodySmall?.color)),
                           );
                         }).toList(),
                         onChanged: (String? newValue) {
@@ -256,6 +272,7 @@ class _CliquepageState extends State<Cliquepage>
                           });
                         },
                         isExpanded: true,
+                        dropdownColor: theme.dialogBackgroundColor,
                       ),
                       if (transactionTypeError != null)
                         Padding(
@@ -273,8 +290,11 @@ class _CliquepageState extends State<Cliquepage>
                               .map((member) {
                             if (transactionType == "send") {
                               return RadioListTile(
-                                activeColor: Color(0xFFE4003A),
-                                title: Text(member.name),
+                                activeColor: theme.colorScheme.tertiary,
+                                title: Text(member.name,
+                                    style: TextStyle(
+                                        color:
+                                            theme.textTheme.titleSmall?.color)),
                                 value: member.memberId,
                                 groupValue: selectedMembers.isNotEmpty
                                     ? selectedMembers[0]['memberId']
@@ -288,13 +308,16 @@ class _CliquepageState extends State<Cliquepage>
                                     });
                                   });
                                 },
-                                controlAffinity: ListTileControlAffinity
-                                    .trailing, // Add this line to move the radio button to the end
+                                controlAffinity:
+                                    ListTileControlAffinity.trailing,
                               );
                             } else {
                               return CheckboxListTile(
-                                activeColor: Color(0xFFE4003A),
-                                title: Text(member.name),
+                                activeColor: theme.colorScheme.tertiary,
+                                title: Text(member.name,
+                                    style: TextStyle(
+                                        color:
+                                            theme.textTheme.titleSmall?.color)),
                                 value: selectedMembers.any((element) =>
                                     element['memberId'] == member.memberId),
                                 onChanged: (bool? checked) {
@@ -386,11 +409,11 @@ class _CliquepageState extends State<Cliquepage>
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFFFB200),
+                    backgroundColor: theme.colorScheme.tertiary,
                   ),
                   child: Text(
                     'Create Transaction',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: theme.colorScheme.onPrimary),
                   ),
                 ),
               ],
@@ -406,18 +429,19 @@ class _CliquepageState extends State<Cliquepage>
     ReportsProvider reportsProvider = Provider.of<ReportsProvider>(context);
     CliqueMediaProvider cliqueMediaProvider =
         Provider.of<CliqueMediaProvider>(context);
+    ThemeData theme = Theme.of(context);
+
     return Consumer3<CliqueListProvider, CliqueProvider, TransactionProvider>(
       builder: (context, cliqueListProvider, cliqueProvider,
           transactionProvider, child) {
         return DefaultTabController(
           length: 3,
           child: Scaffold(
-            backgroundColor: Colors.white,
             appBar: AppBar(
               title: Text(
                 "Clique Ledger",
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: theme.textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -426,20 +450,18 @@ class _CliquepageState extends State<Cliquepage>
                   onPressed: () {
                     context.push(RoutersConstants.CLIQUE_SETTINGS_ROUTE);
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.settings,
-                    color: Colors.white,
+                    color: theme.colorScheme.onPrimary,
                   ),
                 )
               ],
               flexibleSpace: Container(
-                decoration: const BoxDecoration(
-                  //color: Color(0xFF800000),
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Color.fromARGB(255, 128, 6,
-                          37), // Note the use of 0xFF prefix for hex colors
-                      Color(0xFFEB5B00),
+                      theme.colorScheme.primary,
+                      theme.colorScheme.secondary,
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -450,25 +472,23 @@ class _CliquepageState extends State<Cliquepage>
             body: Column(
               children: [
                 TabBar(
-                    indicatorColor: const Color(0xFFFFB200),
-                    controller: _tabController,
-                    tabs: [
-                      Tab(
-                        child: Text("Transaction",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 102, 2, 27))),
-                      ),
-                      Tab(
-                        child: Text("Media",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 102, 2, 27))),
-                      ),
-                      Tab(
-                        child: Text("Report",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 102, 2, 27))),
-                      ),
-                    ]),
+                  indicatorColor: theme.colorScheme.secondary,
+                  controller: _tabController,
+                  tabs: [
+                    Tab(
+                      child: Text("Transaction",
+                          style: TextStyle(color: theme.colorScheme.tertiary)),
+                    ),
+                    Tab(
+                      child: Text("Media",
+                          style: TextStyle(color: theme.colorScheme.tertiary)),
+                    ),
+                    Tab(
+                      child: Text("Report",
+                          style: TextStyle(color: theme.colorScheme.tertiary)),
+                    ),
+                  ],
+                ),
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
@@ -512,10 +532,10 @@ class _CliquepageState extends State<Cliquepage>
                     cliqueListProvider,
                   ),
                   tooltip: 'Create Transaction',
-                  backgroundColor: const Color(0xFFFFB200),
+                  backgroundColor: theme.colorScheme.secondary,
                   child: const Icon(
                     Icons.add,
-                    color: Color.fromARGB(255, 255, 255, 255),
+                    color: Colors.white,
                   ),
                 ),
                 FloatingActionButton(
@@ -525,10 +545,10 @@ class _CliquepageState extends State<Cliquepage>
                     pickImage.showImagePickerOption(context);
                   },
                   tooltip: 'Add Media',
-                  backgroundColor: const Color(0xFFFFB200),
+                  backgroundColor: theme.colorScheme.secondary,
                   child: const Icon(
                     Icons.photo,
-                    color: Color.fromARGB(255, 255, 255, 255),
+                    color: Colors.white,
                   ),
                 ),
                 FloatingActionButton(
@@ -542,7 +562,7 @@ class _CliquepageState extends State<Cliquepage>
                     });
                   },
                   tooltip: 'Generate Report',
-                  backgroundColor: const Color(0xFFFFB200),
+                  backgroundColor: theme.colorScheme.secondary,
                   child: const Icon(
                     Icons.report,
                     color: Colors.white,
@@ -563,15 +583,17 @@ class TransactionsTab extends StatelessWidget {
   const TransactionsTab({required this.transactions});
 
   void _checkTransaction(BuildContext context, Transaction t) {
+    final theme = Theme.of(context);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: const Text(
+              title: Text(
                 'Transaction Details',
-                style: TextStyle(
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
@@ -584,68 +606,57 @@ class TransactionsTab extends StatelessWidget {
                     if (t.type == "send") ...[
                       Text(
                         "Send Transaction",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w200,
-                            fontSize: 16),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w200,
+                        ),
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
                       Text(
                         '${t.sender.name} : \u{20B9}${t.amount.toStringAsFixed(2) ?? 'N/A'} paid to ${t.participants[0].name}',
-                        style: const TextStyle(
-                          fontSize: 16.0,
+                        style: theme.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                     ] else ...[
                       Text(
                         "Spend Transaction",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w200,
-                            fontSize: 16),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w200,
+                        ),
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
                       Text(
                         '${t.sender.name} Paid Total: \u{20B9}${t.amount?.toStringAsFixed(2) ?? 'N/A'} To -',
-                        style: const TextStyle(
-                          fontSize: 16.0,
+                        style: theme.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       ...t.participants
                           .map(
                             (p) => Text(
                               '${p.name} - \u{20B9}${p.partAmount}',
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                color: Colors.grey[700],
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
                               ),
                             ),
                           )
                           .toList(),
                     ],
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Text(
                       'Description:',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       '${t.description}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[800],
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: () => {},
                       child: const Text(
@@ -656,11 +667,9 @@ class TransactionsTab extends StatelessWidget {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 150, 4, 41),
-                        minimumSize:
-                            Size(double.infinity, 36), // Full-width button
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12), // Add vertical padding
+                        backgroundColor: theme.colorScheme.secondary,
+                        minimumSize: const Size(double.infinity, 36),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                     ),
                   ],
@@ -668,9 +677,9 @@ class TransactionsTab extends StatelessWidget {
               ),
               actions: <Widget>[
                 TextButton(
-                  child: const Text(
+                  child: Text(
                     'Close',
-                    style: TextStyle(color: Color.fromARGB(255, 150, 4, 41)),
+                    style: TextStyle(color: theme.colorScheme.secondary),
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -686,54 +695,45 @@ class TransactionsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return ListView(
       children: transactions.map((tx) {
         return Center(
           child: Container(
-            // margin:
-            //     const EdgeInsets.symmetric(vertical: 10.0, horizontal: 100.0),
             margin: const EdgeInsets.fromLTRB(60, 10, 5, 10),
             width: MediaQuery.of(context).size.width * 0.7,
-            height: 100, // Set desired height
+            height: 100,
             child: Card(
               elevation: 10.0,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               child: InkWell(
                 borderRadius: BorderRadius.circular(20.0),
-                focusColor: Colors.amberAccent,
+                focusColor: theme.colorScheme.secondary,
                 onTap: () => _checkTransaction(context, tx),
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 254, 246, 235),
-                      // gradient: const LinearGradient(
-                      //   colors: [
-                      //     Colors.redAccent,
-                      //         // Note the use of 0xFF prefix for hex colors
-                      //     Colors.yellowAccent,
-                      //   ],
-                      // ),
-                      borderRadius: BorderRadius.circular(20)),
-
-                  padding: const EdgeInsets.all(
-                      8.0), // Add padding for better appearance
+                    color: theme.colorScheme.primary,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: const EdgeInsets.all(8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         '${tx.sender.name} - \u{20B9}${tx.amount != null ? tx.amount!.toStringAsFixed(2) : tx.amount!.toStringAsFixed(2)}',
-                        style: TextStyle(fontSize: 16.0),
+                        style: theme.textTheme.bodyLarge,
                       ),
                       const SizedBox(height: 4.0),
                       Text(
                         'Date: ${DateFormat('yyyy-MM-dd HH:mm').format(tx.date.toLocal())}',
-                        style: TextStyle(
-                            color: const Color.fromARGB(255, 32, 30, 30)),
+                        style: theme.textTheme.bodyMedium,
                       ),
                       const SizedBox(height: 4.0),
                       Text(
                         tx.description,
-                        style: TextStyle(color: Colors.grey),
+                        style: theme.textTheme.bodySmall,
                       ),
                     ],
                   ),
@@ -749,9 +749,9 @@ class TransactionsTab extends StatelessWidget {
 
 class ReportTab extends StatefulWidget {
   final CliqueProvider cliqueProvider;
-  ReportsProvider reportsProvider;
-  ReportTab(
-      {Key? key, required this.cliqueProvider, required this.reportsProvider})
+  final ReportsProvider reportsProvider;
+
+  ReportTab({Key? key, required this.cliqueProvider, required this.reportsProvider})
       : super(key: key);
 
   @override
@@ -761,7 +761,7 @@ class ReportTab extends StatefulWidget {
 
 class _ReportTabState extends State<ReportTab> {
   final CliqueProvider cliqueProvider;
-  ReportsProvider reportsProvider;
+  final ReportsProvider reportsProvider;
   final ReportApi reportApi = ReportApi();
   bool isLoading = false; // Loading state for the overall report
 
@@ -777,68 +777,84 @@ class _ReportTabState extends State<ReportTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: ListView.builder(
-          itemCount: reportsProvider
-              .reportList[cliqueProvider.currentClique!.id]!.length,
-          itemBuilder: (context, index) {
-            AbstructReport report = reportsProvider
-                .reportList[cliqueProvider.currentClique!.id]![index];
-            Color tileColor = report.isDue
-                ? const Color.fromARGB(255, 172, 72, 10)
-                : const Color.fromARGB(255, 20, 135, 97);
+    final theme = Theme.of(context);
+    final isDarkTheme = theme.brightness == Brightness.dark;
 
-            return Column(
-              children: [
-                ExpansionTile(
-                  backgroundColor: tileColor,
-                  title: Row(
-                    children: [
-                      Container(
-                        width: 80,
-                        child: Text(report.userName),
+    return Scaffold(
+      body: ListView.builder(
+        itemCount: reportsProvider
+            .reportList[cliqueProvider.currentClique!.id]!.length,
+        itemBuilder: (context, index) {
+          AbstructReport report = reportsProvider
+              .reportList[cliqueProvider.currentClique!.id]![index];
+          Color tileColor = report.isDue
+              ? Color.fromRGBO(239, 90, 111, 0.2)
+              : Color.fromRGBO(119, 228, 200, 0.2);
+
+          return Column(
+            children: [
+              ExpansionTile(
+                backgroundColor: tileColor,
+                title: Row(
+                  children: [
+                    Container(
+                      width: 80,
+                      child: Text(
+                        report.userName,
+                        style: theme.textTheme.bodyMedium,
                       ),
-                      const SizedBox(width: 80),
-                      Container(
-                        width: 50,
-                        child: Text(
-                          report.isDue ? "Due" : "Extra",
-                          style: TextStyle(
-                              color: report.isDue
-                                  ? const Color.fromARGB(255, 199, 27, 47)
-                                  : const Color.fromARGB(255, 35, 141, 105),
-                              fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 80),
+                    Container(
+                      width: 50,
+                      child: Text(
+                        report.isDue ? "Due" : "Extra",
+                        style: theme.textTheme.bodyMedium!.copyWith(
+                          color: report.isDue
+                              ? Color.fromRGBO(222, 75, 95, 1)
+                              : Color.fromRGBO(99, 220, 190, 1),
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 50),
-                      Text('${report.amount}'),
-                    ],
-                  ),
-                  onExpansionChanged: (bool expanded) async {
-                    if (expanded) {
-                      report.detailsReport ??
-                          await getDetailsReport(
-                              cliqueProvider.currentClique!.id,
-                              report.memberId,
-                              reportsProvider);
-                    }
-                  },
-                  children: report.detailsReport?.map((details) {
-                        return ListTile(
-                          title: Text(details.transactionId),
-                          subtitle: Text(
-                              '${DateFormat('yyyy-MM-dd HH:mm').format(details.date.toLocal())} - ${details.description}'),
-                          trailing: Text(
-                            'Sent: ${details.sendAmount ?? 0}, Received: ${details.receiveAmount ?? 0}',
-                          ),
-                        );
-                      }).toList() ??
-                      [],
+                    ),
+                    const SizedBox(width: 50),
+                    Text(
+                      '${report.amount}',
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ],
                 ),
-              ],
-            );
-          },
-        ));
+                onExpansionChanged: (bool expanded) async {
+                  if (expanded) {
+                    report.detailsReport ??
+                        await getDetailsReport(
+                            cliqueProvider.currentClique!.id,
+                            report.memberId,
+                            reportsProvider);
+                  }
+                },
+                children: report.detailsReport?.map((details) {
+                      return ListTile(
+                        title: Text(
+                          details.transactionId,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                        subtitle: Text(
+                          '${DateFormat('yyyy-MM-dd HH:mm').format(details.date.toLocal())} - ${details.description}',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                        trailing: Text(
+                          'Sent: ${details.sendAmount ?? 0}, Received: ${details.receiveAmount ?? 0}',
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      );
+                    }).toList() ??
+                    [],
+              ),
+            ],
+          );
+        },
+      ),
+    );
   }
 }

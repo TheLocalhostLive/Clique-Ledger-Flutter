@@ -7,12 +7,11 @@ ThemeData lightTheme = ThemeData(
     primary: Color.fromRGBO(220, 214, 247, 1),
     secondary: Color.fromRGBO(166, 177, 225, 1),
     tertiary: Color.fromRGBO(66, 72, 116, 1),
-    
   ),
   textTheme: TextTheme(
     displayLarge: TextStyle(color: Colors.black),
     displayMedium: TextStyle(color: Colors.black),
-    bodyLarge: TextStyle(color: Colors.black),
+    bodyLarge: TextStyle(color: Color.fromRGBO(7, 15, 43, 1)),
     bodyMedium: TextStyle(color: Colors.black),
     titleMedium: TextStyle(color: Colors.black),
     titleSmall: TextStyle(color: Colors.black),
@@ -32,7 +31,7 @@ ThemeData darkTheme = ThemeData(
   textTheme: TextTheme(
     displayLarge: TextStyle(color: Colors.white),
     displayMedium: TextStyle(color: Colors.white),
-    bodyLarge: TextStyle(color: Colors.white),
+    bodyLarge: TextStyle(color: Color.fromRGBO(245, 247, 248, 1)),
     bodyMedium: TextStyle(color: Colors.white),
     titleMedium: TextStyle(color: Colors.white),
     titleSmall: TextStyle(color: Colors.white),

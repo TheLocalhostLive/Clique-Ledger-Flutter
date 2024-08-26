@@ -253,25 +253,19 @@ class _DashboardState extends State<Dashboard>
                 theme.brightness == Brightness.dark
                     ? Icons.wb_sunny
                     : Icons.nightlight_round,
-                color: theme.brightness == Brightness.dark
-                    ? Color.fromRGBO(245, 247, 248, 1) // Dark mode color
-                    : Color.fromRGBO(7, 15, 43, 1),
+                color: theme.textTheme.bodyLarge?.color,
               ),
             ),
             IconButton(
               onPressed: _confirmLogout,
               icon: Icon(IconData(0xe3b3, fontFamily: 'MaterialIcons')),
-              color: theme.brightness == Brightness.dark
-                  ? Color.fromRGBO(245, 247, 248, 1) // Dark mode color
-                  : Color.fromRGBO(7, 15, 43, 1),
+              color: theme.textTheme.bodyLarge?.color,
             )
           ],
           title: Text(
             "Clique Ledger",
             style: TextStyle(
-              color: theme.brightness == Brightness.dark
-                  ? Color.fromRGBO(245, 247, 248, 1) // Dark mode color
-                  : Color.fromRGBO(7, 15, 43, 1), // Light mode color
+              color: theme.textTheme.bodyLarge?.color,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -296,12 +290,12 @@ class _DashboardState extends State<Dashboard>
                 tabs: [
                   Tab(
                     child: Text(
-                      "Active Ledger",
+                      "Active Clique",
                       style: TextStyle(color: theme.colorScheme.tertiary),
                     ),
                   ),
                   Tab(
-                    child: Text("Finished Ledger",
+                    child: Text("Finished Clique",
                         style: TextStyle(color: theme.colorScheme.tertiary)),
                   )
                 ]),
