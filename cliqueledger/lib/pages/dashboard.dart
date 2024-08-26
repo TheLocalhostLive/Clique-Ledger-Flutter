@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:cliqueledger/themes/theme_provider.dart';
-import 'package:flutter/material.dart';
 import 'package:cliqueledger/api_helpers/createCliquePost.dart';
 import 'package:cliqueledger/api_helpers/fetchCliqeue.dart';
 import 'package:cliqueledger/models/cliqeue.dart';
@@ -38,10 +36,10 @@ class _DashboardState extends State<Dashboard>
   final CliqueList cliqueList = CliqueList();
 
   bool isCliquesLoading = true;
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Initialize transactionProvider here
     transactionProvider = Provider.of<TransactionProvider>(context);
     cliqueListProvider = Provider.of<CliqueListProvider>(context);
   }
@@ -77,6 +75,9 @@ class _DashboardState extends State<Dashboard>
   }
 
   void _createClique(BuildContext context) {
+    // Navigate to create page or show a dialog
+    // For demonstration, we'll show a simple dialog
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -84,40 +85,31 @@ class _DashboardState extends State<Dashboard>
         final TextEditingController amountController = TextEditingController();
         final TextEditingController cliqueNameController =
             TextEditingController();
+        final TextEditingController MembersController = TextEditingController();
         final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            final ThemeData theme = Theme.of(context);
-            final Color secondaryColor = theme.colorScheme.secondary;
-            final Color surfaceColor = theme.colorScheme.surface;
-            final Color onSurfaceColor = theme.colorScheme.onSurface;
-            final Color tertiaryColor = theme.colorScheme.tertiary;
-
             return AlertDialog(
-              title: Text('Create Clique',
-                  style: TextStyle(color: secondaryColor)),
-              backgroundColor: surfaceColor,
+              title: const Text('Create Clique'),
               content: Form(
                 key: formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     TextFormField(
-                      cursorColor: secondaryColor,
+                      cursorColor: Color.fromARGB(255, 114, 4, 32),
                       controller: cliqueNameController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: "Enter Clique Name",
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: onSurfaceColor,
-                          ),
-                        ),
+                            borderSide: BorderSide(
+                          color: Color.fromARGB(255, 114, 4, 32),
+                        )),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: secondaryColor,
-                          ),
-                        ),
+                            borderSide: BorderSide(
+                          color: Color.fromARGB(255, 114, 4, 32),
+                        )),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -130,33 +122,30 @@ class _DashboardState extends State<Dashboard>
                       children: <Widget>[
                         Checkbox(
                           value: withFunds,
-                          activeColor: tertiaryColor,
+                          activeColor: Color(0xFFE4003A),
                           onChanged: (bool? value) {
                             setState(() {
                               withFunds = value ?? false;
                             });
                           },
                         ),
-                        Text("With funds",
-                            style: TextStyle(color: tertiaryColor)),
+                        const Text("With funds"),
                       ],
                     ),
                     if (withFunds)
                       TextFormField(
-                        cursorColor: secondaryColor,
+                        cursorColor: Color.fromARGB(255, 114, 4, 32),
                         controller: amountController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: "Enter Amount",
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: onSurfaceColor,
-                            ),
-                          ),
+                              borderSide: BorderSide(
+                            color: Color.fromARGB(255, 114, 4, 32),
+                          )),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: secondaryColor,
-                            ),
-                          ),
+                              borderSide: BorderSide(
+                            color: Color.fromARGB(255, 114, 4, 32),
+                          )),
                         ),
                         keyboardType: TextInputType.number,
                         validator: (value) {
@@ -171,18 +160,21 @@ class _DashboardState extends State<Dashboard>
               ),
               actions: <Widget>[
                 TextButton(
-                  child:
-                      Text('Cancel', style: TextStyle(color: secondaryColor)),
+                  child: const Text('Cancel',style: TextStyle(color: Color.fromARGB(255, 161, 2, 41),),),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
                 TextButton(
-                  child: Text('Create', style: TextStyle(color: tertiaryColor)),
+                  child: const Text('Create',style: TextStyle(color: Color(0xFFFFB200) ),),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
+                      // Handle the create action
                       String amount = amountController.text;
                       String cliqueName = cliqueNameController.text;
+                      // String members = MembersController.text;
+                      bool isActive = true;
+                      //List<String> membersList = members.split(',');
                       CliquePostSchema cls = amount.isEmpty
                           ? CliquePostSchema(name: cliqueName, fund: "0")
                           : CliquePostSchema(name: cliqueName, fund: amount);
@@ -199,88 +191,35 @@ class _DashboardState extends State<Dashboard>
     );
   }
 
-  void _confirmLogout() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        final ThemeData theme = Theme.of(context);
-        Color tertiaryColor = theme.colorScheme.tertiary;
-        Color secondaryColor = theme.colorScheme.secondary;
-
-        return AlertDialog(
-          title: Text("Confirm Logout"),
-          content: Text("Are you sure you want to logout?"),
-          actions: <Widget>[
-            TextButton(
-              child: Text("Cancel"),
-              style: TextButton.styleFrom(
-                foregroundColor: secondaryColor, // Color for the Cancel button
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text("Confirm"),
-              style: TextButton.styleFrom(
-                foregroundColor: tertiaryColor, // Color for the Confirm button
-              ),
-              onPressed: () async {
-                await Authservice.instance.logout();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    var themeProvider = Provider.of<ThemeProvider>(context);
-    var theme = themeProvider.themeData;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           actions: <Widget>[
             IconButton(
-              onPressed: () {
-                themeProvider.toggleMode();
+              onPressed: () async {
+                await Authservice.instance.logout();
               },
-              icon: Icon(
-                theme.brightness == Brightness.dark
-                    ? Icons.wb_sunny
-                    : Icons.nightlight_round,
-                color: theme.brightness == Brightness.dark
-                    ? Color.fromRGBO(245, 247, 248, 1) // Dark mode color
-                    : Color.fromRGBO(7, 15, 43, 1),
-              ),
-            ),
-            IconButton(
-              onPressed: _confirmLogout,
               icon: Icon(IconData(0xe3b3, fontFamily: 'MaterialIcons')),
-              color: theme.brightness == Brightness.dark
-                  ? Color.fromRGBO(245, 247, 248, 1) // Dark mode color
-                  : Color.fromRGBO(7, 15, 43, 1),
+              color: Colors.white,
             )
           ],
           title: Text(
             "Clique Ledger",
-            style: TextStyle(
-              color: theme.brightness == Brightness.dark
-                  ? Color.fromRGBO(245, 247, 248, 1) // Dark mode color
-                  : Color.fromRGBO(7, 15, 43, 1), // Light mode color
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
           ),
           flexibleSpace: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
+              //color: Color(0xFF536493)
               gradient: LinearGradient(
                 colors: [
-                  theme.colorScheme.primary,
-                  theme.colorScheme.secondary,
+                  Color.fromARGB(255, 128, 6,
+                      37), // Note the use of 0xFF prefix for hex colors
+                  Color(0xFFEB5B00),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -291,18 +230,19 @@ class _DashboardState extends State<Dashboard>
         body: Column(
           children: [
             TabBar(
-                indicatorColor: theme.colorScheme.secondary,
+                indicatorColor: const Color(0xFFFFB200),
                 controller: _tabController,
                 tabs: [
                   Tab(
                     child: Text(
                       "Active Ledger",
-                      style: TextStyle(color: theme.colorScheme.tertiary),
+                      style: TextStyle(color: Color.fromARGB(255, 102, 2, 27)),
                     ),
                   ),
                   Tab(
                     child: Text("Finished Ledger",
-                        style: TextStyle(color: theme.colorScheme.tertiary)),
+                        style:
+                            TextStyle(color: Color.fromARGB(255, 102, 2, 27))),
                   )
                 ]),
             Expanded(
@@ -337,7 +277,7 @@ class _DashboardState extends State<Dashboard>
               onPressed: () => _createClique(context),
               tooltip: 'Create Clique',
               child: const Icon(Icons.add, color: Colors.white),
-              backgroundColor: theme.colorScheme.secondary,
+              backgroundColor: Color(0xFFFFB200),
             ),
             Text("")
           ],
@@ -359,7 +299,6 @@ class _LedgerTabState extends State<LedgerTab> {
   @override
   Widget build(BuildContext context) {
     CliqueProvider cliqueProvider = Provider.of<CliqueProvider>(context);
-    var theme = Theme.of(context);
     return ListView(
       children: widget.cliqueList.values.map((clique) {
         return Center(
@@ -386,35 +325,67 @@ class _LedgerTabState extends State<LedgerTab> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surface,
+                      // gradient: LinearGradient(
+                      //   colors: [
+                      //     Color.fromARGB(255, 143, 177, 240),
+                      //     Color.fromARGB(255, 222, 155, 228)
+                      //   ],
+                      // ),
+                      color: Color.fromARGB(255, 254, 246, 235),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.fromLTRB(15, 5, 5, 5),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
+                        children: [
+                          Container(
+                            height: 50,
+                            width: 50,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(60),
+                              child: Image.asset(
+                                "assets/images/groupSelfie.png",
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                              width: 10), // Space between photo and text
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(clique.name,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: theme.colorScheme.tertiary,
-                                    )),
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
                                 Text(
-                                    "Latest Transaction: ${clique.latestTransaction}",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: theme.colorScheme.tertiary,
-                                    )),
+                                  clique.name,
+                                  style: TextStyle(
+                                    fontSize: 26.0,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w200,
+                                  ),
+                                ),
+                                Text(
+                                  clique.latestTransaction != null
+                                      ? '${clique.latestTransaction!.sender.name}-${clique.latestTransaction!.amount != null ? clique.latestTransaction!.amount : clique.latestTransaction!.amount} \u{20B9}'
+                                      : 'No transactions yet',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 54, 24, 56),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w100,
+                                  ),
+                                ),
+                                Text(
+                                  clique.latestTransaction != null
+                                      ? '${DateFormat('yyyy-MM-dd HH:mm').format(clique.latestTransaction!.date.toLocal())}'
+                                      : '',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 51, 22, 54),
+                                    fontSize: 10,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                          Icon(Icons.arrow_forward_ios,
-                              color: theme.colorScheme.secondary)
                         ],
                       ),
                     ),
@@ -423,6 +394,18 @@ class _LedgerTabState extends State<LedgerTab> {
           ),
         );
       }).toList(),
+    );
+  }
+}
+
+class LogoutButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      child: Text("Logout"),
+      onPressed: () async {
+        Authservice.instance.logout();
+      },
     );
   }
 }
