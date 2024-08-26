@@ -656,22 +656,24 @@ class TransactionsTab extends StatelessWidget {
                         color: theme.colorScheme.onSurface,
                       ),
                     ),
-                    const SizedBox(height: 30),
-                    ElevatedButton(
-                      onPressed: () => {},
-                      child: const Text(
-                        "Verify",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.secondary,
-                        minimumSize: const Size(double.infinity, 36),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                    ),
+                    SizedBox(height: 30),
+                    // ElevatedButton(
+                    //   onPressed: () => {},
+                    //   child: const Text(
+                    //     "Verify",
+                    //     style: TextStyle(
+                    //       color: Colors.white,
+                    //       fontWeight: FontWeight.bold,
+                    //     ),
+                    //   ),
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor: const Color.fromARGB(255, 150, 4, 41),
+                    //     minimumSize:
+                    //         Size(double.infinity, 36), // Full-width button
+                    //     padding: const EdgeInsets.symmetric(
+                    //         vertical: 12), // Add vertical padding
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
