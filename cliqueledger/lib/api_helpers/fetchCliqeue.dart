@@ -24,6 +24,10 @@ class CliqueList {
       if (response.statusCode == 200) {
         print('Response Body : ${response.body}');
         final List<dynamic> jsonList = json.decode(response.body);
+
+
+
+
         cliqueList = jsonList.map((jsonItem) => Clique.fromJson(jsonItem)).toList();
         print("Data fetched successfully: ${cliqueList.length} items");
         cliqueListProvider.setCliqueList(cliqueList);
@@ -33,7 +37,7 @@ class CliqueList {
       }
     } catch (e) {
       // Handle exceptions
-      print("Exception occurred: $e");
+      print("Exception occurred in Fetch Clique: $e");
     }
 
     // Return an empty list in case of failure
