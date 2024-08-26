@@ -12,10 +12,11 @@ class CliqueProvider with ChangeNotifier {
     _currentClique = clique;
     notifyListeners();
   }
-  void chaneLatestTransaction(Transaction t){
+
+  void chaneLatestTransaction(Transaction t) {
     _currentClique!.latestTransaction = t;
   }
-}
+
   Member getMemberById(String id) {
     Member member =
         currentClique!.members.firstWhere((member) => member.memberId == id);
