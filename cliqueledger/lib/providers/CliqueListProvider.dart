@@ -34,5 +34,9 @@ class CliqueListProvider with ChangeNotifier {
     notifyListeners();
     
   }
+  void deleteClique(String cliqueId){
+    _activeCliqueList.remove(cliqueId);
+    notifyListeners();
+  }
   
 }
