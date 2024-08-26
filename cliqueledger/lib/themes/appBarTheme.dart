@@ -1,5 +1,5 @@
-// ignore: file_names
 import 'package:flutter/material.dart';
+import 'package:cliqueledger/themes/theme.dart';
 
 class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -8,19 +8,22 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final Color startColor = theme.colorScheme.primary;
+    final Color endColor = theme.colorScheme.secondary;
+
     return AppBar(
       title: Text(
         title,
-        style:
-            const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: theme.textTheme.titleSmall?.color,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       flexibleSpace: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 128, 6,37), // Note the use of 0xFF prefix for hex colors
-              Color(0xFFEB5B00),
-            ],
+            colors: [startColor, endColor],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
