@@ -28,7 +28,6 @@ ThemeData darkTheme = ThemeData(
     primary: Color.fromRGBO(27, 26, 85, 1),
     secondary: Color.fromRGBO(83, 92, 145, 1),
     tertiary: Color.fromRGBO(146, 144, 195, 1),
-    
   ),
   textTheme: TextTheme(
     displayLarge: TextStyle(color: Colors.white),
