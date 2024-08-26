@@ -18,13 +18,7 @@ class Routers {
   static GoRouter routers(bool isAuth) {
     final GoRouter router = GoRouter(
       redirect: (context, state) {
-        final loggedIn = Authservice.instance.loginInfo.isLoggedIn;
-        final isLogging = state.uri.toString() == '/signup';
-        final isOnWelcome = state.uri.toString() == '/';
-
-        if (!loggedIn && !isLogging && !isOnWelcome) return '/signup';
-        if (loggedIn && isLogging) return '/dashboard';
-        return null;
+      
       },
       refreshListenable: Authservice.instance.loginInfo,
       debugLogDiagnostics: true, // Enable diagnostics for debugging
