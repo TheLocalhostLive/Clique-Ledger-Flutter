@@ -63,8 +63,15 @@ class _CliqueMediaTab extends State<CliqueMediaTab> {
 
 // }
 
-class MediaCards extends StatelessWidget {
+class MediaCards extends StatefulWidget {
   const MediaCards({super.key});
+
+  @override
+  _MediaCardsState createState() => _MediaCardsState();
+}
+
+class _MediaCardsState extends State<MediaCards> {
+  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -74,23 +81,34 @@ class MediaCards extends StatelessWidget {
         context.read<CliqueMediaProvider>().cliqueMediaMap[currentCliqueId];
 
     return Consumer<CliqueMediaProvider>(
-        builder: (context, child, cliqueMediaProvider) {
-      return ListView.builder(
+      builder: (context, cliqueMediaProvider, child) {
+        // Scroll to the bottom when new items are added
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scrollController.hasClients) {
+            _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+          }
+        });
+
+        return ListView.builder(
+          controller: _scrollController,
           itemCount: medias!.length,
           itemBuilder: (context, index) {
             if (medias[index].mediaId != "DUMMY") {
               return MediaCard(
-                  media: medias[index],
-                  user: context
-                      .read<CliqueProvider>()
-                      .getMemberById(medias[index].senderId)
-                      );
+                media: medias[index],
+                user: context
+                    .read<CliqueProvider>()
+                    .getMemberById(medias[index].senderId),
+              );
             }
             return ImageWithLoadingOverlay(imageUrl: medias[index].fileUrl);
-          });
-    });
+          },
+        );
+      },
+    );
   }
 }
+
 
 class MediaCard extends StatelessWidget {
   final CliqueMediaResponse media;
