@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:cliqueledger/api_helpers/clique_media.dart';
 import 'package:cliqueledger/models/clique_media.dart';
+import 'package:cliqueledger/models/member.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/providers/clique_media_provider.dart';
 import 'package:cliqueledger/service/authservice.dart';
@@ -79,10 +80,10 @@ class MediaCards extends StatelessWidget {
             if (medias[index].mediaId != "DUMMY") {
               return MediaCard(
                   media: medias[index],
-                  labelText: context
+                  user: context
                       .read<CliqueProvider>()
                       .getMemberById(medias[index].senderId)
-                      .name);
+                      );
             }
             return ImageWithLoadingOverlay(imageUrl: medias[index].fileUrl);
           });
@@ -92,46 +93,57 @@ class MediaCards extends StatelessWidget {
 
 class MediaCard extends StatelessWidget {
   final CliqueMediaResponse media;
-  final String labelText;
+  final Member user;
 
-  const MediaCard({super.key, required this.media, required this.labelText});
+  const MediaCard({
+    super.key,
+    required this.media,
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
     // Get the screen width
     double screenWidth = MediaQuery.of(context).size.width;
     
-    ThemeData theme = Theme.of(context); 
+    final currentUserId = Authservice.instance.profile!.cliqueLedgerAppUid;
+    final senderUserId = user.userId;
+    final bool isCurrentUserSender = currentUserId == senderUserId;
+    ThemeData theme = Theme.of(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            constraints: BoxConstraints(
-              minHeight: 200,
-              minWidth: screenWidth * 0.5,
-              maxWidth: screenWidth * 0.7,
-            ),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  labelText,
-                  style: TextStyle(
-                    fontSize: 13.0,
-                    color: theme.textTheme.bodyLarge?.color,
-                    fontWeight: FontWeight.bold,
+      child: Align(
+        alignment: isCurrentUserSender
+            ? Alignment.centerRight
+            : Alignment.centerLeft, // Align based on the sender
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              constraints: BoxConstraints(
+                minHeight: 200,
+                minWidth: screenWidth * 0.5,
+                maxWidth: screenWidth * 0.7,
+              ),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user.name,
+                    style: TextStyle(
+                      fontSize: 13.0,
+                      color: theme.textTheme.bodyLarge?.color,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                GestureDetector(
+                  const SizedBox(height: 10),
+                  GestureDetector(
                     onTap: () {
                       // Navigate to full-screen image view when the card is tapped
                       Navigator.push(
@@ -148,21 +160,23 @@ class MediaCard extends StatelessWidget {
                         media.fileUrl,
                         fit: BoxFit.cover,
                       ),
-                    )),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: Text(
-                    'Date: ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(media.createdAt).toLocal())}',
-                    style: TextStyle(
-                      color: theme.textTheme.bodySmall?.color,
-                      fontSize: 12.0,
                     ),
                   ),
-                ),
-              ],
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      'Date: ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(media.createdAt).toLocal())}',
+                      style: TextStyle(
+                        color: theme.textTheme.bodySmall?.color,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
