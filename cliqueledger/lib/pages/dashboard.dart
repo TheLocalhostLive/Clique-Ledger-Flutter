@@ -433,7 +433,9 @@ class _LedgerTabState extends State<LedgerTab> {
                                       color: theme.colorScheme.tertiary,
                                     )),
                                 Text(
-                                    "Latest Transaction: ${clique.latestTransaction}",
+                                   clique.latestTransaction != null
+                                      ? '${clique.latestTransaction!.sender.name}-${clique.latestTransaction!.amount} \u{20B9} ${DateFormat('yyyy-MM-dd HH:mm').format(clique.latestTransaction!.date.toLocal())}'
+                                      : 'No transactions yet',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: theme.colorScheme.tertiary,
