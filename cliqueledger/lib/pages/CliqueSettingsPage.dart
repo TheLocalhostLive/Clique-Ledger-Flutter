@@ -23,13 +23,14 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Consumer2<CliqueListProvider, CliqueProvider>(
       builder: (context, cliqueListProvider, cliqueProvider, child) {
         TextEditingController _nameController =
             TextEditingController(text: cliqueProvider.currentClique!.name);
 
         return Scaffold(
-          backgroundColor: Colors.white,
           appBar: GradientAppBar(title: "Clique Ledger"),
           body: SingleChildScrollView(
             child: Padding(
@@ -44,7 +45,10 @@ class _SettingsPageState extends State<SettingsPage> {
                       width: 120,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 3.0),
+                        border: Border.all(
+                          color: theme.colorScheme.onSurface, // Border color
+                          width: 3.0,
+                        ),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(
@@ -65,8 +69,11 @@ class _SettingsPageState extends State<SettingsPage> {
                           padding: EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(color: Colors.black, width: 1.5),
-                            color: Colors.white,
+                            border: Border.all(
+                              color: theme.colorScheme.primary, // Border color
+                              width: 1.5,
+                            ),
+                            color: theme.colorScheme.primary,
                           ),
                           child: isEditing
                               ? TextField(
@@ -74,20 +81,21 @@ class _SettingsPageState extends State<SettingsPage> {
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                   ),
-                                  style: TextStyle(fontSize: 20.0),
+                                  style: theme.textTheme.bodyLarge,
                                 )
                               : Text(
                                   _nameController.text,
-                                  style: TextStyle(
-                                    fontSize: 22.0,
+                                  style: theme.textTheme.titleMedium!.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black,
                                   ),
                                 ),
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.edit, color: Color(0xFFFFB200)),
+                        icon: Icon(
+                          Icons.edit,
+                          color: theme.colorScheme.secondary, // Icon color
+                        ),
                         onPressed: () {
                           setState(() {
                             isEditing = true;
@@ -108,11 +116,13 @@ class _SettingsPageState extends State<SettingsPage> {
                             });
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFFFB200),
+                            backgroundColor: theme.colorScheme.secondary,
                           ),
                           child: Text(
                             "Save",
-                            style: TextStyle(color: Colors.white),
+                            style: theme.textTheme.labelLarge!.copyWith(
+                              color: theme.textTheme.titleSmall?.color,
+                            ),
                           ),
                         ),
                       ),
@@ -122,10 +132,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     children: [
                       Text(
                         "Participants",
-                        style: TextStyle(
-                          fontSize: 20,
+                        style: theme.textTheme.titleLarge!.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: Colors.black,
                         ),
                       ),
                       const Spacer(),
@@ -134,11 +142,13 @@ class _SettingsPageState extends State<SettingsPage> {
                           context.push(RoutersConstants.ADD_MEMBER_ROUTE);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFFFB200),
+                          backgroundColor: theme.colorScheme.secondary,
                         ),
                         child: Text(
                           "Add Member",
-                          style: TextStyle(color: Colors.white),
+                          style: theme.textTheme.labelLarge!.copyWith(
+                            color: theme.textTheme.titleSmall?.color,
+                          ),
                         ),
                       ),
                     ],
@@ -156,7 +166,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           .activeCliqueList[cliqueProvider.currentClique!.id]!
                           .members[index];
                       return Card(
-                        color: Color.fromARGB(255, 254, 246, 235),
+                        color: theme.colorScheme.primary,
                         margin: EdgeInsets.symmetric(vertical: 8.0),
                         child: ListTile(
                           title: Column(
@@ -164,24 +174,21 @@ class _SettingsPageState extends State<SettingsPage> {
                             children: [
                               Text(
                                 member.name,
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: Colors.black,
-                                ),
+                                style: theme.textTheme.bodyLarge,
                               ),
                               Text(
                                 member.email,
-                                style: TextStyle(
-                                  fontSize:
-                                      14.0, // Smaller font size for the email
-                                  color: Colors.grey[600], // Grey-ish color
+                                style: theme.textTheme.bodyMedium!.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
                                 ),
                               ),
                             ],
                           ),
                           trailing: IconButton(
-                            icon: Icon(Icons.delete,
-                                color: const Color.fromARGB(255, 146, 12, 2)),
+                            icon: Icon(
+                              Icons.delete,
+                              color: theme.colorScheme.error, // Delete icon color
+                            ),
                             onPressed: () async {
                               await MemberApi.removeMember(
                                 cliqueProvider.currentClique!.id,
