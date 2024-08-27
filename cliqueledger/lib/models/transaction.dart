@@ -33,6 +33,17 @@ class Transaction {
     required this.isVerified,
   });
 
+
+ static Member formatMember(Map<String, dynamic> json){
+    return Member(
+      name: json['member_name'], 
+      memberId: json['member_id'],
+      userId: json['user_id'],
+      email: json['email'],
+      isAdmin: false
+      );
+  }
+
   factory Transaction.fromJson(Map<String, dynamic> json) {
     try {
       // Print each field to debug
@@ -50,7 +61,7 @@ class Transaction {
         id: json['transaction_id'] as String,
         cliqueId: json['clique_id'] as String,
         type: json['transaction_type'] as String? ?? 'unknown',
-        sender: Member.fromJson(json['sender']),
+        sender: formatMember(json['sender']as Map<String, dynamic>),
         participants: (json['participants'] as List)
             .map((e) => Participant.fromJson(e))
             .toList(),

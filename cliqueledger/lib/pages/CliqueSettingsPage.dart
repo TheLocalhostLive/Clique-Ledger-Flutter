@@ -177,6 +177,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       final member = cliqueListProvider
                           .activeCliqueList[cliqueProvider.currentClique!.id]!
                           .members[index];
+                     
                       return Card(
                         color: theme.colorScheme.primary,
                         margin: EdgeInsets.symmetric(vertical: 8.0),
@@ -184,10 +185,22 @@ class _SettingsPageState extends State<SettingsPage> {
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                             Row(children: [
+                               Text(
                                 member.name,
                                 style: theme.textTheme.bodyLarge,
                               ),
+                              const SizedBox(width: 10,),
+                             member.isAdmin ?
+                             Text("Admin",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: theme.textTheme.bodySmall?.color
+                                  ),
+                              ):Text("")
+
+                             ],),
+
                               Text(
                                 member.email,
                                 style: theme.textTheme.bodyMedium!.copyWith(
