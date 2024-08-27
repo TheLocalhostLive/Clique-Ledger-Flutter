@@ -70,10 +70,9 @@ class _SettingsPageState extends State<SettingsPage> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(
-                              color: theme.colorScheme.primary, // Border color
+                              color: theme.colorScheme.secondary, // Border color
                               width: 1.5,
                             ),
-                            color: theme.colorScheme.primary,
                           ),
                           child: isEditing
                               ? TextField(
@@ -82,6 +81,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     border: InputBorder.none,
                                   ),
                                   style: theme.textTheme.bodyLarge,
+                                  cursorColor: theme.colorScheme.primary,
                                 )
                               : Text(
                                   _nameController.text,
