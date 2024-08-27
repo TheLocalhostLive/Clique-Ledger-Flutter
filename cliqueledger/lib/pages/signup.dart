@@ -1,7 +1,6 @@
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';
 
 class Signup extends StatefulWidget {
@@ -12,18 +11,17 @@ class Signup extends StatefulWidget {
 class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     ValueNotifier<bool> changedButton = ValueNotifier(false);
 
     return Material(
-      color: Colors.white,
       child: SingleChildScrollView(
         child: Column(
           children: [
-            
             Padding(
-              padding: EdgeInsets.all(1),
+              padding: const EdgeInsets.all(1),
               child: Image.asset(
-                "assets/images/hey_red.png",
+                "assets/images/register.png",
                 height: 450,
                 width: 450,
               ),
@@ -35,8 +33,8 @@ class _SignupState extends State<Signup> {
               "New here?",
               style: TextStyle(
                 fontFamily: GoogleFonts.dancingScript().fontFamily,
-                fontSize: 30.0,
-                color: const Color.fromARGB(255, 0, 0, 0),
+                fontSize: 40.0,
+                color: theme.textTheme.displayLarge!.color, // Use displayLarge color from theme
               ),
             ),
             const SizedBox(
@@ -44,7 +42,7 @@ class _SignupState extends State<Signup> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFB200),
+                backgroundColor: theme.colorScheme.secondary, // Use primary color from theme
               ),
               onPressed: () async {
                 // Attempt to login/signup
@@ -56,15 +54,18 @@ class _SignupState extends State<Signup> {
                   // Navigate to the dashboard
                   context.push('/dashboard');
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Login successful')),
+                    SnackBar(content: Text('Login successful', style: TextStyle(color: theme.textTheme.bodyLarge!.color))),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Login failed')),
+                    SnackBar(content: Text('Login failed', style: TextStyle(color: theme.textTheme.bodyLarge!.color))),
                   );
                 }
               },
-              child: const Text("Register | Login",style: TextStyle(color: Colors.white),),
+              child: Text(
+                "Register | Login",
+                style: TextStyle(color: theme.textTheme.bodyLarge!.color), // Use bodyLarge color from theme
+              ),
             ),
           ],
         ),
