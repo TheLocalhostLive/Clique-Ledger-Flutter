@@ -440,5 +440,6 @@ class PickImage {
     if (returnImage == null) return;
 
     debugPrint(returnImage.path);
+    return returnImage.path;
   }
 }
