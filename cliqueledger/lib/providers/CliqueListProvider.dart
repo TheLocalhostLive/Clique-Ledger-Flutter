@@ -38,5 +38,8 @@ class CliqueListProvider with ChangeNotifier {
     _activeCliqueList.remove(cliqueId);
     notifyListeners();
   }
+  void nameChange(String cliqueId , String cliqueName){
+    _activeCliqueList[cliqueId]!.name = cliqueName;
+  }
   
 }

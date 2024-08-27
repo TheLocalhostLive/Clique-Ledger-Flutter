@@ -3,7 +3,7 @@ import 'package:cliqueledger/models/transaction.dart';
 
 class Clique {
   final String id;
-  final String name;
+   String name;
   final List<Member> admins;
   final List<Member> members;
   final bool isActive;
