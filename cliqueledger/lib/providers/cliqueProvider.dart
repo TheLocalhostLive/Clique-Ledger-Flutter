@@ -23,4 +23,10 @@ class CliqueProvider with ChangeNotifier {
 
     return member;
   }
+
+  Member getMemberByUserId(String id) {
+    Member member =
+        currentClique!.members.firstWhere((memeber) => memeber.userId == id);
+    return member;
+  }
 }
