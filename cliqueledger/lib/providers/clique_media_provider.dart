@@ -18,6 +18,7 @@ class CliqueMediaProvider with ChangeNotifier {
     } else {
       _cliqueMediaMap[cliqueId] = [mediaRes];
     }
+    debugPrint("CliqueMediaProvider: $mediaRes Added in provider");
     notifyListeners();
   }
 
@@ -25,5 +26,14 @@ class CliqueMediaProvider with ChangeNotifier {
     isMediaScreenPreview = !isMediaScreenPreview;
     notifyListeners();
     
+  }
+
+  void deleteByMediaId(String cliqueId, String mediaId) {
+    if(_cliqueMediaMap.containsKey(cliqueId)) {
+      
+      _cliqueMediaMap[cliqueId]!.removeWhere((media) => media.mediaId == mediaId);
+    }
+    debugPrint("CliqueMediaProvider: $mediaId deleted from provider");
+    notifyListeners();
   }
 }
