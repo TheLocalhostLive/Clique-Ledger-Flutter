@@ -452,7 +452,7 @@ class _CliquepageState extends State<Cliquepage>
                   },
                   icon: Icon(
                     Icons.settings,
-                    color: theme.colorScheme.onPrimary,
+                    color: theme.textTheme.bodyLarge?.color,
                   ),
                 )
               ],
