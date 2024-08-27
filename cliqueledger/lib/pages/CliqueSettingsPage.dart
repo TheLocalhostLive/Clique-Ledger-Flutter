@@ -1,4 +1,5 @@
 import 'package:cliqueledger/api_helpers/MemberApi.dart';
+import 'package:cliqueledger/api_helpers/cliqueApi.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -20,6 +21,16 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final List<Member> memberList = [];
   bool isEditing = false;
+
+  Future<String> setNewName(CliqueProvider cliqueProvider,String cliqueId , CliqueListProvider cliqueListProvider,String cliqeName) async{
+      int code = await CliqueApi.changeCliqueName(cliqueId, cliqeName, cliqueListProvider, context);
+      if(code == 200){
+        cliqueProvider.currentClique!.name = cliqeName;
+        return cliqeName;
+      }
+      return "";
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +121,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            String newName = await setNewName(cliqueProvider,cliqueProvider.currentClique!.id,cliqueListProvider,_nameController.text);
                             setState(() {
                               isEditing = false;
                             });
