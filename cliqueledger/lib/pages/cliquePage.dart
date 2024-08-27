@@ -18,6 +18,7 @@ import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/providers/reportsProvider.dart';
 import 'package:cliqueledger/providers/clique_media_provider.dart';
+import 'package:cliqueledger/service/authservice.dart';
 import 'package:cliqueledger/themes/appBarTheme.dart';
 import 'package:cliqueledger/utility/routers_constant.dart';
 import 'package:cliqueledger/widgets/media_tab.dart';
@@ -698,14 +699,22 @@ class TransactionsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final currentUserId = Authservice.instance.profile!.cliqueLedgerAppUid;
 
     return ListView(
       children: transactions.map((tx) {
-        return Center(
+        bool isCurrentUserSender = tx.sender.userId == currentUserId;
+
+        return Align(
+          alignment: isCurrentUserSender
+              ? Alignment.centerRight
+              : Alignment.centerLeft,
           child: Container(
-            margin: const EdgeInsets.fromLTRB(60, 10, 5, 10),
+            margin: isCurrentUserSender
+                ? const EdgeInsets.fromLTRB(60, 10, 5, 10)
+                : const EdgeInsets.fromLTRB(5, 10, 60, 10),
             width: MediaQuery.of(context).size.width * 0.7,
-            height: 140, // Increased height to accommodate spacing
+            height: 140,
             child: Card(
               elevation: 10.0,
               shape: RoundedRectangleBorder(
@@ -739,9 +748,9 @@ class TransactionsTab extends StatelessWidget {
                         top: 30,
                         left: 0,
                         child: Text(
-                          '\u{20B9}${tx.amount != null ? tx.amount!.toStringAsFixed(2) : tx.amount!.toStringAsFixed(2)}',
+                          '\u{20B9}${tx.amount.toStringAsFixed(2)}',
                           style: TextStyle(
-                            fontSize: 24.0, // Larger font for the amount
+                            fontSize: 24.0,
                             fontWeight: FontWeight.bold,
                             color: theme.textTheme.bodyLarge?.color,
                           ),
@@ -750,20 +759,19 @@ class TransactionsTab extends StatelessWidget {
                       Positioned(
                         top: 65,
                         left: 0,
-                        right: 0, // Ensure description takes full width
+                        right: 0,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               tx.description,
                               style: TextStyle(
-                                  color: theme.textTheme.bodyMedium?.color,
-                                  fontSize: 14.0,
-                                  overflow: TextOverflow.ellipsis),
+                                color: theme.textTheme.bodyMedium?.color,
+                                fontSize: 14.0,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                            const SizedBox(
-                                height:
-                                    10.0), // Space between description and date
+                            const SizedBox(height: 10.0),
                             Align(
                               alignment: Alignment.bottomRight,
                               child: Text(
