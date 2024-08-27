@@ -35,6 +35,7 @@ class CliqueApi{
       }
   }
   static Future<int> changeCliqueName(String cliqueId , String newName, CliqueListProvider cliqueListProvider, BuildContext context) async{
+    print('${BASE_URL}/cliques/${cliqueId}');
     final uriDelete =  Uri.parse('${BASE_URL}/cliques/${cliqueId}');
     int  code=400;
     try {
@@ -42,7 +43,7 @@ class CliqueApi{
          'Content-Type': 'application/json',
           'Authorization': 'Bearer $accessToken',
       },
-       
+       body: json.encode({"name":newName})
       );
        print(response.statusCode);
           print('response body : ${response.body}');
