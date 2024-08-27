@@ -20,7 +20,7 @@ class DetailsReport{
       date: DateTime.parse(json['date'] as String),
       description: json['description'],
       sendAmount: json['send_amount'],
-      receiveAmount: json['Receive_amount']
+      receiveAmount: json['receive_amount']
     );
   }
 }
