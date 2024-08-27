@@ -727,10 +727,10 @@ class TransactionsTab extends StatelessWidget {
                         left: 0,
                         child: Text(
                           tx.sender.name,
-                          style: const TextStyle(
+                          style:  TextStyle(
                             fontSize: 13.0,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                            color: theme.textTheme.bodyLarge?.color,
                           ),
                         ),
                       ),
@@ -739,10 +739,10 @@ class TransactionsTab extends StatelessWidget {
                         left: 0,
                         child: Text(
                           '\u{20B9}${tx.amount != null ? tx.amount!.toStringAsFixed(2) : tx.amount!.toStringAsFixed(2)}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 24.0, // Larger font for the amount
                             fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                            color: theme.textTheme.bodyLarge?.color,
                           ),
                         ),
                       ),
