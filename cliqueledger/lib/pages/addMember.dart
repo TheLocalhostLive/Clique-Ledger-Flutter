@@ -60,11 +60,10 @@ class _AddMemberState extends State<AddMember> {
 
     return Consumer2<CliqueProvider, CliqueListProvider>(
       builder: (context, cliqueProvider, cliqueListProvider, child) {
-        var buttonCol = theme.colorScheme.primary;
+        var buttonCol = theme.colorScheme.secondary;
         var textCol1 = theme.colorScheme.tertiary;
         var textCol2 = theme.colorScheme.secondary;
         return Scaffold(
-          backgroundColor: theme.colorScheme.surface,
           appBar: const GradientAppBar(title: "Clique Ledger"),
           body: Padding(
             padding: const EdgeInsets.all(16),
@@ -76,13 +75,13 @@ class _AddMemberState extends State<AddMember> {
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: textCol1,
+                    color: theme.textTheme.bodyLarge?.color,
                   ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _searchController,
-                  cursorColor: theme.colorScheme.secondary, // Set cursor color based on theme
+                  cursorColor: theme.colorScheme.tertiary, // Set cursor color based on theme
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: theme.colorScheme.primary,
@@ -105,7 +104,7 @@ class _AddMemberState extends State<AddMember> {
                       ),
                       child: Text(
                         "Search",
-                        style: TextStyle(color: textCol1),
+                        style: TextStyle(color: theme.textTheme.titleSmall?.color),
                       ),
                     ),
                     const Spacer(),
@@ -121,7 +120,7 @@ class _AddMemberState extends State<AddMember> {
                         ),
                         child: Text(
                           "Add Member",
-                          style: TextStyle(color: textCol1),
+                          style: TextStyle(color: theme.textTheme.titleSmall?.color),
                         ),
                       ),
                   ],
