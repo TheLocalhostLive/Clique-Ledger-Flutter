@@ -60,7 +60,7 @@ class Clique {
   
   Member? senderMember = allMembers.firstWhere(
     (member) => member.memberId == lastTransaction.sender,
-    orElse: () => Member(name: '', memberId: '', userId: '', email: ''),
+    orElse: () => Member(name: '', memberId: '', userId: '', email: '' , isAdmin: false),
   );
 
   return Transaction(
