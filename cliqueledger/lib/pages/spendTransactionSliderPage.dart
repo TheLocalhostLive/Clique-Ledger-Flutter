@@ -30,13 +30,11 @@ class SpendTransactionSliderPage extends StatefulWidget {
 
 class _SpendTransactionSliderPageState
     extends State<SpendTransactionSliderPage> {
-  // State to store allocated amounts for each member
   late Map<String, double> memberAllocations;
 
   @override
   void initState() {
     super.initState();
-    // Initialize member allocations with 0.0 for each selected member
     memberAllocations = {
       for (var member in widget.selectedMembers) member['memberId']!: 0.0,
     };
@@ -44,12 +42,13 @@ class _SpendTransactionSliderPageState
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Consumer3<TransactionProvider, CliqueProvider, CliqueListProvider>(
         builder: (context, transactionProvider, cliqueProvider,
             CliqueListProvider, child) {
       return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: GradientAppBar(title: "Allocate Spend Amoung"),
+        appBar: GradientAppBar(title: "Allocate Spend Among"),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -67,17 +66,21 @@ class _SpendTransactionSliderPageState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Allocate for $memberName',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text(
+                            'Allocate for $memberName',
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.tertiary,
+                            ),
+                          ),
                           Slider(
-                            activeColor: Color(0xFFE4003A),
+                            activeColor: theme.colorScheme.secondary,
                             value: memberAllocations[memberId]!,
                             min: 0,
                             max: widget.amount.toDouble(),
                             divisions: 1000,
-                            label:
-                                memberAllocations[memberId]!.toStringAsFixed(2),
+                            label: memberAllocations[memberId]!
+                                .toStringAsFixed(2),
                             onChanged: (value) {
                               setState(() {
                                 memberAllocations[memberId] = value;
@@ -85,27 +88,33 @@ class _SpendTransactionSliderPageState
                             },
                           ),
                           TextFormField(
-                            cursorColor: const Color.fromARGB(255, 188, 5, 51),
-                            initialValue:
-                                memberAllocations[memberId]!.toStringAsFixed(2),
+                            cursorColor: theme.colorScheme.primary,
+                            initialValue: memberAllocations[memberId]!
+                                .toStringAsFixed(2),
                             keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                color: Color.fromARGB(255, 114, 4, 32),
-                              )),
+                                borderSide: BorderSide(
+                                  color: theme.colorScheme.primary,
+                                ),
+                              ),
                               focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                color: Color.fromARGB(255, 114, 4, 32),
-                              )),
-                              floatingLabelStyle: TextStyle(color: Color(0xFFE4003A)),
+                                borderSide: BorderSide(
+                                  color: theme.colorScheme.secondary,
+                                ),
+                              ),
+                              floatingLabelStyle: TextStyle(
+                                color: theme.colorScheme.tertiary,
+                              ),
                               labelText: 'Amount',
                               border: OutlineInputBorder(),
                               prefixIcon: Padding(
                                 padding:
-                                    EdgeInsets.symmetric(horizontal: 8.0),
-                                child:
-                                    Text('₹', style: TextStyle(fontSize: 18)),
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(
+                                  '₹',
+                                  style: TextStyle(fontSize: 18),
+                                ),
                               ),
                             ),
                             onChanged: (value) {
@@ -128,7 +137,8 @@ class _SpendTransactionSliderPageState
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFFFB200)),
+                  backgroundColor: theme.colorScheme.secondary,
+                ),
                 onPressed: () async {
                   double totalAmount =
                       memberAllocations.values.reduce((a, b) => a + b);
@@ -155,13 +165,12 @@ class _SpendTransactionSliderPageState
                         description: widget.description);
                     await TransactionPost.postData(tSchema, transactionProvider,
                         cliqueProvider, CliqueListProvider);
-                    // ignore: use_build_context_synchronously
                     context.pop();
                   }
                 },
                 child: Text(
                   'Submit Allocations',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: theme.textTheme.titleSmall?.color),
                 ),
               ),
             ],
