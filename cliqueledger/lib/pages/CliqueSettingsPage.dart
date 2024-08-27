@@ -22,14 +22,15 @@ class _SettingsPageState extends State<SettingsPage> {
   final List<Member> memberList = [];
   bool isEditing = false;
 
-  Future<String> setNewName(CliqueProvider cliqueProvider,String cliqueId , CliqueListProvider cliqueListProvider,String cliqeName) async{
-      int code = await CliqueApi.changeCliqueName(cliqueId, cliqeName, cliqueListProvider, context);
-      if(code == 200){
-        cliqueProvider.currentClique!.name = cliqeName;
-        return cliqeName;
-      }
-      return "";
-
+  Future<String> setNewName(CliqueProvider cliqueProvider, String cliqueId,
+      CliqueListProvider cliqueListProvider, String cliqeName) async {
+    int code = await CliqueApi.changeCliqueName(
+        cliqueId, cliqeName, cliqueListProvider, context);
+    if (code == 200) {
+      cliqueProvider.currentClique!.name = cliqeName;
+      return cliqeName;
+    }
+    return "";
   }
 
   @override
@@ -81,7 +82,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(
-                              color: theme.colorScheme.secondary, // Border color
+                              color:
+                                  theme.colorScheme.secondary, // Border color
                               width: 1.5,
                             ),
                           ),
@@ -122,7 +124,11 @@ class _SettingsPageState extends State<SettingsPage> {
                         alignment: Alignment.centerRight,
                         child: ElevatedButton(
                           onPressed: () async {
-                            String newName = await setNewName(cliqueProvider,cliqueProvider.currentClique!.id,cliqueListProvider,_nameController.text);
+                            String newName = await setNewName(
+                                cliqueProvider,
+                                cliqueProvider.currentClique!.id,
+                                cliqueListProvider,
+                                _nameController.text);
                             setState(() {
                               isEditing = false;
                             });
@@ -177,7 +183,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       final member = cliqueListProvider
                           .activeCliqueList[cliqueProvider.currentClique!.id]!
                           .members[index];
-                     
+
                       return Card(
                         color: theme.colorScheme.primary,
                         margin: EdgeInsets.symmetric(vertical: 8.0),
@@ -185,22 +191,36 @@ class _SettingsPageState extends State<SettingsPage> {
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                             Row(children: [
-                               Text(
-                                member.name,
-                                style: theme.textTheme.bodyLarge,
-                              ),
-                              const SizedBox(width: 10,),
-                             member.isAdmin ?
-                             Text("Admin",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: theme.textTheme.bodySmall?.color
+                              Row(
+                                children: [
+                                  Text(
+                                    member.name,
+                                    style: theme.textTheme.bodyLarge,
                                   ),
-                              ):Text("")
-
-                             ],),
-
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  member.isAdmin
+                                      ? Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: theme.colorScheme.secondary,
+                                            borderRadius: BorderRadius.circular(
+                                                8), // Rounded rectangle border
+                                          ),
+                                          child: Text(
+                                            "Admin",
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: theme
+                                                  .textTheme.bodySmall?.color,
+                                            ),
+                                          ),
+                                        )
+                                      : SizedBox.shrink(),
+                                ],
+                              ),
                               Text(
                                 member.email,
                                 style: theme.textTheme.bodyMedium!.copyWith(
@@ -212,7 +232,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           trailing: IconButton(
                             icon: Icon(
                               Icons.delete,
-                              color: theme.colorScheme.error, // Delete icon color
+                              color:
+                                  theme.colorScheme.error, // Delete icon color
                             ),
                             onPressed: () async {
                               await MemberApi.removeMember(
