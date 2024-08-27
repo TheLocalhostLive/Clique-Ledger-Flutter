@@ -40,10 +40,10 @@ class SocketEventHandler {
 
     Member member = cliquesProvider!.getMemberById(newMedia.senderId);
     debugPrint('member=>> ${member.userId}');
-    if(Authservice.instance.profile!.cliqueLedgerAppUid == member.userId) {
-      cliqueMediaProvider!.deleteByMediaId (newMedia.cliqueId, "DUMMY");
+    if(Authservice.instance.profile!.cliqueLedgerAppUid != member.userId) {
+      cliqueMediaProvider!.addItem(newMedia.cliqueId, newMedia);
     } 
-    cliqueMediaProvider!.addItem(newMedia.cliqueId, newMedia);
+    
   }
 
 
