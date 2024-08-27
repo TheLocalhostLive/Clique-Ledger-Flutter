@@ -5,6 +5,7 @@ import 'package:cliqueledger/api_helpers/clique_media.dart';
 import 'package:cliqueledger/models/clique_media.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/providers/clique_media_provider.dart';
+import 'package:cliqueledger/service/authservice.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -26,10 +27,11 @@ class _CliqueMediaTab extends State<CliqueMediaTab> {
   @override
   Widget build(BuildContext context) {
     String currentCliqueId = context.read<CliqueProvider>().currentClique!.id;
-    Map<String, List<CliqueMediaResponse>>? cliqueMediaMap =
-        context.watch<CliqueMediaProvider>().cliqueMediaMap;
-    if (cliqueMediaMap[currentCliqueId] == null ||
-        cliqueMediaMap[currentCliqueId]!.isEmpty) {
+    // Map<String, List<CliqueMediaResponse>>? cliqueMediaMap =
+    //     context.watch<CliqueMediaProvider>().cliqueMediaMap;
+
+    if (cliqueMediaProvider.cliqueMediaMap[currentCliqueId] == null ||
+        cliqueMediaProvider.cliqueMediaMap[currentCliqueId]!.isEmpty) {
       return const Scaffold(
           body: Center(
         child: (Text("No media yet")),
@@ -69,17 +71,22 @@ class MediaCards extends StatelessWidget {
     List<CliqueMediaResponse>? medias =
         context.read<CliqueMediaProvider>().cliqueMediaMap[currentCliqueId];
 
-    return ListView.builder(
-      itemCount: medias!.length,
-      itemBuilder: (context, index) {
-        return MediaCard(
-            media: medias[index],
-            labelText: context
-                .read<CliqueProvider>()
-                .getMemberById(medias[index].senderId)
-                .name);
-      },
-    );
+    return Consumer<CliqueMediaProvider>(
+        builder: (context, child, cliqueMediaProvider) {
+      return ListView.builder(
+          itemCount: medias!.length,
+          itemBuilder: (context, index) {
+            if (medias[index].mediaId != "DUMMY") {
+              return MediaCard(
+                  media: medias[index],
+                  labelText: context
+                      .read<CliqueProvider>()
+                      .getMemberById(medias[index].senderId)
+                      .name);
+            }
+            return ImageWithLoadingOverlay(imageUrl: medias[index].fileUrl);
+          });
+    });
   }
 }
 
@@ -159,6 +166,40 @@ class MediaCard extends StatelessWidget {
   }
 }
 
+class ImageWithLoadingOverlay extends StatelessWidget {
+  final String imageUrl;
+
+  ImageWithLoadingOverlay({required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Image.file(
+          File(imageUrl),
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Icon(Icons
+                .error); // Display an error icon if the image fails to load
+          },
+        ),
+        // Loading indicator overlay
+        Positioned(
+          child: Container(
+            color: Colors.black.withOpacity(0.5), // Semi-transparent overlay
+            child: Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class FullScreenImageView extends StatelessWidget {
   final String imageUrl;
 
@@ -209,104 +250,85 @@ class PickImage {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Scaffold(
-              backgroundColor: Colors.black,
-              body: Stack(
-                children: [
-                  Center(
-                    child: InteractiveViewer(
-                      panEnabled: true, // Enable panning
-                      scaleEnabled: true, // Enable scaling (zooming)
-                      minScale: 0.5, // Minimum zoom scale
-                      maxScale: 4.0, // Maximum zoom scale
-                      child: Image.file(
-                        File(cliqueMediaProvider.filePath),
-                        fit: BoxFit.contain,
-                      ),
-                    ),
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: Stack(
+            children: [
+              Center(
+                child: InteractiveViewer(
+                  panEnabled: true, // Enable panning
+                  scaleEnabled: true, // Enable scaling (zooming)
+                  minScale: 0.5, // Minimum zoom scale
+                  maxScale: 4.0, // Maximum zoom scale
+                  child: Image.file(
+                    File(cliqueMediaProvider.filePath),
+                    fit: BoxFit.contain,
                   ),
-                  Positioned(
-                    top: 40, // Position the back button below the status bar
-                    left: 20,
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Close the dialog
-                      },
-                    ),
-                  ),
-                  if (isLoading)
-                    Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    ),
-                  Positioned(
-                    bottom: 40,
-                    left: 20,
-                    right: 20,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          bottom:
-                              20), // Add padding to create space at the bottom
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Close the dialog
-                            },
-                            child: const Text(
-                              'Cancel',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: isLoading
-                                ? null
-                                : () async {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-
-                                    CliqueMediaResponse? response =
-                                        await CliqueMedia.uploadFile(
-                                            File(cliqueMediaProvider.filePath),
-                                            selectedClique);
-
-                                    if (!context.mounted) return;
-
-                                    setState(() {
-                                      isLoading = false;
-                                    });
-
-                                    if (response != null) {
-                                      cliqueMediaProvider.addItem(
-                                          cliqueProvider.currentClique!.id,
-                                          response);
-                                    } else {
-                                      debugPrint(
-                                          "Media-tab: Response was null");
-                                    }
-
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                  },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green, // Button color
-                            ),
-                            child: const Text('Send'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            );
-          },
+              Positioned(
+                top: 40, // Position the back button below the status bar
+                left: 20,
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                ),
+              ),
+              Positioned(
+                bottom: 40,
+                left: 20,
+                right: 20,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      bottom: 20), // Add padding to create space at the bottom
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          File file = File(cliqueMediaProvider.filePath);
+
+                          String cliqueId = cliqueProvider.currentClique!.id;
+                          CliqueMedia.uploadFile(file, cliqueId);
+
+                          String uid =
+                              Authservice.instance.profile!.cliqueLedgerAppUid;
+
+                          CliqueMediaResponse dummyData = CliqueMediaResponse(
+                              mediaId: "DUMMY",
+                              cliqueId: cliqueId,
+                              fileUrl: cliqueMediaProvider.filePath,
+                              createdAt: DateTime.now().toString(),
+                              mediaType: "application/octet-stream",
+                              senderId: cliqueProvider
+                                  .getMemberByUserId(uid)
+                                  .memberId);
+                          cliqueMediaProvider.addItem(cliqueId, dummyData);
+                          debugPrint("Dummy data added");
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green, // Button color
+                        ),
+                        child: const Text('Send'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
