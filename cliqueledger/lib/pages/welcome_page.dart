@@ -5,40 +5,58 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class WelcomePage extends StatelessWidget {
-  
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-        child: Column(
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final screenWidth = MediaQuery.of(context).size.width;
 
-      children: [
-        const SizedBox(height: 30,),
-        Padding(padding: EdgeInsets.all(20),
-          child: Image.asset("assets/images/take_love_red.png",
-          height: 400,
-          width: 400,
+    // Calculate font size based on screen width
+    final double fontSize = screenWidth * 0.1; // Adjust the multiplier as needed
+
+    return Material(
+      child: Column(
+        children: [
+          const SizedBox(height: 30),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Image.asset(
+              "assets/images/get_started.png",
+              height: 400,
+              width: 400,
+            ),
           ),
-        ),
-        const SizedBox(height: 30,),
-        Text(
-          "Welcome to Cliqeue Ledger",
-          
-          style: TextStyle(fontSize: 55.0,
-          fontFamily: GoogleFonts.qwitcherGrypen().fontFamily,
+          const SizedBox(height: 30),
+          Text(
+            "Welcome to",
+            style: textTheme.displayMedium?.copyWith(
+              fontSize: fontSize, // Adjusting for the first line
+              fontFamily: GoogleFonts.dancingScript().fontFamily,
+              color: theme.textTheme.bodyLarge?.color,
+            ),
           ),
-        ),
-        const SizedBox(height: 30,),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFFFFB200)
+          Text(
+            "Clique Ledger",
+            style: textTheme.displayMedium?.copyWith(
+              fontSize: fontSize * 1.7, // Full size for the second line
+              fontFamily: GoogleFonts.dancingScript().fontFamily,
+              color: theme.textTheme.bodyLarge?.color,
+            ),
           ),
-          child: const Text("Get Started",style: TextStyle(color: Colors.white,),),
-          onPressed: () {
-            context.push(RoutersConstants.SIGNUP_PAGE_ROUTE);
-          },
-        )
-      ],
-    ));
+          const SizedBox(height: 30),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.colorScheme.secondary,
+              foregroundColor: theme.textTheme.titleSmall?.color,
+            ),
+            child: const Text("Get Started"),
+            onPressed: () {
+              context.push(RoutersConstants.SIGNUP_PAGE_ROUTE);
+            },
+          )
+        ],
+      ),
+    );
   }
 }
