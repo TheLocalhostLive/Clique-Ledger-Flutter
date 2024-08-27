@@ -427,13 +427,12 @@ class _CliquepageState extends State<Cliquepage>
   @override
   Widget build(BuildContext context) {
     ReportsProvider reportsProvider = Provider.of<ReportsProvider>(context);
-    CliqueMediaProvider cliqueMediaProvider =
-        Provider.of<CliqueMediaProvider>(context);
+    // CliqueMediaProvider cliqueMediaProvider =
+    //     Provider.of<CliqueMediaProvider>(context);
     ThemeData theme = Theme.of(context);
-
-    return Consumer3<CliqueListProvider, CliqueProvider, TransactionProvider>(
+    return Consumer4<CliqueListProvider, CliqueProvider, TransactionProvider, CliqueMediaProvider>(
       builder: (context, cliqueListProvider, cliqueProvider,
-          transactionProvider, child) {
+          transactionProvider, cliqueMediaProvider, child) {
         return DefaultTabController(
           length: 3,
           child: Scaffold(

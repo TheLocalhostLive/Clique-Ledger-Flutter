@@ -11,6 +11,7 @@ import 'package:cliqueledger/models/transaction.dart';
 import 'package:cliqueledger/providers/CliqueListProvider.dart';
 import 'package:cliqueledger/providers/TransactionProvider.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
+import 'package:cliqueledger/providers/clique_media_provider.dart';
 import 'package:cliqueledger/service/socket_service.dart';
 import 'package:cliqueledger/themes/appBarTheme.dart';
 import 'package:cliqueledger/utility/routers_constant.dart';
@@ -35,7 +36,8 @@ class _DashboardState extends State<Dashboard>
   late TransactionProvider transactionProvider;
   late CliqueListProvider cliqueListProvider;
   late TabController _tabController;
-
+  late CliqueMediaProvider cliqueMediaProvider;
+  late CliqueProvider  cliqueProvider;
   final CliqueList cliqueList = CliqueList();
 
   bool isCliquesLoading = true;
@@ -45,12 +47,16 @@ class _DashboardState extends State<Dashboard>
     super.didChangeDependencies();
     transactionProvider = Provider.of<TransactionProvider>(context);
     cliqueListProvider = Provider.of<CliqueListProvider>(context);
+    cliqueMediaProvider = Provider.of<CliqueMediaProvider>(context);
+    cliqueProvider = Provider.of<CliqueProvider>(context);
   }
 
   void _initSocket() {
     SocketService.instance.connectAndListen();
     SocketService.transactionProvider = transactionProvider;
-    SocketService.cliquesProvider = cliqueListProvider;
+    SocketService.cliqueListProvider = cliqueListProvider;
+    SocketService.cliqueProvider = cliqueProvider;
+    SocketService.cliqueMediaProvider = cliqueMediaProvider;
     List<String> rooms = cliqueListProvider.activeCliqueList.keys.toList();
 
     SocketService.instance.joinRooms(rooms);
@@ -248,8 +254,10 @@ class _DashboardState extends State<Dashboard>
         appBar: AppBar(
           actions: <Widget>[
             IconButton(
-              onPressed: () {
+              onPressed: () async {
                 themeProvider.toggleMode();
+                await Authservice.instance.logout();
+                context.go(RoutersConstants.SIGNUP_PAGE_ROUTE);
               },
               icon: Icon(
                 theme.brightness == Brightness.dark
