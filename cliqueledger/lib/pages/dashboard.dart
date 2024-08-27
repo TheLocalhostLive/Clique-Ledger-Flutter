@@ -364,6 +364,7 @@ class _LedgerTabState extends State<LedgerTab> {
               elevation: 10.0,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5)),
+                  shadowColor: Color.fromARGB(255, 158, 158, 158),
               child: InkWell(
                   borderRadius: BorderRadius.circular(5),
                   onTap: () {
