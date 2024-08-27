@@ -6,7 +6,6 @@ import 'package:cliqueledger/models/clique_media.dart';
 import 'package:cliqueledger/models/member.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/providers/clique_media_provider.dart';
-import 'package:cliqueledger/providers/media_loading_provider.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
