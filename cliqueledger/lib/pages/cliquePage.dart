@@ -439,7 +439,7 @@ class _CliquepageState extends State<Cliquepage>
           child: Scaffold(
             appBar: AppBar(
               title: Text(
-                "Clique Ledger",
+                cliqueProvider.currentClique?.name ?? "Clique Ledger",
                 style: TextStyle(
                   color: theme.textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.bold,
