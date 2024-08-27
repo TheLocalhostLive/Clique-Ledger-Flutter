@@ -430,7 +430,8 @@ class _CliquepageState extends State<Cliquepage>
     // CliqueMediaProvider cliqueMediaProvider =
     //     Provider.of<CliqueMediaProvider>(context);
     ThemeData theme = Theme.of(context);
-    return Consumer4<CliqueListProvider, CliqueProvider, TransactionProvider, CliqueMediaProvider>(
+    return Consumer4<CliqueListProvider, CliqueProvider, TransactionProvider,
+        CliqueMediaProvider>(
       builder: (context, cliqueListProvider, cliqueProvider,
           transactionProvider, cliqueMediaProvider, child) {
         return DefaultTabController(
@@ -727,7 +728,7 @@ class TransactionsTab extends StatelessWidget {
                         left: 0,
                         child: Text(
                           tx.sender.name,
-                          style:  TextStyle(
+                          style: TextStyle(
                             fontSize: 13.0,
                             fontWeight: FontWeight.bold,
                             color: theme.textTheme.bodyLarge?.color,
@@ -756,10 +757,9 @@ class TransactionsTab extends StatelessWidget {
                             Text(
                               tx.description,
                               style: TextStyle(
-                                color: theme.textTheme.bodyMedium?.color,
-                                fontSize: 14.0,
-                                overflow: TextOverflow.ellipsis
-                              ),
+                                  color: theme.textTheme.bodyMedium?.color,
+                                  fontSize: 14.0,
+                                  overflow: TextOverflow.ellipsis),
                             ),
                             const SizedBox(
                                 height:
@@ -821,7 +821,6 @@ class _ReportTabState extends State<ReportTab> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDarkTheme = theme.brightness == Brightness.dark;
 
     return Scaffold(
       body: ListView.builder(
@@ -835,16 +834,17 @@ class _ReportTabState extends State<ReportTab> {
               ExpansionTile(
                 title: Row(
                   children: [
-                    Container(
-                      width: 80,
+                    // Wrapping Text widgets with Expanded to prevent overflow
+                    Expanded(
+                      flex: 2,
                       child: Text(
                         report.userName,
                         style: theme.textTheme.bodyMedium,
                       ),
                     ),
-                    const SizedBox(width: 80),
-                    Container(
-                      width: 50,
+                    const SizedBox(width: 10), // Adjust width as necessary
+                    Expanded(
+                      flex: 1,
                       child: Text(
                         report.isDue ? "Due" : "Extra",
                         style: theme.textTheme.bodyMedium!.copyWith(
@@ -855,10 +855,14 @@ class _ReportTabState extends State<ReportTab> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 50),
-                    Text(
-                      '${report.amount}',
-                      style: theme.textTheme.bodyMedium,
+                    const SizedBox(width: 10), // Adjust width as necessary
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        '${report.amount}',
+                        style: theme.textTheme.bodyMedium,
+                        textAlign: TextAlign.right, // Align text to the right
+                      ),
                     ),
                   ],
                 ),
@@ -870,14 +874,13 @@ class _ReportTabState extends State<ReportTab> {
                   }
                 },
                 children: report.detailsReport?.map((details) {
-                      // Determine the color based on sendAmount for each detail
-                      Color detailTileColor = details.sendAmount == null
-                          ? Color.fromRGBO(222, 75, 95, 0.2)
-                          : Color.fromRGBO(99, 220, 190, 0.2);
+                      Color detailTileColor =
+                          details.sendAmount == null || details.sendAmount == 0
+                              ? Color.fromRGBO(222, 75, 95, 0.2)
+                              : Color.fromRGBO(99, 220, 190, 0.2);
 
                       return ListTile(
-                        tileColor:
-                            detailTileColor, // Set tile color here for each ListTile
+                        tileColor: detailTileColor,
                         title: Text(
                           details.transactionId,
                           style: theme.textTheme.bodyMedium,
