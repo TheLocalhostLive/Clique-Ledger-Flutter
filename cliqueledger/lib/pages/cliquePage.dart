@@ -751,7 +751,8 @@ class ReportTab extends StatefulWidget {
   final CliqueProvider cliqueProvider;
   final ReportsProvider reportsProvider;
 
-  ReportTab({Key? key, required this.cliqueProvider, required this.reportsProvider})
+  ReportTab(
+      {Key? key, required this.cliqueProvider, required this.reportsProvider})
       : super(key: key);
 
   @override
@@ -787,14 +788,9 @@ class _ReportTabState extends State<ReportTab> {
         itemBuilder: (context, index) {
           AbstructReport report = reportsProvider
               .reportList[cliqueProvider.currentClique!.id]![index];
-          Color tileColor = report.isDue
-              ? Color.fromRGBO(239, 90, 111, 0.2)
-              : Color.fromRGBO(119, 228, 200, 0.2);
-
           return Column(
             children: [
               ExpansionTile(
-                backgroundColor: tileColor,
                 title: Row(
                   children: [
                     Container(
@@ -827,14 +823,19 @@ class _ReportTabState extends State<ReportTab> {
                 onExpansionChanged: (bool expanded) async {
                   if (expanded) {
                     report.detailsReport ??
-                        await getDetailsReport(
-                            cliqueProvider.currentClique!.id,
-                            report.memberId,
-                            reportsProvider);
+                        await getDetailsReport(cliqueProvider.currentClique!.id,
+                            report.memberId, reportsProvider);
                   }
                 },
                 children: report.detailsReport?.map((details) {
+                      // Determine the color based on sendAmount for each detail
+                      Color detailTileColor = details.sendAmount == null
+                          ? Color.fromRGBO(222, 75, 95, 0.2)
+                          : Color.fromRGBO(99, 220, 190, 0.2);
+
                       return ListTile(
+                        tileColor:
+                            detailTileColor, // Set tile color here for each ListTile
                         title: Text(
                           details.transactionId,
                           style: theme.textTheme.bodyMedium,
