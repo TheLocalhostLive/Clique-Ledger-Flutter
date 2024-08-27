@@ -358,18 +358,24 @@ class _LedgerTabState extends State<LedgerTab> {
   showDialog(
     context: context,
     builder: (BuildContext context) {
+       final ThemeData theme = Theme.of(context);
+       final Color secondaryColor = theme.colorScheme.secondary;
+       final Color surfaceColor = theme.colorScheme.surface;
+       final Color onSurfaceColor = theme.colorScheme.onSurface;
+       final Color tertiaryColor = theme.colorScheme.tertiary;
+
       return AlertDialog(
         title: const Text('Delete Clique'),
         content: const Text('Are you sure you want to delete this Clique?'),
         actions: <Widget>[
           TextButton(
-            child: const Text('Cancel',style: TextStyle(color: Color.fromARGB(255, 161, 2, 41),),),
+            child: Text('Cancel',style: TextStyle(color: secondaryColor,),),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
           TextButton(
-            child: const Text('Delete',style: TextStyle(color: Color(0xFFFFB200) ),),
+            child: Text('Delete',style: TextStyle(color: tertiaryColor ),),
             onPressed: ()  async{
               await CliqueDelete.deleteClique(clique,cliqueListProvider,context);
               Navigator.of(context).pop();
