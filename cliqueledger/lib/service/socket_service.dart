@@ -21,7 +21,7 @@ class SocketService {
   static CliqueProvider? cliqueProvider;
 
   final Map<String, dynamic> _eventHandlerMap = {
-    "transaction-created": (data) => SocketEventHandler.handleCreateTranscation(data, transactionProvider),
+    "transaction-created": (data) => SocketEventHandler.handleCreateTranscation(data, transactionProvider, cliqueListProvider),
     "transaction-deleted": SocketEventHandler.handleDeleteTransaction,
     "transaction-accepted": SocketEventHandler.handleAcceptTransaction,
     "transaction-rejected": SocketEventHandler.handleRejectTransaction,
