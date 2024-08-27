@@ -228,7 +228,8 @@ class _DashboardState extends State<Dashboard>
               ),
               onPressed: () async {
                 await Authservice.instance.logout();
-                Navigator.of(context).pop();
+                // ignore: use_build_context_synchronously
+                context.go(RoutersConstants.SIGNUP_PAGE_ROUTE);
               },
             ),
           ],
