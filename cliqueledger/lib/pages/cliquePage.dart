@@ -701,7 +701,16 @@ class TransactionsTab extends StatelessWidget {
     final theme = Theme.of(context);
     final currentUserId = Authservice.instance.profile!.cliqueLedgerAppUid;
 
+    final ScrollController _scrollController = ScrollController();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
+    });
+
     return ListView(
+      controller: _scrollController,
       children: transactions.map((tx) {
         bool isCurrentUserSender = tx.sender.userId == currentUserId;
 
