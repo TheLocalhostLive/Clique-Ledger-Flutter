@@ -755,8 +755,8 @@ class TransactionsTab extends StatelessWidget {
                           children: [
                             Text(
                               tx.description,
-                              style: const TextStyle(
-                                color: Colors.grey,
+                              style: TextStyle(
+                                color: theme.textTheme.bodyMedium?.color,
                                 fontSize: 14.0,
                                 overflow: TextOverflow.ellipsis
                               ),
@@ -768,8 +768,8 @@ class TransactionsTab extends StatelessWidget {
                               alignment: Alignment.bottomRight,
                               child: Text(
                                 'Date: ${DateFormat('yyyy-MM-dd HH:mm').format(tx.date.toLocal())}',
-                                style: const TextStyle(
-                                  color: Colors.grey,
+                                style: TextStyle(
+                                  color: theme.textTheme.bodySmall?.color,
                                   fontSize: 12.0,
                                 ),
                               ),
