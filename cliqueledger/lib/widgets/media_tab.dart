@@ -153,8 +153,8 @@ class MediaCard extends StatelessWidget {
                   alignment: Alignment.bottomRight,
                   child: Text(
                     'Date: ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(media.createdAt).toLocal())}',
-                    style: const TextStyle(
-                      color: Colors.grey,
+                    style: TextStyle(
+                      color: theme.textTheme.bodySmall?.color,
                       fontSize: 12.0,
                     ),
                   ),
