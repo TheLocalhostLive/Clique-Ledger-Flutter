@@ -6,6 +6,7 @@ import 'package:cliqueledger/models/clique_media.dart';
 import 'package:cliqueledger/models/member.dart';
 import 'package:cliqueledger/providers/cliqueProvider.dart';
 import 'package:cliqueledger/providers/clique_media_provider.dart';
+import 'package:cliqueledger/providers/media_loading_provider.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -261,99 +262,135 @@ class PickImage {
         context.read<CliqueMediaProvider>();
     CliqueProvider cliqueProvider = context.read<CliqueProvider>();
     String selectedClique = cliqueProvider.currentClique!.id;
-    bool isLoading = false;
 
     ThemeData theme = Theme.of(context);
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Scaffold(
-          backgroundColor: Colors.black,
-          body: Stack(
-            children: [
-              Center(
-                child: InteractiveViewer(
-                  panEnabled: true, // Enable panning
-                  scaleEnabled: true, // Enable scaling (zooming)
-                  minScale: 0.5, // Minimum zoom scale
-                  maxScale: 4.0, // Maximum zoom scale
-                  child: Image.file(
-                    File(cliqueMediaProvider.filePath),
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 40, // Position the back button below the status bar
-                left: 20,
-                
-                child: IconButton(
-                  icon: Icon(Icons.close,color: Colors.white),
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
-                  style: IconButton.styleFrom(
-                    shadowColor: Colors.black,
-                    backgroundColor: const Color.fromRGBO(0,0,0,0.2)
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 40,
-                left: 20,
-                right: 20,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      bottom: 20), // Add padding to create space at the bottom
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          File file = File(cliqueMediaProvider.filePath);
-
-                          String cliqueId = cliqueProvider.currentClique!.id;
-                          CliqueMedia.uploadFile(file, cliqueId);
-
-                          String uid =
-                              Authservice.instance.profile!.cliqueLedgerAppUid;
-
-                          CliqueMediaResponse dummyData = CliqueMediaResponse(
-                              mediaId: "DUMMY",
-                              cliqueId: cliqueId,
-                              fileUrl: cliqueMediaProvider.filePath,
-                              createdAt: DateTime.now().toString(),
-                              mediaType: "application/octet-stream",
-                              senderId: cliqueProvider
-                                  .getMemberByUserId(uid)
-                                  .memberId);
-                          cliqueMediaProvider.addItem(cliqueId, dummyData);
-                          debugPrint("Dummy data added");
-                          Navigator.of(context).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.primary, // Button color
-                        ),
-                        child: Text('Send', style: TextStyle(
-                          color: theme.textTheme.titleSmall?.color
-                        ),),
+        bool isLoading = false; // Loading state variable
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Scaffold(
+              backgroundColor: Colors.black,
+              body: Stack(
+                children: [
+                  Center(
+                    child: InteractiveViewer(
+                      panEnabled: true, // Enable panning
+                      scaleEnabled: true, // Enable scaling (zooming)
+                      minScale: 0.5, // Minimum zoom scale
+                      maxScale: 4.0, // Maximum zoom scale
+                      child: Image.file(
+                        File(cliqueMediaProvider.filePath),
+                        fit: BoxFit.contain,
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                  Positioned(
+                    top: 40, // Position the back button below the status bar
+                    left: 20,
+                    child: IconButton(
+                      icon: Icon(Icons.close, color: Colors.white),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                      style: IconButton.styleFrom(
+                          shadowColor: Colors.black,
+                          backgroundColor:
+                              const Color.fromRGBO(0, 0, 0, 0.2)),
+                    ),
+                  ),
+                  // Loading icon
+                  if (isLoading)
+                    const Positioned(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  Positioned(
+                    bottom: 40,
+                    left: 20,
+                    right: 20,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          bottom:
+                              20), // Add padding to create space at the bottom
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton(
+                            
+                            onPressed: () async {
+                              setState(() {
+                                isLoading = true; // Show loading indicator
+                              });
+
+                              File file = File(cliqueMediaProvider.filePath);
+                              String cliqueId =
+                                  cliqueProvider.currentClique!.id;
+                              String uid = Authservice
+                                  .instance.profile!.cliqueLedgerAppUid;
+
+                              // CliqueMediaResponse dummyData =
+                              //     CliqueMediaResponse(
+                              //         mediaId: "DUMMY",
+                              //         cliqueId: cliqueId,
+                              //         fileUrl: cliqueMediaProvider.filePath,
+                              //         createdAt: DateTime.now().toString(),
+                              //         mediaType: "application/octet-stream",
+                              //         senderId: cliqueProvider
+                              //             .getMemberByUserId(uid)
+                              //             .memberId);
+                              // cliqueMediaProvider.addItem(cliqueId, dummyData);
+                              // debugPrint("Dummy data added");
+
+                              CliqueMediaResponse? newMedia =
+                                  await CliqueMedia.uploadFile(
+                                      file, cliqueId);
+
+                              // Hide loading indicator
+                              setState(() {
+                                isLoading = false;
+                              });
+
+                              // cliqueMediaProvider.deleteByMediaId(
+                              //     newMedia!.cliqueId, "DUMMY");
+                              if(newMedia == null) return;
+
+                              cliqueMediaProvider.addItem(
+                                  newMedia.cliqueId, newMedia);
+
+                              Navigator.of(context).pop();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  theme.colorScheme.primary, // Button color
+                            ),
+                            
+                            child: Text(
+                              'Send',
+                              style: TextStyle(
+                                  color:
+                                      theme.textTheme.titleSmall?.color),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
   void showImagePickerOption(BuildContext context) {
-    
     ThemeData theme = Theme.of(context);
-    
+
     showModalBottomSheet(
         backgroundColor: theme.colorScheme.surface,
         context: context,
