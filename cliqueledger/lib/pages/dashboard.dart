@@ -248,9 +248,7 @@ class _DashboardState extends State<Dashboard>
   Widget build(BuildContext context) {
     var themeProvider = Provider.of<ThemeProvider>(context);
     var theme = themeProvider.themeData;
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           actions: <Widget>[
             IconButton(
@@ -292,26 +290,8 @@ class _DashboardState extends State<Dashboard>
         ),
         body: Column(
           children: [
-            TabBar(
-                indicatorColor: theme.colorScheme.secondary,
-                controller: _tabController,
-                tabs: [
-                  Tab(
-                    child: Text(
-                      "Active Clique",
-                      style: TextStyle(color: theme.colorScheme.tertiary),
-                    ),
-                  ),
-                  Tab(
-                    child: Text("Finished Clique",
-                        style: TextStyle(color: theme.colorScheme.tertiary)),
-                  )
-                ]),
             Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  isCliquesLoading
+              child:  isCliquesLoading
                       ? const Center(
                           child: CircularProgressIndicator(),
                         )
@@ -321,31 +301,16 @@ class _DashboardState extends State<Dashboard>
                             )
                           : LedgerTab(
                               cliqueList: cliqueListProvider.activeCliqueList),
-                  cliqueListProvider.finishedCliqueList.isEmpty
-                      ? const Center(
-                          child: Text("No Ledgers to Show"),
-                        )
-                      : LedgerTab(
-                          cliqueList: cliqueListProvider.finishedCliqueList)
-                ],
-              ),
             ),
           ],
         ),
-        floatingActionButton: IndexedStack(
-          index: _tabController.index,
-          children: [
-            FloatingActionButton(
+        floatingActionButton: FloatingActionButton(
               onPressed: () => _createClique(context),
               tooltip: 'Create Clique',
-              child: const Icon(Icons.add, color: Colors.white),
               backgroundColor: theme.colorScheme.secondary,
+              child: const Icon(Icons.add, color: Colors.white),
             ),
-            Text("")
-          ],
-        ),
-      ),
-    );
+        );
   }
 }
 
