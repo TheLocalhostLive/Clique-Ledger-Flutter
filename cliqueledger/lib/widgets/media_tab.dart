@@ -100,6 +100,8 @@ class MediaCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Get the screen width
     double screenWidth = MediaQuery.of(context).size.width;
+    
+    ThemeData theme = Theme.of(context); 
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
@@ -114,7 +116,7 @@ class MediaCard extends StatelessWidget {
             ),
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 254, 246, 235),
+              color: theme.colorScheme.primary,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -122,9 +124,9 @@ class MediaCard extends StatelessWidget {
               children: [
                 Text(
                   labelText,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13.0,
-                    color: Color.fromARGB(255, 146, 12, 2),
+                    color: theme.textTheme.bodyLarge?.color,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -247,6 +249,8 @@ class PickImage {
     String selectedClique = cliqueProvider.currentClique!.id;
     bool isLoading = false;
 
+    ThemeData theme = Theme.of(context);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -269,11 +273,16 @@ class PickImage {
               Positioned(
                 top: 40, // Position the back button below the status bar
                 left: 20,
+                
                 child: IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  icon: Icon(Icons.close,color: Colors.white),
                   onPressed: () {
                     Navigator.of(context).pop(); // Close the dialog
                   },
+                  style: IconButton.styleFrom(
+                    shadowColor: Colors.black,
+                    backgroundColor: const Color.fromRGBO(0,0,0,0.2)
+                  ),
                 ),
               ),
               Positioned(
@@ -284,17 +293,8 @@ class PickImage {
                   padding: const EdgeInsets.only(
                       bottom: 20), // Add padding to create space at the bottom
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
                       ElevatedButton(
                         onPressed: () {
                           File file = File(cliqueMediaProvider.filePath);
@@ -319,9 +319,11 @@ class PickImage {
                           Navigator.of(context).pop();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green, // Button color
+                          backgroundColor: theme.colorScheme.primary, // Button color
                         ),
-                        child: const Text('Send'),
+                        child: Text('Send', style: TextStyle(
+                          color: theme.textTheme.titleSmall?.color
+                        ),),
                       ),
                     ],
                   ),
@@ -335,8 +337,11 @@ class PickImage {
   }
 
   void showImagePickerOption(BuildContext context) {
+    
+    ThemeData theme = Theme.of(context);
+    
     showModalBottomSheet(
-        backgroundColor: const Color(0xFFFFB200),
+        backgroundColor: theme.colorScheme.surface,
         context: context,
         builder: (builder) {
           return Padding(

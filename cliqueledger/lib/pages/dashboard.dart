@@ -256,8 +256,6 @@ class _DashboardState extends State<Dashboard>
             IconButton(
               onPressed: () async {
                 themeProvider.toggleMode();
-                await Authservice.instance.logout();
-                context.go(RoutersConstants.SIGNUP_PAGE_ROUTE);
               },
               icon: Icon(
                 theme.brightness == Brightness.dark
