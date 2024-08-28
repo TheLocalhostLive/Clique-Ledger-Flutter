@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 package="com.core.cliqueledger">
     <application
-        android:label="cliqueledger"
+        android:label="Clique Ledger"
         android:name="com.core.cliqueledger.CliqueLedgerApplication"
         android:icon="@mipmap/ic_launcher">
         <activity
