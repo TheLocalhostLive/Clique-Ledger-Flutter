@@ -4,7 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 
 class Signup extends StatefulWidget {
+  const Signup({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _SignupState createState() => _SignupState();
 }
 
@@ -12,7 +15,7 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    ValueNotifier<bool> changedButton = ValueNotifier(false);
+   
 
     return Material(
       child: SingleChildScrollView(
@@ -52,11 +55,14 @@ class _SignupState extends State<Signup> {
                 // Check if login/signup was successful
                 if (Authservice.instance.loginInfo.isLoggedIn) {
                   // Navigate to the dashboard
+                  // ignore: use_build_context_synchronously
                   context.push('/dashboard');
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Login successful', style: TextStyle(color: theme.textTheme.bodyLarge!.color))),
                   );
                 } else {
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Login failed', style: TextStyle(color: theme.textTheme.bodyLarge!.color))),
                   );

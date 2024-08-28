@@ -1,27 +1,24 @@
-import 'dart:io';
 
 import 'package:cliqueledger/themes/theme_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:cliqueledger/api_helpers/cliqueDelete.dart';
-import 'package:cliqueledger/api_helpers/createCliquePost.dart';
-import 'package:cliqueledger/api_helpers/fetchCliqeue.dart';
+import 'package:cliqueledger/api_helpers/clique_delete.dart';
+import 'package:cliqueledger/api_helpers/create_cliique_post.dart';
+import 'package:cliqueledger/api_helpers/fetch_cliqeue.dart';
 import 'package:cliqueledger/models/cliqeue.dart';
-import 'package:cliqueledger/models/cliquePostSchema.dart';
-import 'package:cliqueledger/models/transaction.dart';
-import 'package:cliqueledger/providers/CliqueListProvider.dart';
-import 'package:cliqueledger/providers/TransactionProvider.dart';
-import 'package:cliqueledger/providers/cliqueProvider.dart';
+import 'package:cliqueledger/models/clique_post_schema.dart';
+import 'package:cliqueledger/providers/Clique_list_provider.dart';
+import 'package:cliqueledger/providers/transaction_provider.dart';
+import 'package:cliqueledger/providers/clique_provider.dart';
 import 'package:cliqueledger/providers/clique_media_provider.dart';
 import 'package:cliqueledger/service/socket_service.dart';
-import 'package:cliqueledger/themes/appBarTheme.dart';
+
 import 'package:cliqueledger/utility/routers_constant.dart';
-import 'package:flutter/material.dart';
+
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -193,7 +190,8 @@ class _DashboardState extends State<Dashboard>
                       CliquePostSchema cls = amount.isEmpty
                           ? CliquePostSchema(name: cliqueName, fund: "0")
                           : CliquePostSchema(name: cliqueName, fund: amount);
-                      await createCliquePost.postData(cls, cliqueListProvider);
+                      await createCliquePost.postData(cls, cliqueListProvider,context);
+                      // ignore: use_build_context_synchronously
                       Navigator.of(context).pop();
                     }
                   },
@@ -215,20 +213,19 @@ class _DashboardState extends State<Dashboard>
         Color secondaryColor = theme.colorScheme.secondary;
 
         return AlertDialog(
-          title: Text("Confirm Logout"),
-          content: Text("Are you sure you want to logout?"),
+          title: const Text("Confirm Logout"),
+          content: const Text("Are you sure you want to logout?"),
           actions: <Widget>[
             TextButton(
-              child: Text("Cancel"),
               style: TextButton.styleFrom(
                 foregroundColor: secondaryColor, // Color for the Cancel button
               ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              child: const Text("Cancel"),
             ),
             TextButton(
-              child: Text("Confirm"),
               style: TextButton.styleFrom(
                 foregroundColor: tertiaryColor, // Color for the Confirm button
               ),
@@ -237,6 +234,7 @@ class _DashboardState extends State<Dashboard>
                 // ignore: use_build_context_synchronously
                 context.go(RoutersConstants.SIGNUP_PAGE_ROUTE);
               },
+              child: const Text("Confirm"),
             ),
           ],
         );
@@ -264,7 +262,7 @@ class _DashboardState extends State<Dashboard>
             ),
             IconButton(
               onPressed: _confirmLogout,
-              icon: Icon(IconData(0xe3b3, fontFamily: 'MaterialIcons')),
+              icon: const Icon(IconData(0xe3b3, fontFamily: 'MaterialIcons')),
               color: theme.textTheme.bodyLarge?.color,
             )
           ],
@@ -317,7 +315,7 @@ class _DashboardState extends State<Dashboard>
 class LedgerTab extends StatefulWidget {
   final Map<String, Clique> cliqueList;
 
-  const LedgerTab({required this.cliqueList});
+  const LedgerTab({super.key, required this.cliqueList});
   
 
   @override
@@ -331,8 +329,6 @@ class _LedgerTabState extends State<LedgerTab> {
     builder: (BuildContext context) {
        final ThemeData theme = Theme.of(context);
        final Color secondaryColor = theme.colorScheme.secondary;
-       final Color surfaceColor = theme.colorScheme.surface;
-       final Color onSurfaceColor = theme.colorScheme.onSurface;
        final Color tertiaryColor = theme.colorScheme.tertiary;
 
       return AlertDialog(
@@ -349,6 +345,7 @@ class _LedgerTabState extends State<LedgerTab> {
             child: Text('Delete',style: TextStyle(color: tertiaryColor ),),
             onPressed: ()  async{
               await CliqueDelete.deleteClique(clique,cliqueListProvider,context);
+              // ignore: use_build_context_synchronously
               Navigator.of(context).pop();
             },
           ),
@@ -365,14 +362,14 @@ class _LedgerTabState extends State<LedgerTab> {
     return ListView(
       children: widget.cliqueList.values.map((clique) {
         return Center(
-          child: Container(
+          child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.95,
             height: 100,
             child: Card(
               elevation: 10.0,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5)),
-                  shadowColor: Color.fromARGB(255, 158, 158, 158),
+                  shadowColor: const Color.fromARGB(255, 158, 158, 158),
               child: InkWell(
                   borderRadius: BorderRadius.circular(5),
                   onLongPress: () async {

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:cliqueledger/models/abstructReport.dart';
-import 'package:cliqueledger/models/detailsReport.dart';
-import 'package:cliqueledger/providers/reportsProvider.dart';
+import 'package:cliqueledger/models/abstruct_report.dart';
+import 'package:cliqueledger/models/details_report.dart';
+import 'package:cliqueledger/providers/reports_provider.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:cliqueledger/utility/constant.dart';
 import 'package:flutter/material.dart';

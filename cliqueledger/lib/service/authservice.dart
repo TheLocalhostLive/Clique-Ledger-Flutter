@@ -6,7 +6,6 @@ import 'package:cliqueledger/utility/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart';
 
 class _LoginInfo extends ChangeNotifier {
   var _isLoggedIn = false;
@@ -19,6 +18,7 @@ class _LoginInfo extends ChangeNotifier {
 }
 
 @immutable
+// ignore: must_be_immutable
 class Authservice {
   static final Authservice instance = Authservice._internal();
   factory Authservice() {
@@ -30,7 +30,7 @@ class Authservice {
   final _loginInfo = _LoginInfo();
   get loginInfo => _loginInfo;
 
-  final appAuth = FlutterAppAuth();
+  final appAuth = const FlutterAppAuth();
   Auth0IdToken? idToken;
   String? accessToken;
 
@@ -46,7 +46,7 @@ class Authservice {
     final secureRefreshToken =
         await secureStorage.read(key: REFRESH_TOKEN_KEY);
 
-    print(secureRefreshToken);
+   
     if (secureRefreshToken == null) return false;
 
     final response = await appAuth.token(TokenRequest(
@@ -65,10 +65,10 @@ class Authservice {
       profile = await getUserDetails(accessToken!);
 
       if (profile != null) {
-        print("profile Info");
-        print(profile!.toJson());
+        // print("profile Info");
+        // print(profile!.toJson());
       } else
-        print("Profile is null");
+        // print("Profile is null");
 
       if (result.refreshToken != null) {
         await secureStorage.write(
@@ -99,8 +99,9 @@ class Authservice {
         await appAuth.authorizeAndExchangeCode(authorizationTokenRequest);
 
     if (isAuthResultValid(result)) {
-      final auth0IdToken = parseIdToken(result!.idToken!);
-      print(auth0IdToken);
+      // final auth0IdToken = 
+      parseIdToken(result!.idToken!);
+      //print(auth0IdToken);
       _loginInfo.isLoggedIn = true;
     }
 
@@ -142,7 +143,7 @@ class Authservice {
       final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
       return Auth0User.fromJson(jsonResponse);
     } else {
-      print('Failed to load user details: ${response.statusCode}');
+      //print('Failed to load user details: ${response.statusCode}');
       return null;
     }
   }

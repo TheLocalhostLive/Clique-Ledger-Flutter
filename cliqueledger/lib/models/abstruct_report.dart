@@ -1,4 +1,4 @@
-import 'package:cliqueledger/models/detailsReport.dart';
+import 'package:cliqueledger/models/details_report.dart';
 
 class AbstructReport{
   final String userId;

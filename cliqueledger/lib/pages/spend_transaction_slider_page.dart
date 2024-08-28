@@ -1,12 +1,12 @@
-import 'package:cliqueledger/api_helpers/transactionPost.dart';
-import 'package:cliqueledger/models/ParticipantsPost.dart';
-import 'package:cliqueledger/models/TransactionPostSchema.dart';
-import 'package:cliqueledger/models/participants.dart';
-import 'package:cliqueledger/providers/CliqueListProvider.dart';
-import 'package:cliqueledger/providers/TransactionProvider.dart';
-import 'package:cliqueledger/providers/cliqueProvider.dart';
-import 'package:cliqueledger/themes/appBarTheme.dart';
-import 'package:cliqueledger/utility/routers_constant.dart';
+import 'package:cliqueledger/api_helpers/transaction_post.dart';
+import 'package:cliqueledger/models/Participants_post.dart';
+import 'package:cliqueledger/models/Transaction_post_schema.dart';
+
+import 'package:cliqueledger/providers/Clique_list_provider.dart';
+import 'package:cliqueledger/providers/transaction_provider.dart';
+import 'package:cliqueledger/providers/clique_provider.dart';
+import 'package:cliqueledger/themes/app_bar_theme.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -17,11 +17,10 @@ class SpendTransactionSliderPage extends StatefulWidget {
   final String description;
 
   const SpendTransactionSliderPage(
-      {Key? key,
+      {super.key,
       required this.selectedMembers,
       required this.amount,
-      required this.description})
-      : super(key: key);
+      required this.description});
 
   @override
   State<SpendTransactionSliderPage> createState() =>
@@ -46,9 +45,10 @@ class _SpendTransactionSliderPageState
 
     return Consumer3<TransactionProvider, CliqueProvider, CliqueListProvider>(
         builder: (context, transactionProvider, cliqueProvider,
+            // ignore: avoid_types_as_parameter_names, non_constant_identifier_names
             CliqueListProvider, child) {
       return Scaffold(
-        appBar: GradientAppBar(title: "Allocate Spend Among"),
+        appBar: const GradientAppBar(title: "Allocate Spend Among"),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -107,10 +107,10 @@ class _SpendTransactionSliderPageState
                                 color: theme.colorScheme.tertiary,
                               ),
                               labelText: 'Amount',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Padding(
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                     EdgeInsets.symmetric(horizontal: 8.0),
                                 child: Text(
                                   '₹',
                                   style: TextStyle(fontSize: 18),
@@ -145,7 +145,7 @@ class _SpendTransactionSliderPageState
 
                   if (totalAmount > widget.amount) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content:
                             Text("Total amount is exceeding the spend amount"),
                       ),
@@ -165,6 +165,7 @@ class _SpendTransactionSliderPageState
                         description: widget.description);
                     await TransactionPost.postData(tSchema, transactionProvider,
                         cliqueProvider, CliqueListProvider);
+                    // ignore: use_build_context_synchronously
                     context.pop();
                   }
                 },

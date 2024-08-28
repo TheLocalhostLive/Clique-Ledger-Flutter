@@ -1,35 +1,30 @@
-import 'package:cliqueledger/api_helpers/MemberApi.dart';
-import 'dart:io';
+
 
 import 'package:cliqueledger/api_helpers/clique_media.dart';
-import 'package:cliqueledger/api_helpers/fetchTransactions.dart';
-import 'package:cliqueledger/api_helpers/reportApi.dart';
-import 'package:cliqueledger/api_helpers/transactionPost.dart';
-import 'package:cliqueledger/models/ParticipantsPost.dart';
-import 'package:cliqueledger/models/TransactionPostSchema.dart';
-import 'package:cliqueledger/models/cliqeue.dart';
-import 'package:cliqueledger/models/abstructReport.dart';
-import 'package:cliqueledger/models/detailsReport.dart';
-import 'package:cliqueledger/models/member.dart';
-import 'package:cliqueledger/models/participants.dart';
-import 'package:cliqueledger/pages/spendTransactionSliderPage.dart';
-import 'package:cliqueledger/providers/CliqueListProvider.dart';
-import 'package:cliqueledger/providers/TransactionProvider.dart';
-import 'package:cliqueledger/providers/cliqueProvider.dart';
-import 'package:cliqueledger/providers/reportsProvider.dart';
+import 'package:cliqueledger/api_helpers/fetch_transactions.dart';
+import 'package:cliqueledger/api_helpers/report_api.dart';
+import 'package:cliqueledger/api_helpers/transaction_post.dart';
+import 'package:cliqueledger/models/Participants_post.dart';
+import 'package:cliqueledger/models/Transaction_post_schema.dart';
+import 'package:cliqueledger/models/abstruct_report.dart';
+
+import 'package:cliqueledger/providers/Clique_list_provider.dart';
+import 'package:cliqueledger/providers/transaction_provider.dart';
+import 'package:cliqueledger/providers/clique_provider.dart';
+import 'package:cliqueledger/providers/reports_provider.dart';
 import 'package:cliqueledger/providers/clique_media_provider.dart';
 import 'package:cliqueledger/service/authservice.dart';
-import 'package:cliqueledger/themes/appBarTheme.dart';
+
 import 'package:cliqueledger/utility/routers_constant.dart';
 import 'package:cliqueledger/widgets/media_tab.dart';
-import 'package:file_picker/file_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:cliqueledger/models/transaction.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:provider/provider.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+
 
 class Cliquepage extends StatefulWidget {
   const Cliquepage({super.key});
@@ -165,7 +160,7 @@ class _CliquepageState extends State<Cliquepage>
                             ),
                           ),
                           labelText: 'Amount',
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           errorText: amountError,
                           prefixIcon: Padding(
                             padding:
@@ -179,7 +174,7 @@ class _CliquepageState extends State<Cliquepage>
                                       fontSize: 18,
                                       color: theme.textTheme.bodySmall?.color),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                     width:
                                         4), // Space between the symbol and the input
                               ],
@@ -280,10 +275,10 @@ class _CliquepageState extends State<Cliquepage>
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
                             transactionTypeError!,
-                            style: TextStyle(color: Colors.red),
+                            style: const TextStyle(color: Colors.red),
                           ),
                         ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       // Members Checkboxes
                       Expanded(
                         child: ListView(
@@ -388,9 +383,6 @@ class _CliquepageState extends State<Cliquepage>
                             participants: participants,
                             amount: amount,
                             description: description);
-                        print('description : $description');
-                        print('cliqueId : $cliqueId');
-                        print('amount: $amount');
                         await TransactionPost.postData(
                             tSchema,
                             transactionProvider,
@@ -406,6 +398,7 @@ class _CliquepageState extends State<Cliquepage>
                           },
                         );
                       }
+                      // ignore: use_build_context_synchronously
                       Navigator.of(context).pop();
                     }
                   },
@@ -555,7 +548,6 @@ class _CliquepageState extends State<Cliquepage>
                 FloatingActionButton(
                   heroTag: 'btn3',
                   onPressed: () async {
-                    print('clicked');
                     await getAbstructReport(cliqueProvider.currentClique!.id,
                         reportsProvider, context);
                     setState(() {
@@ -581,7 +573,7 @@ class _CliquepageState extends State<Cliquepage>
 class TransactionsTab extends StatelessWidget {
   final List<Transaction> transactions;
 
-  const TransactionsTab({required this.transactions});
+  const TransactionsTab({super.key, required this.transactions});
 
   void _checkTransaction(BuildContext context, Transaction t) {
     final theme = Theme.of(context);
@@ -613,7 +605,7 @@ class TransactionsTab extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        '${t.sender.name} : \u{20B9}${t.amount.toStringAsFixed(2) ?? 'N/A'} paid to ${t.participants[0].name}',
+                        '${t.sender.name} : \u{20B9}${t.amount.toStringAsFixed(2)} paid to ${t.participants[0].name}',
                         style: theme.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
@@ -627,7 +619,7 @@ class TransactionsTab extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        '${t.sender.name} Paid Total: \u{20B9}${t.amount?.toStringAsFixed(2) ?? 'N/A'} To -',
+                        '${t.sender.name} Paid Total: \u{20B9}${t.amount.toStringAsFixed(2)} To -',
                         style: theme.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
@@ -642,7 +634,7 @@ class TransactionsTab extends StatelessWidget {
                               ),
                             ),
                           )
-                          .toList(),
+                          ,
                     ],
                     const SizedBox(height: 20),
                     Text(
@@ -652,12 +644,12 @@ class TransactionsTab extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${t.description}',
+                      t.description,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface,
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     // ElevatedButton(
                     //   onPressed: () => {},
                     //   child: const Text(
@@ -701,16 +693,16 @@ class TransactionsTab extends StatelessWidget {
     final theme = Theme.of(context);
     final currentUserId = Authservice.instance.profile!.cliqueLedgerAppUid;
 
-    final ScrollController _scrollController = ScrollController();
+    final ScrollController scrollController = ScrollController();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      if (scrollController.hasClients) {
+        scrollController.jumpTo(scrollController.position.maxScrollExtent);
       }
     });
 
     return ListView(
-      controller: _scrollController,
+      controller: scrollController,
       children: transactions.map((tx) {
         bool isCurrentUserSender = tx.sender.userId == currentUserId;
 
@@ -810,11 +802,11 @@ class ReportTab extends StatefulWidget {
   final CliqueProvider cliqueProvider;
   final ReportsProvider reportsProvider;
 
-  ReportTab(
-      {Key? key, required this.cliqueProvider, required this.reportsProvider})
-      : super(key: key);
+  const ReportTab(
+      {super.key, required this.cliqueProvider, required this.reportsProvider});
 
   @override
+  // ignore: no_logic_in_create_state
   State<ReportTab> createState() => _ReportTabState(
       cliqueProvider: cliqueProvider, reportsProvider: reportsProvider);
 }
@@ -866,8 +858,8 @@ class _ReportTabState extends State<ReportTab> {
                         report.isDue ? "Due" : "Extra",
                         style: theme.textTheme.bodyMedium!.copyWith(
                           color: report.isDue
-                              ? Color.fromRGBO(222, 75, 95, 1)
-                              : Color.fromRGBO(99, 220, 190, 1),
+                              ? const Color.fromRGBO(222, 75, 95, 1)
+                              : const Color.fromRGBO(99, 220, 190, 1),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -893,8 +885,8 @@ class _ReportTabState extends State<ReportTab> {
                 children: report.detailsReport?.map((details) {
                       Color detailTileColor =
                           details.sendAmount == null || details.sendAmount == 0
-                              ? Color.fromRGBO(222, 75, 95, 0.2)
-                              : Color.fromRGBO(99, 220, 190, 0.2);
+                              ? const Color.fromRGBO(222, 75, 95, 0.2)
+                              : const Color.fromRGBO(99, 220, 190, 0.2);
 
                       return ListTile(
                         tileColor: detailTileColor,

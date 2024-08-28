@@ -1,8 +1,7 @@
 import 'package:cliqueledger/models/cliqeue.dart'; // fixed typo
-import 'package:cliqueledger/providers/CliqueListProvider.dart';
+import 'package:cliqueledger/providers/Clique_list_provider.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:cliqueledger/utility/constant.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -14,30 +13,35 @@ class CliqueList {
 
   Future<void> fetchData(CliqueListProvider cliqueListProvider) async {
     String? accessToken = Authservice.instance.accessToken;
-    print('Access Token : $accessToken');
+   
     
-    final uriGet = Uri.parse('${BASE_URL}/cliques');
+    final uriGet = Uri.parse('$BASE_URL/cliques');
     try {
       final response = await http.get(uriGet,headers: {
         'Authorization' : 'Bearer $accessToken'
         });
       if (response.statusCode == 200) {
-        print('Response Body : ${response.body}');
+     
         final List<dynamic> jsonList = json.decode(response.body);
-
-
+         // ignore: use_build_context_synchronously
+   
 
 
         cliqueList = jsonList.map((jsonItem) => Clique.fromJson(jsonItem)).toList();
-        print("Data fetched successfully: ${cliqueList.length} items");
+      
         cliqueListProvider.setCliqueList(cliqueList);
       } else {
         // Handle error response
-        print("Error while fetching data: ${response.statusCode}");
+        // ignore: use_build_context_synchronously
+        
+
+       
       }
     } catch (e) {
       // Handle exceptions
-      print("Exception occurred in Fetch Clique: $e");
+      // ignore: use_build_context_synchronously
+    //
+      
     }
 
     // Return an empty list in case of failure
