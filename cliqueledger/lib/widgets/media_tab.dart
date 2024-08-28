@@ -1,24 +1,27 @@
 import 'dart:io';
-import 'dart:typed_data';
+
 
 import 'package:cliqueledger/api_helpers/clique_media.dart';
 import 'package:cliqueledger/models/clique_media.dart';
 import 'package:cliqueledger/models/member.dart';
-import 'package:cliqueledger/providers/cliqueProvider.dart';
+import 'package:cliqueledger/providers/clique_provider.dart';
 import 'package:cliqueledger/providers/clique_media_provider.dart';
 import 'package:cliqueledger/service/authservice.dart';
-import 'package:file_picker/file_picker.dart';
+
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class CliqueMediaTab extends StatefulWidget {
   CliqueMediaProvider cliqueMediaProvider;
   CliqueMediaTab({super.key, required this.cliqueMediaProvider});
   @override
+  // ignore: library_private_types_in_public_api
   _CliqueMediaTab createState() =>
+      // ignore: no_logic_in_create_state
       _CliqueMediaTab(cliqueMediaProvider: cliqueMediaProvider);
 }
 
@@ -66,6 +69,7 @@ class MediaCards extends StatefulWidget {
   const MediaCards({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _MediaCardsState createState() => _MediaCardsState();
 }
 
@@ -203,7 +207,7 @@ class MediaCard extends StatelessWidget {
 class ImageWithLoadingOverlay extends StatelessWidget {
   final String imageUrl;
 
-  ImageWithLoadingOverlay({required this.imageUrl});
+  const ImageWithLoadingOverlay({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -214,7 +218,7 @@ class ImageWithLoadingOverlay extends StatelessWidget {
           File(imageUrl),
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
-            return Icon(Icons
+            return const Icon(Icons
                 .error); // Display an error icon if the image fails to load
           },
         ),
@@ -222,7 +226,7 @@ class ImageWithLoadingOverlay extends StatelessWidget {
         Positioned(
           child: Container(
             color: Colors.black.withOpacity(0.5), // Semi-transparent overlay
-            child: Center(
+            child: const Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
@@ -278,7 +282,7 @@ class PickImage {
     CliqueMediaProvider cliqueMediaProvider =
         context.read<CliqueMediaProvider>();
     CliqueProvider cliqueProvider = context.read<CliqueProvider>();
-    String selectedClique = cliqueProvider.currentClique!.id;
+    //String selectedClique = cliqueProvider.currentClique!.id;
 
     ThemeData theme = Theme.of(context);
 
@@ -346,8 +350,8 @@ class PickImage {
                               File file = File(cliqueMediaProvider.filePath);
                               String cliqueId =
                                   cliqueProvider.currentClique!.id;
-                              String uid = Authservice
-                                  .instance.profile!.cliqueLedgerAppUid;
+                              // String uid = Authservice
+                              //     .instance.profile!.cliqueLedgerAppUid;
 
                               // CliqueMediaResponse dummyData =
                               //     CliqueMediaResponse(
@@ -378,6 +382,7 @@ class PickImage {
                               cliqueMediaProvider.addItem(
                                   newMedia.cliqueId, newMedia);
 
+                              // ignore: use_build_context_synchronously
                               Navigator.of(context).pop();
                             },
                             style: ElevatedButton.styleFrom(

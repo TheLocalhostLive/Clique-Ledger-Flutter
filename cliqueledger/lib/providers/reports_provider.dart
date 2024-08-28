@@ -1,6 +1,5 @@
-import 'package:cliqueledger/models/abstructReport.dart';
-import 'package:cliqueledger/models/cliqeue.dart';
-import 'package:cliqueledger/models/detailsReport.dart';
+import 'package:cliqueledger/models/abstruct_report.dart';
+import 'package:cliqueledger/models/details_report.dart';
 import 'package:flutter/material.dart';
 
 class ReportsProvider with ChangeNotifier {

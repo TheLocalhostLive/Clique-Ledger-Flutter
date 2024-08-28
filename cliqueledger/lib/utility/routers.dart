@@ -1,11 +1,11 @@
 
-import 'package:cliqueledger/pages/CliqueSettingsPage.dart';
-import 'package:cliqueledger/pages/addMember.dart';
+import 'package:cliqueledger/pages/clique_settings_page.dart';
+import 'package:cliqueledger/pages/add_member.dart';
 import 'package:cliqueledger/pages/dashboard.dart';
-import 'package:cliqueledger/pages/cliquePage.dart';
+import 'package:cliqueledger/pages/clique_page.dart';
 import 'package:cliqueledger/pages/login.dart';
 import 'package:cliqueledger/pages/signup.dart';
-import 'package:cliqueledger/pages/spendTransactionSliderPage.dart';
+import 'package:cliqueledger/pages/spend_transaction_slider_page.dart';
 import 'package:cliqueledger/pages/welcome_page.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:cliqueledger/utility/routers_constant.dart';
@@ -79,7 +79,7 @@ class Routers {
         GoRoute(
           path: '/:path',
           name: 'Fallback',
-          builder: (context, state) => Scaffold(
+          builder: (context, state) => const Scaffold(
             body: Center(child: Text('Page not found')),
           ),
         ),

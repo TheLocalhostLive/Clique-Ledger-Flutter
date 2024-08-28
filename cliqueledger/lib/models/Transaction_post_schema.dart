@@ -1,4 +1,4 @@
-import 'package:cliqueledger/models/ParticipantsPost.dart';
+import 'package:cliqueledger/models/Participants_post.dart';
 
 class TransactionPostschema {
   final String cliqueId;

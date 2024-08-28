@@ -57,7 +57,6 @@ class CliqueMedia {
       cliqueMediaProvider.initMap(cliqueId, cliqueMediaResponses);
     } catch (err) {
       debugPrint("Error while Media response");
-      print(err);
     }
   }
 }

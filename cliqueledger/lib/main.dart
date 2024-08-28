@@ -1,16 +1,11 @@
-import 'package:cliqueledger/pages/addMember.dart';
-import 'package:cliqueledger/pages/cliquePage.dart';
-import 'package:cliqueledger/pages/dashboard.dart';
-import 'package:cliqueledger/pages/CliqueSettingsPage.dart';
-import 'package:cliqueledger/pages/repor.page.dart';
-import 'package:cliqueledger/providers/CliqueListProvider.dart';
-import 'package:cliqueledger/providers/TransactionProvider.dart';
-import 'package:cliqueledger/providers/cliqueProvider.dart';
-import 'package:cliqueledger/providers/reportsProvider.dart';
+
+import 'package:cliqueledger/providers/Clique_list_provider.dart';
+import 'package:cliqueledger/providers/transaction_provider.dart';
+import 'package:cliqueledger/providers/clique_provider.dart';
+import 'package:cliqueledger/providers/reports_provider.dart';
 import 'package:cliqueledger/providers/clique_media_provider.dart';
-import 'package:cliqueledger/providers/userProvider.dart';
+import 'package:cliqueledger/providers/user_provider.dart';
 import 'package:cliqueledger/service/authservice.dart';
-import 'package:cliqueledger/themes/theme.dart';
 import 'package:cliqueledger/themes/theme_provider.dart';
 import 'package:cliqueledger/utility/routers.dart';
 import 'package:flutter/material.dart';
@@ -23,11 +18,11 @@ Future<void> main() async {
     bool isInitialized = await Authservice.instance.init(); // Await Authservice initialization
     if (!isInitialized) {
       // Handle the case where initialization fails (optional)
-      print("No refresh token");
+      //print("No refresh token");
     }
   } catch (e) {
     // Handle any exceptions thrown during initialization
-    print("Error during initialization: $e");
+    //print("Error during initialization: $e");
   }
   runApp(
     MultiProvider(

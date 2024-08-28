@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:cliqueledger/models/cliqeue.dart';
-import 'package:cliqueledger/providers/CliqueListProvider.dart';
+import 'package:cliqueledger/providers/Clique_list_provider.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:cliqueledger/utility/constant.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 class CliqueApi{
   static String? accessToken = Authservice.instance.accessToken;
   static Future<void> deleteClique(Clique clique , CliqueListProvider cliqueListProvider, BuildContext context) async {
-      final uriDelete =  Uri.parse('${BASE_URL}/cliques/${clique.id}');
+      final uriDelete =  Uri.parse('$BASE_URL/cliques/${clique.id}');
       try {
         final response = await http.delete(uriDelete ,headers: {
           'Content-Type': 'application/json',
@@ -17,26 +17,29 @@ class CliqueApi{
         });
 
         if(response.statusCode == 204){
-             print(response.statusCode);
-          print('response body : ${response.body}');
           cliqueListProvider.deleteClique(clique.id);
-          print("Cliqued Deleted Successfully");
+      
+           // ignore: use_build_context_synchronously
            ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Deleted Succussfully')),
+                      const SnackBar(content: Text('Deleted Succussfully')),
                     );
         }else{
-            print(response.statusCode);
+          
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to Delete the Clique')),
+                      const SnackBar(content: Text('Failed to Delete the Clique')),
                     );
         }
       } catch (e) {
-        print('Exception Occured in Delete cliqye :$e');
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Failed to Delete the Clique')),
+                    );
       }
   }
   static Future<int> changeCliqueName(String cliqueId , String newName, CliqueListProvider cliqueListProvider, BuildContext context) async{
-    print('${BASE_URL}/cliques/${cliqueId}');
-    final uriDelete =  Uri.parse('${BASE_URL}/cliques/${cliqueId}');
+   
+    final uriDelete =  Uri.parse('$BASE_URL/cliques/$cliqueId');
     int  code=400;
     try {
       final response = await http.patch(uriDelete,headers:{
@@ -45,24 +48,25 @@ class CliqueApi{
       },
        body: json.encode({"name":newName})
       );
-       print(response.statusCode);
-          print('response body : ${response.body}');
-
       if(response.statusCode == 200){
           code = response.statusCode;
           cliqueListProvider.nameChange(cliqueId, newName);
-          print("Cliqued Name changed Successfully");
+           // ignore: use_build_context_synchronously
            ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Clique Name updated Succussfully')),
+                      const SnackBar(content: Text('Clique Name updated Succussfully')),
                     );
       }else{
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Operation Failed')),
+                      const SnackBar(content: Text('Operation Failed')),
                     );
       }
       //return response.statusCode;
     } catch (e) {
-      
+          // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Operation Failed')),
+                    );
     }
 
      return code;

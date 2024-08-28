@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:cliqueledger/themes/theme.dart';
-import 'package:cliqueledger/api_helpers/MemberApi.dart';
-import 'package:cliqueledger/models/member.dart';
+
+import 'package:cliqueledger/api_helpers/Member_api.dart';
+
 import 'package:cliqueledger/models/user.dart';
-import 'package:cliqueledger/providers/CliqueListProvider.dart';
-import 'package:cliqueledger/providers/cliqueProvider.dart';
-import 'package:cliqueledger/themes/appBarTheme.dart';
-import 'package:cliqueledger/utility/routers.dart';
+import 'package:cliqueledger/providers/Clique_list_provider.dart';
+import 'package:cliqueledger/providers/clique_provider.dart';
+import 'package:cliqueledger/themes/app_bar_theme.dart';
 
 class AddMember extends StatefulWidget {
   const AddMember({super.key});
@@ -32,6 +31,7 @@ class _AddMemberState extends State<AddMember> {
 
     User? user = await MemberApi.searchUser(email);
     if (user == null) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Nothing Found")),
       );
@@ -49,6 +49,7 @@ class _AddMemberState extends State<AddMember> {
   Future<void> _addMember(CliqueListProvider cl, CliqueProvider c) async {
     await MemberApi.addUserPost(selectedUsers, cl, c);
 
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Member added successfully")),
     );
@@ -61,8 +62,6 @@ class _AddMemberState extends State<AddMember> {
     return Consumer2<CliqueProvider, CliqueListProvider>(
       builder: (context, cliqueProvider, cliqueListProvider, child) {
         var buttonCol = theme.colorScheme.secondary;
-        var textCol1 = theme.colorScheme.tertiary;
-        var textCol2 = theme.colorScheme.secondary;
         return Scaffold(
           appBar: const GradientAppBar(title: "Clique Ledger"),
           body: Padding(

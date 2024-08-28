@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:cliqueledger/models/transaction.dart';
-import 'package:cliqueledger/providers/CliqueListProvider.dart';
-import 'package:cliqueledger/providers/TransactionProvider.dart';
-import 'package:cliqueledger/providers/cliqueProvider.dart';
+import 'package:cliqueledger/providers/Clique_list_provider.dart';
+import 'package:cliqueledger/providers/transaction_provider.dart';
+import 'package:cliqueledger/providers/clique_provider.dart';
 import 'package:cliqueledger/providers/clique_media_provider.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:cliqueledger/service/socket_event_handler.dart';

@@ -1,14 +1,14 @@
-import 'package:cliqueledger/api_helpers/MemberApi.dart';
-import 'package:cliqueledger/api_helpers/cliqueApi.dart';
+import 'package:cliqueledger/api_helpers/Member_api.dart';
+import 'package:cliqueledger/api_helpers/clique_api.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cliqueledger/api_helpers/fetchMemeber.dart';
+
 import 'package:cliqueledger/models/member.dart';
-import 'package:cliqueledger/providers/CliqueListProvider.dart';
-import 'package:cliqueledger/providers/cliqueProvider.dart';
-import 'package:cliqueledger/providers/userProvider.dart';
-import 'package:cliqueledger/themes/appBarTheme.dart';
+import 'package:cliqueledger/providers/Clique_list_provider.dart';
+import 'package:cliqueledger/providers/clique_provider.dart';
+
+import 'package:cliqueledger/themes/app_bar_theme.dart';
 import 'package:cliqueledger/utility/routers_constant.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -39,18 +39,18 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Consumer2<CliqueListProvider, CliqueProvider>(
       builder: (context, cliqueListProvider, cliqueProvider, child) {
-        TextEditingController _nameController =
+        TextEditingController nameController =
             TextEditingController(text: cliqueProvider.currentClique!.name);
 
         return Scaffold(
-          appBar: GradientAppBar(title: "Clique Ledger"),
+          appBar: const GradientAppBar(title: "Clique Ledger"),
           body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                   Center(
                     child: Container(
                       height: 120,
@@ -72,13 +72,13 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: Container(
-                          padding: EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(
@@ -89,15 +89,15 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                           child: isEditing
                               ? TextField(
-                                  controller: _nameController,
-                                  decoration: InputDecoration(
+                                  controller: nameController,
+                                  decoration: const InputDecoration(
                                     border: InputBorder.none,
                                   ),
                                   style: theme.textTheme.bodyLarge,
                                   cursorColor: theme.colorScheme.primary,
                                 )
                               : Text(
-                                  _nameController.text,
+                                  nameController.text,
                                   style: theme.textTheme.titleMedium!.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -124,11 +124,11 @@ class _SettingsPageState extends State<SettingsPage> {
                         alignment: Alignment.centerRight,
                         child: ElevatedButton(
                           onPressed: () async {
-                            String newName = await setNewName(
+                            await setNewName(
                                 cliqueProvider,
                                 cliqueProvider.currentClique!.id,
                                 cliqueListProvider,
-                                _nameController.text);
+                                nameController.text);
                             setState(() {
                               isEditing = false;
                             });
@@ -145,7 +145,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ),
                     ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     children: [
                       Text(
@@ -171,10 +171,10 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ListView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: cliqueListProvider
                         .activeCliqueList[cliqueProvider.currentClique!.id]!
                         .members
@@ -186,7 +186,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
                       return Card(
                         color: theme.colorScheme.primary,
-                        margin: EdgeInsets.symmetric(vertical: 8.0),
+                        margin: const EdgeInsets.symmetric(vertical: 8.0),
                         child: ListTile(
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +202,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ),
                                   member.isAdmin
                                       ? Container(
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 4),
                                           decoration: BoxDecoration(
                                             color: theme.colorScheme.secondary,
@@ -218,7 +218,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                             ),
                                           ),
                                         )
-                                      : SizedBox.shrink(),
+                                      : const SizedBox.shrink(),
                                 ],
                               ),
                               Text(
