@@ -14,7 +14,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 class SocketService {
   static final SocketService instance = SocketService._internal();
 
-  IO.Socket? socket;
+  static IO.Socket? socket;
   static TransactionProvider? transactionProvider;
   static CliqueListProvider? cliqueListProvider;
   static CliqueMediaProvider? cliqueMediaProvider;
@@ -25,7 +25,7 @@ class SocketService {
     "transaction-deleted": SocketEventHandler.handleDeleteTransaction,
     "transaction-accepted": SocketEventHandler.handleAcceptTransaction,
     "transaction-rejected": SocketEventHandler.handleRejectTransaction,
-    "added-to-clique": SocketEventHandler.handleAddToClique,
+    "added-to-clique": (data) => SocketEventHandler.handleAddToClique(data, cliqueListProvider, socket),
     "removed-from-clique": SocketEventHandler.handleRemoveFromClique,
     "media-created": (data) => SocketEventHandler.handleMediaCreated(data, cliqueMediaProvider, cliqueProvider)
   };
@@ -56,7 +56,6 @@ class SocketService {
 
   //rooms are basically cliqueId
   void joinRooms(List<String> rooms) {
-    print(rooms);
     socket!.emit('join-rooms', jsonEncode(rooms));
   }
 
