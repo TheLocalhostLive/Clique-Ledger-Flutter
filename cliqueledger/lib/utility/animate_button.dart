@@ -1,4 +1,10 @@
-// InkWell(
+// import 'package:flutter/material.dart';
+
+// class AnimatedButton{
+
+//   // ignore: non_constant_identifier_names
+//   Widget Button(){
+//     return InkWell(
 //               onTap: () {
 //                 changedButton.value = true;
 //               },
@@ -31,3 +37,6 @@
 //                 },
 //               ),
 //             ),
+//   }
+
+// }
