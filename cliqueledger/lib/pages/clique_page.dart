@@ -499,7 +499,7 @@ class _CliquepageState extends State<Cliquepage>
                               : TransactionsTab(
                                   transactions:
                                       transactionProvider.transactionMap[
-                                          cliqueProvider.currentClique!.id]!,
+                                          cliqueProvider.currentClique!.id]?.values.toList() ?? [],
                                 ),
                       CliqueMediaTab(cliqueMediaProvider: cliqueMediaProvider),
                       !isGenerateButtonClicked ||
