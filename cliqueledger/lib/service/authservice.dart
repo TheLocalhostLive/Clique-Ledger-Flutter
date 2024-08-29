@@ -138,7 +138,7 @@ class Authservice {
     final response = await http.get(url, headers: {
       'Authorization': 'Bearer $accessToken',
     });
-
+    debugPrint(accessToken);
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
       return Auth0User.fromJson(jsonResponse);
