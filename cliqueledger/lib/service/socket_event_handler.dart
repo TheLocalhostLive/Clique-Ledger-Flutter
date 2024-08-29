@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:cliqueledger/api_helpers/http_wrapper.dart';
+import 'package:cliqueledger/models/cliqeue.dart';
 import 'package:cliqueledger/models/clique_media.dart';
 import 'package:cliqueledger/models/member.dart';
 import 'package:cliqueledger/models/transaction.dart';
@@ -7,6 +11,7 @@ import 'package:cliqueledger/providers/clique_provider.dart';
 import 'package:cliqueledger/providers/clique_media_provider.dart';
 import 'package:cliqueledger/service/authservice.dart';
 import 'package:flutter/material.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketEventHandler {
   static void handleCreateTranscation(
@@ -27,7 +32,36 @@ class SocketEventHandler {
   static void handleDeleteTransaction(data) {}
   static void handleAcceptTransaction(data) {}
   static void handleRejectTransaction(data) {}
-  static void handleAddToClique(data) {}
+
+  static void handleAddToClique(
+      dynamic data, CliqueListProvider? cliqueListProvider, IO.Socket? socket) async {
+    
+    print(data);
+    final jsonBody = jsonDecode(data);
+    
+    String cliqueId = jsonBody["data"]["cliqueId"];
+    String? accessToken = Authservice.instance.accessToken;
+
+
+    try {
+      HTTPWrapper request = HTTPWrapper(
+          endpoint: 'cliques/$cliqueId/',
+          method: 'GET',
+          accessToken: accessToken);
+      dynamic response = await request.sendRequest();
+
+      Clique clique = Clique.fromJson(jsonDecode(response));
+      
+      cliqueListProvider!.setClique(clique);
+      
+      socket!.emit('join-rooms', jsonEncode([clique.id]));
+
+    } catch (err) {
+      debugPrint(
+          "SocketEventHanlder:: There is an error in handleAddToClique ");
+    }
+  }
+
   static void handleRemoveFromClique(data) {}
 
   static void handleMediaCreated(
