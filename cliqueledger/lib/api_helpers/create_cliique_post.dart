@@ -3,6 +3,7 @@ import 'package:cliqueledger/models/cliqeue.dart';
 import 'package:cliqueledger/models/clique_post_schema.dart';
 import 'package:cliqueledger/providers/Clique_list_provider.dart';
 import 'package:cliqueledger/service/authservice.dart';
+import 'package:cliqueledger/service/socket_service.dart';
 import 'package:cliqueledger/utility/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -38,7 +39,7 @@ class CreateCliquePost {
 
         // Update the provider
         cliqueListProvider.setClique(newClique);
-
+        SocketService.instance.joinRooms([newClique.id]);
        
       } else {
         // Handle non-success status codes
