@@ -130,46 +130,46 @@ class _DashboardState extends State<Dashboard>
                         return null;
                       },
                     ),
-                    Row(
-                      children: <Widget>[
-                        Checkbox(
-                          value: withFunds,
-                          activeColor: tertiaryColor,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              withFunds = value ?? false;
-                            });
-                          },
-                        ),
-                        Text("With funds",
-                            style: TextStyle(color: tertiaryColor)),
-                      ],
-                    ),
-                    if (withFunds)
-                      TextFormField(
-                        cursorColor: secondaryColor,
-                        controller: amountController,
-                        decoration: InputDecoration(
-                          hintText: "Enter Amount",
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: onSurfaceColor,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: secondaryColor,
-                            ),
-                          ),
-                        ),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Amount cannot be empty";
-                          }
-                          return null;
-                        },
-                      ),
+                    // Row(
+                    //   children: <Widget>[
+                    //     Checkbox(
+                    //       value: withFunds,
+                    //       activeColor: tertiaryColor,
+                    //       onChanged: (bool? value) {
+                    //         setState(() {
+                    //           withFunds = value ?? false;
+                    //         });
+                    //       },
+                    //     ),
+                    //     Text("With funds",
+                    //         style: TextStyle(color: tertiaryColor)),
+                    //   ],
+                    // ),
+                    // if (withFunds)
+                    //   TextFormField(
+                    //     cursorColor: secondaryColor,
+                    //     controller: amountController,
+                    //     decoration: InputDecoration(
+                    //       hintText: "Enter Amount",
+                    //       enabledBorder: OutlineInputBorder(
+                    //         borderSide: BorderSide(
+                    //           color: onSurfaceColor,
+                    //         ),
+                    //       ),
+                    //       focusedBorder: OutlineInputBorder(
+                    //         borderSide: BorderSide(
+                    //           color: secondaryColor,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     keyboardType: TextInputType.number,
+                    //     validator: (value) {
+                    //       if (value == null || value.isEmpty) {
+                    //         return "Amount cannot be empty";
+                    //       }
+                    //       return null;
+                    //     },
+                    //   ),
                   ],
                 ),
               ),
