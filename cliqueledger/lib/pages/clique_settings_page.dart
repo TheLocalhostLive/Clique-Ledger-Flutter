@@ -193,9 +193,13 @@ class _SettingsPageState extends State<SettingsPage> {
                             children: [
                               Row(
                                 children: [
-                                  Text(
-                                    member.name,
-                                    style: theme.textTheme.bodyLarge,
+                                  SizedBox(
+                                    width: 150, // Set the desired width
+                                    child: Text(
+                                      member.name,
+                                      style: theme.textTheme.bodyLarge,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                   const SizedBox(
                                     width: 10,
@@ -225,6 +229,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 member.email,
                                 style: theme.textTheme.bodyMedium!.copyWith(
                                   color: theme.colorScheme.onSurfaceVariant,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
