@@ -65,11 +65,12 @@ class Authservice {
       profile = await getUserDetails(accessToken!);
 
       if (profile != null) {
-        // print("profile Info");
-        // print(profile!.toJson());
-      } else{}
-        // print("Profile is null");
-
+        debugPrint("profile Info");
+        debugPrint(profile!.toString());
+      } else{
+        debugPrint("Profile is null");
+      }
+      
       if (result.refreshToken != null) {
         await secureStorage.write(
           key: REFRESH_TOKEN_KEY,
