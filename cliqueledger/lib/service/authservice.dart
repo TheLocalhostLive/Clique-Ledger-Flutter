@@ -67,7 +67,7 @@ class Authservice {
       if (profile != null) {
         // print("profile Info");
         // print(profile!.toJson());
-      } else
+      } else{}
         // print("Profile is null");
 
       if (result.refreshToken != null) {
