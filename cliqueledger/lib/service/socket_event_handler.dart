@@ -54,7 +54,6 @@ class SocketEventHandler {
       
       cliqueListProvider!.setClique(clique);
       
-      socket!.emit('join-rooms', jsonEncode([clique.id]));
 
     } catch (err) {
       debugPrint(
